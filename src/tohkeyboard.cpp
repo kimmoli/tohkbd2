@@ -291,6 +291,8 @@ QList<unsigned int> Tohkbd::readEepromConfig()
 
         for (int i=0; i < data.count()/2; i++)
             ret.append((data.at(2*i)<<8) || data.at(2*i+1));
+
+        inputFile.close();
     }
 
     return ret;
