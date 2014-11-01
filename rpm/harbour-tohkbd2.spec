@@ -11,7 +11,7 @@ Name:       harbour-tohkbd2
 %{?qtc_builddir:%define _builddir %qtc_builddir}
 
 Summary:    The OtherHalf Keyboard version 2 daemon
-Version:    0.0.1
+Version:    0.0.devel
 Release:    1
 Group:      Qt/Qt
 License:    LICENSE

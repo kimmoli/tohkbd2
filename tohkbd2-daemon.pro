@@ -32,19 +32,21 @@ message($${DEFINES})
 SOURCES += \
     src/tohkbd2-daemon.cpp \
     src/toh.cpp \
-    src/tca8424.cpp \
     src/worker.cpp \
     src/tohkeyboard.cpp \
     src/uinputif.cpp \
-    src/driverBase.cpp
+    src/driverBase.cpp \
+    src/tca8424driver.cpp \
+    src/keymapping.cpp
 
 HEADERS += \
     src/toh.h \
-    src/tca8424.h \
     src/worker.h \
     src/tohkeyboard.h \
     src/uinputif.h \
-    src/driverBase.h
+    src/driverBase.h \
+    src/tca8424driver.h \
+    src/keymapping.h
 
 OTHER_FILES += \
     rpm/$${TARGET}.spec \

@@ -16,18 +16,16 @@
 
 #include "tohkeyboard.h"
 #include "toh.h"
-#include "tca8424.h"
 #include "uinputif.h"
-
-
-bool Tohkbd::interruptsEnabled = false;
-bool Tohkbd::vddEnabled = false;
-
-int Tohkbd::capsLockSeq = 0;
 
 /* Main */
 Tohkbd::Tohkbd()
 {
+    interruptsEnabled = false;
+    vddEnabled = false;
+    stickyCtrl = false;
+    capsLockSeq = 0;
+
     thread = new QThread();
     worker = new Worker();
 
@@ -43,6 +41,15 @@ Tohkbd::Tohkbd()
 
     uinputif = new UinputIf();
     uinputif->openUinputDevice();
+
+    tca8424 = new tca8424driver(0x3b);
+    keymap = new keymapping();
+
+    connect(keymap, SIGNAL(shiftChanged()), this, SLOT(handleShiftChanged()));
+    connect(keymap, SIGNAL(ctrlChanged()), this, SLOT(handleCtrlChanged()));
+    connect(keymap, SIGNAL(altChanged()), this, SLOT(handleAltChanged()));
+    connect(keymap, SIGNAL(symChanged()), this, SLOT(handleSymChanged()));
+    connect(keymap, SIGNAL(keyPressed(int,bool)), this, SLOT(handleKeyPressed(int,bool)));
 }
 
 
@@ -79,12 +86,7 @@ bool Tohkbd::setInterruptEnable(bool state)
 {
     printf("Interrupt control request - turn %s\n", state ? "on" : "off");
 
-    if (!vddEnabled)
-    {
-        printf("Interrupt requested but VDD Not active. Aborting.\n");
-        return false;
-    }
-    else if (state == interruptsEnabled)
+    if (state == interruptsEnabled)
     {
         printf("Interrupt state already %s\n", state ? "on" : "off");
         return interruptsEnabled;
@@ -92,7 +94,9 @@ bool Tohkbd::setInterruptEnable(bool state)
 
     worker->abort();
     thread->wait(); // If the thread is not running, this will immediately return.
+
     interruptsEnabled = false;
+
     if (gpio_fd >= 0)
     {
         releaseTohInterrupt(gpio_fd);
@@ -105,25 +109,16 @@ bool Tohkbd::setInterruptEnable(bool state)
         if (gpio_fd < 0)
         {
             printf("failed to enable interrupt (are you root?)\n");
+            interruptsEnabled = false;
         }
         else
         {
-            int fd = tca8424_initComms(TCA_ADDR);
-            if (fd < 0)
-            {
-                releaseTohInterrupt(gpio_fd);
-                gpio_fd = -1;
-            }
-            else
-            {
-                tca8424_reset(fd);
-                tca8424_closeComms(fd);
 
-                worker->requestWork(gpio_fd);
-                printf("worker started\n");
+            tca8424->reset();
+            worker->requestWork(gpio_fd);
+            printf("worker started\n");
 
-                interruptsEnabled = true;
-            }
+            interruptsEnabled = true;
         }
     }
 
@@ -159,84 +154,84 @@ void Tohkbd::handleDisplayStatus(const QDBusMessage& msg)
 
 void Tohkbd::handleGpioInterrupt()
 {
-    static int haveCtrl = 0;
-    int fd, code, isShift, isAlt, isCtrl;
-    unsigned char inRep[12];
-    const char *buf;
+    keymap->process(tca8424->readInputReport());
+}
 
-    mutex.lock();
 
-    fd = tca8424_initComms(TCA_ADDR);
-    if (fd < 0 || tca8424_readInputReport(fd, inRep) < 0)
-    {
-        if (fd >= 0)
-            tca8424_closeComms(fd);
-        mutex.unlock();
-        return;
-    }
-
-    buf = tca8424_processKeyMap(inRep, &code, &isShift, &isAlt, &isCtrl);
-
-    if ((code != 0) && (capsLockSeq == 1 || capsLockSeq == 2)) /* Abort caps-lock if other key pressed */
+void Tohkbd::handleKeyPressed(int keyCode, bool forceShift)
+{
+    if ((capsLockSeq == 1 || capsLockSeq == 2)) /* Abort caps-lock if other key pressed */
         capsLockSeq = 0;
 
-    if (code == 0 && isShift && capsLockSeq == 0) /* Shift pressed first time */
+    /* Some of the keys require shift pressed to get correct symbol */
+    if (forceShift)
+        uinputif->sendUinputKeyPress(KEY_LEFTSHIFT, 1);
+
+    /* Mimic key pressing */
+    uinputif->sendUinputKeyPress(keyCode, 1);
+    uinputif->sendUinputKeyPress(keyCode, 0);
+
+    if (forceShift)
+        uinputif->sendUinputKeyPress(KEY_LEFTSHIFT, 0);
+
+    if (stickyCtrl)
+    {
+        uinputif->sendUinputKeyPress(KEY_LEFTCTRL, 0);
+        printf("Ctrl released automatically\n");
+        keymap->ctrlPressed = false;
+    }
+
+    uinputif->synUinputDevice();
+}
+
+void Tohkbd::handleShiftChanged()
+{
+    if (keymap->shiftPressed && capsLockSeq == 0) /* Shift pressed first time */
         capsLockSeq = 1;
-    else if (code == 0 && buf[0]=='!' && capsLockSeq == 1) /* Shift released */
+    else if (!keymap->shiftPressed && capsLockSeq == 1) /* Shift released */
         capsLockSeq = 2;
-    else if (code == 0 && isShift && capsLockSeq == 2) /* Shift pressed 2nd time */
+    else if (keymap->shiftPressed && capsLockSeq == 2) /* Shift pressed 2nd time */
     {
         capsLockSeq = 3;
         uinputif->sendUinputKeyPress(KEY_CAPSLOCK, 1);
         uinputif->sendUinputKeyPress(KEY_CAPSLOCK, 0);
         uinputif->synUinputDevice();
-        tca8424_leds(fd, 1);
+        tca8424->setLeds(LED_CAPSLOCK_ON);
         printf("CapsLock on\n");
     }
-    else if (code == 0 && isShift && capsLockSeq == 3) /* Shift pressed 3rd time */
+    else if (keymap->shiftPressed && capsLockSeq == 3) /* Shift pressed 3rd time */
     {
         capsLockSeq = 0;
         uinputif->sendUinputKeyPress(KEY_CAPSLOCK, 1);
         uinputif->sendUinputKeyPress(KEY_CAPSLOCK, 0);
         uinputif->synUinputDevice();
-        tca8424_leds(fd, 0);
+        tca8424->setLeds(LED_CAPSLOCK_OFF);
         printf("CapsLock off\n");
     }
-    else if (code == 0 && isCtrl) /* Ctrl pressed */
+}
+
+void Tohkbd::handleCtrlChanged()
+{
+    if ((capsLockSeq == 1 || capsLockSeq == 2)) /* Abort caps-lock if other key pressed */
+        capsLockSeq = 0;
+
+    if (keymap->ctrlPressed)
     {
-        haveCtrl ^= 1;
-        uinputif->sendUinputKeyPress(KEY_LEFTCTRL, haveCtrl);
-        printf("%s\n", haveCtrl ? "Ctrl down" : "Ctrl lifted");
+        stickyCtrl = !stickyCtrl;
+        uinputif->sendUinputKeyPress(KEY_LEFTCTRL, stickyCtrl ? 1 : 0);
     }
+}
 
-    if (code != 0) /* We resolved what was pressed */
-    {
-        printf("Key pressed: %s (%d 0x%02x shft=%d alt=%d ctrl=%d)\n",
-               buf, code, inRep[5], isShift, isAlt, haveCtrl);
+void Tohkbd::handleAltChanged()
+{
+    if ((capsLockSeq == 1 || capsLockSeq == 2)) /* Abort caps-lock if other key pressed */
+        capsLockSeq = 0;
 
-        if (isShift)
-            uinputif->sendUinputKeyPress(KEY_LEFTSHIFT, 1);
-        uinputif->sendUinputKeyPress(code, 1);
-        uinputif->sendUinputKeyPress(code, 0);
-        if (isShift)
-            uinputif->sendUinputKeyPress(KEY_LEFTSHIFT, 0);
-        if (haveCtrl)
-        {
-            uinputif->sendUinputKeyPress(KEY_LEFTCTRL, 0);
-            printf("Ctrl released automatically\n");
-            haveCtrl = 0;
-        }
+}
 
-        uinputif->synUinputDevice();
+void Tohkbd::handleSymChanged()
+{
+    if ((capsLockSeq == 1 || capsLockSeq == 2)) /* Abort caps-lock if other key pressed */
+        capsLockSeq = 0;
 
-    }
-    else if (buf[0] != '!')
-    {
-        printf("UNK Input report: %s %02x%02x%02x%02x%02x %02x%02x%02x%02x%02x%02x\n",
-               buf, inRep[0], inRep[1], inRep[2], inRep[3], inRep[4], inRep[5],
-               inRep[6], inRep[7], inRep[8], inRep[9], inRep[10]);
-    }
-
-    tca8424_closeComms(fd);
-    mutex.unlock();
 }

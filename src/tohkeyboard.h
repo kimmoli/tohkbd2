@@ -15,6 +15,9 @@
 
 #include "uinputif.h"
 
+#include "tca8424driver.h"
+#include "keymapping.h"
+
 
 /* main class */
 
@@ -41,22 +44,36 @@ public slots:
     /* interrupts */
     bool setInterruptEnable(bool);
     void handleGpioInterrupt();
+
+    /* dbus signal handler slots */
     void handleDisplayStatus(const QDBusMessage& msg);
+
+    /* keymap handler slots */
+    void handleShiftChanged();
+    void handleCtrlChanged();
+    void handleAltChanged();
+    void handleSymChanged();
+    void handleKeyPressed(int keyCode, bool forceShift);
 
 
 private:
     QThread *thread;
     Worker *worker;
     UinputIf *uinputif;
+    tca8424driver *tca8424;
+    keymapping *keymap;
 
-    static bool vddEnabled;
-    static bool interruptsEnabled;
+    bool vddEnabled;
+    bool interruptsEnabled;
 
-    static int capsLockSeq;
+    int capsLockSeq;
 
     QMutex mutex;
 
     int gpio_fd;
+
+    bool stickyCtrl;
+
 };
 
 
