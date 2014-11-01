@@ -35,14 +35,16 @@ SOURCES += \
     src/tca8424.cpp \
     src/worker.cpp \
     src/tohkeyboard.cpp \
-    src/uinputif.cpp
+    src/uinputif.cpp \
+    src/driverBase.cpp
 
 HEADERS += \
     src/toh.h \
     src/tca8424.h \
     src/worker.h \
     src/tohkeyboard.h \
-    src/uinputif.h
+    src/uinputif.h \
+    src/driverBase.h
 
 OTHER_FILES += \
     rpm/$${TARGET}.spec \
