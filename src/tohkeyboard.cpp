@@ -143,17 +143,15 @@ void Tohkbd::handleDisplayStatus(const QDBusMessage& msg)
     const char *turn = qPrintable(args.at(0).toString());
 
     printf("Display status changed to \"%s\"\n", turn);
-    /* TODO: something */
-//    if (strcmp(turn, "on") == 0)
-//    {
-//        printf("enabling tohkbd\n");
-//        setVddState(true);
-//    }
-//    else if (strcmp(turn, "off") == 0)
-//    {
-//        printf("disabling tohkbd\n");
-//        setVddState(false);
-//    }
+    if (strcmp(turn, "on") == 0)
+    {
+        checkDoWeNeedBacklight();
+    }
+    else if (strcmp(turn, "off") == 0)
+    {
+        tca8424->setLeds(LED_BACKLIGHT_OFF);
+        backlightTimer->stop();
+    }
 }
 
 
