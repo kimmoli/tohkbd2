@@ -1,0 +1,10 @@
+[Unit]
+Description=The Other Half QWERTY Keyboard
+Requires=dbus.service
+
+[Service]
+ExecStart=/usr/sbin/tohkbd
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
