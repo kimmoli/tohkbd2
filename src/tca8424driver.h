@@ -17,7 +17,7 @@ class tca8424driver : public DriverBase
 public:
     explicit tca8424driver(unsigned char address);
 
-    void reset();
+    bool reset();
     void setLeds(int value);
     QByteArray readInputReport();
 

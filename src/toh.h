@@ -12,5 +12,6 @@
 int controlVdd(int state);
 int getTohInterrupt();
 int releaseTohInterrupt(int fdGpio);
+unsigned int getEepromConfig(int number);
 
 #endif // !_TOHKBD_TOH_H

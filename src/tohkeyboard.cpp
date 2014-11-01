@@ -13,6 +13,7 @@
 #include <unistd.h>
 #include <linux/input.h>
 #include <linux/uinput.h>
+#include <QTimer>
 
 #include "tohkeyboard.h"
 #include "toh.h"
@@ -35,6 +36,10 @@ Tohkbd::Tohkbd()
     connect(thread, SIGNAL(started()), worker, SLOT(doWork()));
     connect(worker, SIGNAL(finished()), thread, SLOT(quit()), Qt::DirectConnection);
 
+    backlightTimer = new QTimer(this);
+    backlightTimer->setInterval(2000);
+    connect(backlightTimer, SIGNAL(timeout()), this, SLOT(backlightTimerTimeout()));
+
     /* do this automatically at startup */
     setVddState(true);
     setInterruptEnable(true);
@@ -44,6 +49,13 @@ Tohkbd::Tohkbd()
 
     tca8424 = new tca8424driver(0x3b);
     keymap = new keymapping();
+
+    /*
+     * TODO: Change keyboard mapping "getEepromConfig(int number)"
+     */
+    QList<unsigned int> eepromConfig = readEepromConfig();
+    if (eepromConfig.count() > 0)
+        printf("eeprom at 0 = %x\n", eepromConfig.at(0));
 
     connect(keymap, SIGNAL(shiftChanged()), this, SLOT(handleShiftChanged()));
     connect(keymap, SIGNAL(ctrlChanged()), this, SLOT(handleCtrlChanged()));
@@ -131,18 +143,17 @@ void Tohkbd::handleDisplayStatus(const QDBusMessage& msg)
     const char *turn = qPrintable(args.at(0).toString());
 
     printf("Display status changed to \"%s\"\n", turn);
-    if (strcmp(turn, "on") == 0)
-    {
-        printf("enabling tohkbd\n");
-        setVddState(true);
-        setInterruptEnable(true);
-    }
-    else if (strcmp(turn, "off") == 0)
-    {
-        printf("disabling tohkbd\n");
-        setInterruptEnable(false);
-        setVddState(false);
-    }
+    /* TODO: something */
+//    if (strcmp(turn, "on") == 0)
+//    {
+//        printf("enabling tohkbd\n");
+//        setVddState(true);
+//    }
+//    else if (strcmp(turn, "off") == 0)
+//    {
+//        printf("disabling tohkbd\n");
+//        setVddState(false);
+//    }
 }
 
 
@@ -154,14 +165,29 @@ void Tohkbd::handleDisplayStatus(const QDBusMessage& msg)
 
 void Tohkbd::handleGpioInterrupt()
 {
-    keymap->process(tca8424->readInputReport());
-}
+    if (!vddEnabled)
+    {
+        /* keyboard is being connected to base */
+        /* TODO: how to detect keyboard is removed ??? */
+        QThread::msleep(100);
+        setVddState(true);
+        QThread::msleep(100);
 
+        if (!tca8424->reset())
+            setVddState(false);
+    }
+    else
+    {
+        keymap->process(tca8424->readInputReport());
+    }
+}
 
 void Tohkbd::handleKeyPressed(int keyCode, bool forceShift)
 {
     if ((capsLockSeq == 1 || capsLockSeq == 2)) /* Abort caps-lock if other key pressed */
         capsLockSeq = 0;
+
+    checkDoWeNeedBacklight();
 
     /* Some of the keys require shift pressed to get correct symbol */
     if (forceShift)
@@ -234,4 +260,62 @@ void Tohkbd::handleSymChanged()
     if ((capsLockSeq == 1 || capsLockSeq == 2)) /* Abort caps-lock if other key pressed */
         capsLockSeq = 0;
 
+}
+
+QString Tohkbd::readOneLineFromFile(QString name)
+{
+    QString line;
+
+    QFile inputFile( name );
+
+    if ( inputFile.open( QIODevice::ReadOnly | QIODevice::Text ) )
+    {
+       QTextStream in( &inputFile );
+       line = in.readLine();
+       inputFile.close();
+    }
+    else
+    {
+        line = QString("Error occured.");
+    }
+
+    return line;
+}
+
+QList<unsigned int> Tohkbd::readEepromConfig()
+{
+    QList<unsigned int> ret;
+
+    QFile inputFile ( "/sys/devices/platform/toh-core.0/config_data" );
+    if (inputFile.open(QIODevice::ReadOnly))
+    {
+        QByteArray data = inputFile.readAll();
+
+        for (int i=0; i < data.count()/2; i++)
+            ret.append((data.at(2*i)<<8) || data.at(2*i+1));
+    }
+
+    return ret;
+}
+
+
+void Tohkbd::checkDoWeNeedBacklight()
+{
+    if (!backlightTimer->isActive())
+    {
+        if (readOneLineFromFile("/sys/devices/virtual/input/input11/als_lux").toInt() < 5)
+        {
+            tca8424->setLeds(LED_BACKLIGHT_ON);
+            backlightTimer->start();
+        }
+    }
+    else
+    {
+        backlightTimer->start();
+    }
+}
+
+void Tohkbd::backlightTimerTimeout()
+{
+    tca8424->setLeds(LED_BACKLIGHT_OFF);
 }

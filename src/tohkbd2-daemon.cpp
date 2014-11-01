@@ -30,7 +30,7 @@ int main(int argc, char **argv)
     setlinebuf(stdout);
     setlinebuf(stderr);
 
-    printf("Starting tohkbd daemon. V%s build %s %s\n", APPVERSION,  __DATE__, __TIME__);
+    printf("Starting tohkbd daemon version %s\n", APPVERSION);
 
     QDBusConnection mceSignalconn = QDBusConnection::systemBus();
     if (!mceSignalconn.isConnected())

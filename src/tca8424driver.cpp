@@ -15,7 +15,7 @@ void tca8424driver::init()
     setLeds(LED_CAPSLOCK_OFF | LED_SYMLOCK_OFF | LED_BACKLIGHT_OFF);
 }
 
-void tca8424driver::reset()
+bool tca8424driver::reset()
 {
     /* HID Over I2C protocol v1.0 chapter 7.2.1 Host initiated Reset (HIR)
      * Command register 0x0600
@@ -27,8 +27,15 @@ void tca8424driver::reset()
      */
     char buf[4] = {0x00, 0x06, 0x00, 0x01};
 
-    if (!writeBytes(tca8424address, buf, sizeof(buf)))
+    bool ret = writeBytes(tca8424address, buf, sizeof(buf));
+
+    if (!ret)
+    {
         printf("Error: reset() failed\n");
+    }
+
+    return ret;
+
 }
 
 void tca8424driver::setLeds(int value)

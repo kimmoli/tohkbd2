@@ -10,6 +10,7 @@
 #include <QtDBus/QtDBus>
 
 #include <QTime>
+#include <QTimer>
 #include <QThread>
 #include "worker.h"
 
@@ -55,8 +56,15 @@ public slots:
     void handleSymChanged();
     void handleKeyPressed(int keyCode, bool forceShift);
 
+    void backlightTimerTimeout();
+
 
 private:
+
+    QString readOneLineFromFile(QString name);
+    void checkDoWeNeedBacklight();
+    QList<unsigned int> readEepromConfig();
+
     QThread *thread;
     Worker *worker;
     UinputIf *uinputif;
@@ -73,6 +81,8 @@ private:
     int gpio_fd;
 
     bool stickyCtrl;
+
+    QTimer *backlightTimer;
 
 };
 
