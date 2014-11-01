@@ -201,8 +201,8 @@ void Tohkbd::handleKeyPressed(int keyCode, bool forceShift)
     if (stickyCtrl)
     {
         uinputif->sendUinputKeyPress(KEY_LEFTCTRL, 0);
+        stickyCtrl = false;
         printf("Ctrl released automatically\n");
-        keymap->ctrlPressed = false;
     }
 
     uinputif->synUinputDevice();
