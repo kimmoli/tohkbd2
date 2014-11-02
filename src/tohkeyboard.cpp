@@ -19,7 +19,8 @@
 #include "toh.h"
 #include "uinputif.h"
 
-/* Main */
+/* Main
+ */
 Tohkbd::Tohkbd()
 {
     interruptsEnabled = false;
@@ -38,6 +39,7 @@ Tohkbd::Tohkbd()
 
     backlightTimer = new QTimer(this);
     backlightTimer->setInterval(2000);
+    backlightTimer->setSingleShot(true);
     connect(backlightTimer, SIGNAL(timeout()), this, SLOT(backlightTimerTimeout()));
 
     /* do this automatically at startup */
@@ -65,7 +67,8 @@ Tohkbd::Tohkbd()
 }
 
 
-/* Function to set VDD (3.3V for OH) */
+/* Function to set VDD (3.3V for OH)
+ */
 bool Tohkbd::setVddState(bool state)
 {
     printf("VDD control request - turn %s\n", state ? "on" : "off");
@@ -89,11 +92,8 @@ bool Tohkbd::setVddState(bool state)
 }
 
 
-/*
- *    Interrupt stuff
+/* Interrupt enable and disable
  */
-
-
 bool Tohkbd::setInterruptEnable(bool state)
 {
     printf("Interrupt control request - turn %s\n", state ? "on" : "off");
@@ -137,6 +137,9 @@ bool Tohkbd::setInterruptEnable(bool state)
     return interruptsEnabled;
 }
 
+/* Handle state change of phone display
+ * Turn keyboard backlight on and off
+ */
 void Tohkbd::handleDisplayStatus(const QDBusMessage& msg)
 {
     QList<QVariant> args = msg.arguments();
@@ -149,18 +152,19 @@ void Tohkbd::handleDisplayStatus(const QDBusMessage& msg)
     }
     else if (strcmp(turn, "off") == 0)
     {
-        tca8424->setLeds(LED_BACKLIGHT_OFF);
-        backlightTimer->stop();
+        if (backlightTimer->isActive())
+        {
+            backlightTimer->stop();
+            tca8424->setLeds(LED_BACKLIGHT_OFF);
+        }
     }
 }
 
 
-
-/*
- *  GPIO interrupt handler
- *
+/* GPIO interrupt handler.
+ * Called when TOHKBD keyboard part is attached to the base, and
+ * when there is new input report due a key press.
  */
-
 void Tohkbd::handleGpioInterrupt()
 {
     if (!vddEnabled)
@@ -180,6 +184,8 @@ void Tohkbd::handleGpioInterrupt()
     }
 }
 
+/* Key press handler. Called from keymap->process() if actual key was pressed
+ */
 void Tohkbd::handleKeyPressed(int keyCode, bool forceShift)
 {
     if ((capsLockSeq == 1 || capsLockSeq == 2)) /* Abort caps-lock if other key pressed */
@@ -208,6 +214,8 @@ void Tohkbd::handleKeyPressed(int keyCode, bool forceShift)
     uinputif->synUinputDevice();
 }
 
+/* Shift, Ctrl, Alt and Sym key press and release handlers
+ */
 void Tohkbd::handleShiftChanged()
 {
     if (keymap->shiftPressed && capsLockSeq == 0) /* Shift pressed first time */
@@ -260,6 +268,9 @@ void Tohkbd::handleSymChanged()
 
 }
 
+/* Read first line from a text file
+ * returns empty QString if failed
+ */
 QString Tohkbd::readOneLineFromFile(QString name)
 {
     QString line;
@@ -272,14 +283,13 @@ QString Tohkbd::readOneLineFromFile(QString name)
        line = in.readLine();
        inputFile.close();
     }
-    else
-    {
-        line = QString("Error occured.");
-    }
 
     return line;
 }
 
+/* Read eeprom configuration words to a QList from config_data
+ * returns empty QList if failed
+ */
 QList<unsigned int> Tohkbd::readEepromConfig()
 {
     QList<unsigned int> ret;
@@ -298,7 +308,9 @@ QList<unsigned int> Tohkbd::readEepromConfig()
     return ret;
 }
 
-
+/* Read ambient light value from phones ALS and decide will the backlight be lit or not
+ * Restart timer if timer was already running
+ */
 void Tohkbd::checkDoWeNeedBacklight()
 {
     if (!backlightTimer->isActive())
@@ -315,6 +327,8 @@ void Tohkbd::checkDoWeNeedBacklight()
     }
 }
 
+/* Backlight timer timeout, will turn backlight off
+ */
 void Tohkbd::backlightTimerTimeout()
 {
     tca8424->setLeds(LED_BACKLIGHT_OFF);
