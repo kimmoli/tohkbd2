@@ -1,9 +1,9 @@
 [Unit]
-Description=The Other Half QWERTY Keyboard
+Description=The Other Half Keyboard
 Requires=dbus.service
 
 [Service]
-ExecStart=/usr/sbin/tohkbd
+ExecStart=/usr/bin/harbour-tohkbd2
 Restart=always
 
 [Install]
