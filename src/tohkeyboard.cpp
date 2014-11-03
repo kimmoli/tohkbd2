@@ -19,6 +19,8 @@
 #include "toh.h"
 #include "uinputif.h"
 
+#include <mlite5/MGConfItem>
+
 /* Main
  */
 Tohkbd::Tohkbd()
@@ -27,6 +29,7 @@ Tohkbd::Tohkbd()
     vddEnabled = false;
     stickyCtrl = false;
     capsLockSeq = 0;
+    vkbLayoutIsTohkbd = false;
 
     thread = new QThread();
     worker = new Worker();
@@ -259,6 +262,11 @@ void Tohkbd::handleAltChanged()
     if ((capsLockSeq == 1 || capsLockSeq == 2)) /* Abort caps-lock if other key pressed */
         capsLockSeq = 0;
 
+    if (keymap->altPressed)
+    {
+        vkbLayoutIsTohkbd = !vkbLayoutIsTohkbd;
+        changeActiveLayout(vkbLayoutIsTohkbd);
+    }
 }
 
 void Tohkbd::handleSymChanged()
@@ -333,3 +341,29 @@ void Tohkbd::backlightTimerTimeout()
 {
     tca8424->setLeds(LED_BACKLIGHT_OFF);
 }
+
+/* Change virtual keyboard active layout
+ * true = change to tohkbd.qml
+ * false = change to last non-tohkbd layout
+ */
+void Tohkbd::changeActiveLayout(bool tohkbd)
+{
+    if (!activeLayoutConfItem)
+        activeLayoutConfItem = new MGConfItem("/sailfish/text_input/active_layout");
+
+    QVariant __currentActiveLayout = activeLayoutConfItem->value();
+
+    printf("Current virtual keyboard layout is %s\n", qPrintable(__currentActiveLayout.toString()));
+
+    if (__currentActiveLayout.toString() != "'tohkbd.qml'")
+        currentActiveLayout = __currentActiveLayout;
+
+    if (tohkbd)
+        activeLayoutConfItem->value("'tohkbd.qml'");
+    else
+        activeLayoutConfItem->value(currentActiveLayout);
+}
+
+
+
+

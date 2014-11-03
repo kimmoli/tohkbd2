@@ -1,5 +1,8 @@
 TARGET = harbour-tohkbd2
 
+CONFIG += link_pkgconfig
+PKGCONFIG += mlite5
+
 QT += dbus
 QT -= gui
 

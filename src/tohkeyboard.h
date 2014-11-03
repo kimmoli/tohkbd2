@@ -19,6 +19,7 @@
 #include "tca8424driver.h"
 #include "keymapping.h"
 
+#include <mlite5/MGConfItem>
 
 /* main class */
 
@@ -64,6 +65,7 @@ private:
     QString readOneLineFromFile(QString name);
     void checkDoWeNeedBacklight();
     QList<unsigned int> readEepromConfig();
+    void changeActiveLayout(bool tohkbd);
 
     QThread *thread;
     Worker *worker;
@@ -84,6 +86,10 @@ private:
 
     QTimer *backlightTimer;
 
+    QVariant currentActiveLayout;
+    MGConfItem *activeLayoutConfItem;
+
+    bool vkbLayoutIsTohkbd;
 };
 
 
