@@ -1,10 +1,12 @@
 [Unit]
 Description=The Other Half Keyboard
-Requires=dbus.service
+After=dbus.service
+After=tohd.service
 
 [Service]
 ExecStart=/usr/bin/harbour-tohkbd2
 Restart=always
+RestartSec=5
 
 [Install]
 WantedBy=multi-user.target

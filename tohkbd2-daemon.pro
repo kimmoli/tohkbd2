@@ -7,7 +7,7 @@ DEFINES += "APPVERSION=\\\"$${SPECVERSION}\\\""
 
 target.path = /usr/bin/
 
-systemd.path = /etc/systemd/system/
+systemd.path = /etc/systemd/user/
 systemd.files = config/$${TARGET}.service
 
 udevrule.path = /etc/udev/rules.d/
