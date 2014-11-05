@@ -26,7 +26,7 @@ images.path = $${ambience.path}/images
 images.files = ambience/images/*
 
 vkblayout.path = /usr/share/maliit/plugins/com/jolla/layouts/
-vkblayout.files = config/$${TARGET}.conf config/$${TARGET}.qml
+vkblayout.files = config/layouts/$${TARGET}.conf config/layouts/$${TARGET}.qml
 
 INSTALLS += target systemd udevrule dbusconf ambience images vkblayout
 
@@ -55,4 +55,5 @@ OTHER_FILES += \
     rpm/$${TARGET}.spec \
     config/$${TARGET}.service \
     config/$${TARGET}.conf \
-    config/$${TARGET}.qml
+    config/layouts/$${TARGET}.conf \
+    config/layouts/$${TARGET}.qml

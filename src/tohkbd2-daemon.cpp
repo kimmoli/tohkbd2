@@ -40,9 +40,34 @@ int main(int argc, char **argv)
         sleep(3);
         exit(EXIT_FAILURE);
     }
+    if (!QDBusConnection::systemBus().isConnected())
+    {
+        printf("Cannot connect to the D-Bus systemBus\n%s\n", qPrintable(QDBusConnection::systemBus().lastError().message()));
+        exit(EXIT_FAILURE);
+    }
     printf("Connected to D-Bus systembus\n");
 
+    printf("Environment %s\n", qPrintable(getenv ("DBUS_SESSION_BUS_ADDRESS")));
+
+    if (!QDBusConnection::sessionBus().isConnected())
+    {
+        printf("Cannot connect to the D-Bus sessionBus\n%s\n", qPrintable(QDBusConnection::sessionBus().lastError().message()));
+        exit(EXIT_FAILURE);
+    }
+    printf("Connected to D-Bus sessionbus\n");
+
+    if (!QDBusConnection::systemBus().registerService(SERVICE_NAME))
+    {
+        printf("Cannot register service to systemBus\n%s\n", qPrintable(QDBusConnection::systemBus().lastError().message()));
+        exit(EXIT_FAILURE);
+    }
+
+    printf("Registered %s to D-Bus systembus\n", SERVICE_NAME);
+
+
     Tohkbd tohkbd;
+
+    QDBusConnection::systemBus().registerObject("/", &tohkbd, QDBusConnection::ExportAllSlots | QDBusConnection::ExportAllSignals);
 
     /* Nokia MCE display_status_ind
      * used to enable and disable keyboard when display is on or off

@@ -23,11 +23,14 @@
 
 #include <mlite5/MGConfItem>
 
+#define SERVICE_NAME "com.kimmoli.tohkbd2"
+
 /* main class */
 
 class Tohkbd: public QObject
 {
     Q_OBJECT
+    Q_CLASSINFO("D-Bus Interface", SERVICE_NAME)
 
 public:
     Tohkbd();
@@ -61,6 +64,8 @@ public slots:
 
     void backlightTimerTimeout();
 
+    /* DBUS */
+    void fakeKeyPress(const QDBusMessage& msg);
 
 private:
 

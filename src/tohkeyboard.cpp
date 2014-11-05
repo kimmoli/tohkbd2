@@ -47,7 +47,7 @@ Tohkbd::Tohkbd()
 
     /* do this automatically at startup */
     setVddState(true);
-    setInterruptEnable(true);
+    //setInterruptEnable(true);
 
     uinputif = new UinputIf();
     uinputif->openUinputDevice();
@@ -372,5 +372,10 @@ void Tohkbd::changeActiveLayout(bool tohkbd)
 }
 
 
+void Tohkbd::fakeKeyPress(const QDBusMessage& msg)
+{
+    QList<QVariant> args = msg.arguments();
 
-
+    printf("got fake keypress\n");
+    keymap->process(args.at(0).toByteArray());
+}
