@@ -23,7 +23,7 @@
 static const char conf_devname[] = "tohkbd";
 static const char specialKeys[] = { KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT,
                                     KEY_KPPLUS, KEY_HOME, KEY_END,
-                                    KEY_PAGEDOWN, KEY_PAGEUP, 0 };
+                                    KEY_PAGEDOWN, KEY_PAGEUP, KEY_RIGHTALT, KEY_DELETE, 0 };
 
 int UinputIf::fd = -1;
 
