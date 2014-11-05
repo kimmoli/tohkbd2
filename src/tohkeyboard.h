@@ -94,8 +94,7 @@ private:
 
     QTimer *backlightTimer;
 
-    QVariant currentActiveLayout;
-    MGConfItem *activeLayoutConfItem;
+    QString currentActiveLayout;
 
     bool vkbLayoutIsTohkbd;
 };

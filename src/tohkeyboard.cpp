@@ -359,20 +359,20 @@ void Tohkbd::backlightTimerTimeout()
  */
 void Tohkbd::changeActiveLayout(bool tohkbd)
 {
-    if (!activeLayoutConfItem)
-        activeLayoutConfItem = new MGConfItem("/sailfish/text_input/active_layout");
 
-    QVariant __currentActiveLayout = activeLayoutConfItem->value();
+    MGConfItem* activeLayoutConfItem = new MGConfItem("/sailfish/text_input/active_layout", this);
 
-    printf("Current virtual keyboard layout is %s\n", qPrintable(__currentActiveLayout.toString()));
+    QString __currentActiveLayout = activeLayoutConfItem->value().toString();
 
-    if (__currentActiveLayout.toString() != "'tohkbd.qml'")
+    printf("Current virtual keyboard layout is %s\n", qPrintable(__currentActiveLayout));
+
+    if (!__currentActiveLayout.contains("tohkbd.qml"))
         currentActiveLayout = __currentActiveLayout;
 
     if (tohkbd)
-        activeLayoutConfItem->value("'tohkbd.qml'");
+        activeLayoutConfItem->set("tohkbd.qml");
     else
-        activeLayoutConfItem->value(currentActiveLayout);
+        activeLayoutConfItem->set(currentActiveLayout);
 }
 
 
