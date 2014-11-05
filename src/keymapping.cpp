@@ -25,8 +25,7 @@ keymapping::keymapping(QObject *parent) :
 void keymapping::process(QByteArray inputReport)
 {
     char key;
-    int retKey = KEY_RESERVED;
-    bool forceShift = false;
+    QList< QPair<int,int> > retKey;
 
     bool __shiftPressed = false;
     bool __ctrlPressed = false;
@@ -42,72 +41,72 @@ void keymapping::process(QByteArray inputReport)
         else if (key == 0xCF)                { __altPressed = true; }
         else if (key == 0xE2 || key == 0xBF) { __ctrlPressed = true; }
         else if (key == 0xE1 || key == 0xED) { __symPressed = true; }
-        else if (key == 0xA1) { retKey = KEY_ESC; }
-        else if (key == 0xA3) { retKey = KEY_1; }
-        else if (key == 0xA4) { retKey = KEY_2; }
-        else if (key == 0xA5) { retKey = KEY_3; }
-        else if (key == 0xA6) { retKey = KEY_4; }
-        else if (key == 0xA7) { retKey = KEY_5; }
-        else if (key == 0xA8) { retKey = KEY_6; }
-        else if (key == 0xA9) { retKey = KEY_7; }
-        else if (key == 0xAA) { retKey = KEY_8; }
-        else if (key == 0xAB) { retKey = KEY_9; }
-        else if (key == 0xAC) { retKey = KEY_0; }
-        else if (key == 0xAD) { retKey = KEY_MINUS; }
-        else if (key == 0xAE) { retKey = KEY_EQUAL; }
-        else if (key == 0xAF) { retKey = KEY_BACKSPACE; }
+        else if (key == 0xA1) { retKey.append(qMakePair(KEY_ESC, 0)); }
+        else if (key == 0xA3) { retKey.append(qMakePair(KEY_1, 0)); }
+        else if (key == 0xA4) { retKey.append(qMakePair(KEY_2, 0)); }
+        else if (key == 0xA5) { retKey.append(qMakePair(KEY_3, 0)); }
+        else if (key == 0xA6) { retKey.append(qMakePair(KEY_4, 0)); }
+        else if (key == 0xA7) { retKey.append(qMakePair(KEY_5, 0)); }
+        else if (key == 0xA8) { retKey.append(qMakePair(KEY_6, 0)); }
+        else if (key == 0xA9) { retKey.append(qMakePair(KEY_7, 0)); }
+        else if (key == 0xAA) { retKey.append(qMakePair(KEY_8, 0)); }
+        else if (key == 0xAB) { retKey.append(qMakePair(KEY_9, 0)); }
+        else if (key == 0xAC) { retKey.append(qMakePair(KEY_0, 0)); }
+        else if (key == 0xAD) { retKey.append(qMakePair(KEY_MINUS, 0)); }
+        else if (key == 0xAE) { retKey.append(qMakePair(KEY_EQUAL, 0)); }
+        else if (key == 0xAF) { retKey.append(qMakePair(KEY_BACKSPACE, 0)); }
 
-        else if (key == 0xB1) { retKey = KEY_DELETE; }
-        else if (key == 0xB2) { retKey = KEY_UP; }
-        else if (key == 0xB3) { retKey = KEY_INSERT; }
-        else if (key == 0xB4) { retKey = KEY_Q; }
-        else if (key == 0xB5) { retKey = KEY_W; }
-        else if (key == 0xB6) { retKey = KEY_E; }
-        else if (key == 0xB7) { retKey = KEY_R; }
-        else if (key == 0xB8) { retKey = KEY_T; }
-        else if (key == 0xB9) { retKey = KEY_Y; }
-        else if (key == 0xBA) { retKey = KEY_U; }
-        else if (key == 0xBB) { retKey = KEY_I; }
-        else if (key == 0xBC) { retKey = KEY_O; }
-        else if (key == 0xBD) { retKey = KEY_P; }
-        else if (key == 0xBE) { retKey = KEY_KPPLUS; }
+        else if (key == 0xB1) { retKey.append(qMakePair(KEY_DELETE, 0)); }
+        else if (key == 0xB2) { retKey.append(qMakePair(KEY_UP, 0)); }
+        else if (key == 0xB3) { retKey.append(qMakePair(KEY_INSERT, 0)); }
+        else if (key == 0xB4) { retKey.append(qMakePair(KEY_Q, 0)); }
+        else if (key == 0xB5) { retKey.append(qMakePair(KEY_W, 0)); }
+        else if (key == 0xB6) { retKey.append(qMakePair(KEY_E, 0)); }
+        else if (key == 0xB7) { retKey.append(qMakePair(KEY_R, 0)); }
+        else if (key == 0xB8) { retKey.append(qMakePair(KEY_T, 0)); }
+        else if (key == 0xB9) { retKey.append(qMakePair(KEY_Y, 0)); }
+        else if (key == 0xBA) { retKey.append(qMakePair(KEY_U, 0)); }
+        else if (key == 0xBB) { retKey.append(qMakePair(KEY_I, 0)); }
+        else if (key == 0xBC) { retKey.append(qMakePair(KEY_O, 0)); }
+        else if (key == 0xBD) { retKey.append(qMakePair(KEY_P, 0)); }
+        else if (key == 0xBE) { retKey.append(qMakePair(KEY_KPPLUS, 0)); }
 
-        else if (key == 0xC1) { retKey = KEY_LEFT; }
-        else if (key == 0xC3) { retKey = KEY_RIGHT; }
-        else if (key == 0xC4) { retKey = KEY_A; }
-        else if (key == 0xC5) { retKey = KEY_S; }
-        else if (key == 0xC6) { retKey = KEY_D; }
-        else if (key == 0xC7) { retKey = KEY_F; }
-        else if (key == 0xC8) { retKey = KEY_G; }
-        else if (key == 0xC9) { retKey = KEY_H; }
-        else if (key == 0xCA) { retKey = KEY_J; }
-        else if (key == 0xCB) { retKey = KEY_K; }
-        else if (key == 0xCC) { retKey = KEY_L; }
-    //    else if (key == 0xCD) { retKey = KEY_; /* Ö */ }
-    //    else if (key == 0xCE) { retKey = KEY_; /* Ä */ }
+        else if (key == 0xC1) { retKey.append(qMakePair(KEY_LEFT, 0)); }
+        else if (key == 0xC3) { retKey.append(qMakePair(KEY_RIGHT, 0)); }
+        else if (key == 0xC4) { retKey.append(qMakePair(KEY_A, 0)); }
+        else if (key == 0xC5) { retKey.append(qMakePair(KEY_S, 0)); }
+        else if (key == 0xC6) { retKey.append(qMakePair(KEY_D, 0)); }
+        else if (key == 0xC7) { retKey.append(qMakePair(KEY_F, 0)); }
+        else if (key == 0xC8) { retKey.append(qMakePair(KEY_G, 0)); }
+        else if (key == 0xC9) { retKey.append(qMakePair(KEY_H, 0)); }
+        else if (key == 0xCA) { retKey.append(qMakePair(KEY_J, 0)); }
+        else if (key == 0xCB) { retKey.append(qMakePair(KEY_K, 0)); }
+        else if (key == 0xCC) { retKey.append(qMakePair(KEY_L, 0)); }
+    //    else if (key == 0xCD) { retKey.append(qMakePair(KEY_, 0)); /* Ö */ }
+    //    else if (key == 0xCE) { retKey.append(qMakePair(KEY_, 0)); /* Ä */ }
 
-        else if (key == 0xD1) { retKey = KEY_HOME; }
-        else if (key == 0xD2) { retKey = KEY_DOWN; }
-        else if (key == 0xD3) { retKey = KEY_END; }
-        else if (key == 0xD4) { retKey = KEY_Z; }
-        else if (key == 0xD5) { retKey = KEY_X; }
-        else if (key == 0xD6) { retKey = KEY_C; }
-        else if (key == 0xD7) { retKey = KEY_V; }
-        else if (key == 0xD8) { retKey = KEY_B; }
-        else if (key == 0xD9) { retKey = KEY_N; }
-        else if (key == 0xDA) { retKey = KEY_M; }
-        else if (key == 0xDB) { retKey = KEY_0; forceShift = true; /* ? */ }
-        else if (key == 0xDC) { retKey = KEY_1; forceShift = true; /* ! */ }
-        else if (key == 0xDD) { retKey = KEY_COMMA; }
-        else if (key == 0xDE) { retKey = KEY_DOT; }
+        else if (key == 0xD1) { retKey.append(qMakePair(KEY_HOME, 0)); }
+        else if (key == 0xD2) { retKey.append(qMakePair(KEY_DOWN, 0)); }
+        else if (key == 0xD3) { retKey.append(qMakePair(KEY_END, 0)); }
+        else if (key == 0xD4) { retKey.append(qMakePair(KEY_Z, 0)); }
+        else if (key == 0xD5) { retKey.append(qMakePair(KEY_X, 0)); }
+        else if (key == 0xD6) { retKey.append(qMakePair(KEY_C, 0)); }
+        else if (key == 0xD7) { retKey.append(qMakePair(KEY_V, 0)); }
+        else if (key == 0xD8) { retKey.append(qMakePair(KEY_B, 0)); }
+        else if (key == 0xD9) { retKey.append(qMakePair(KEY_N, 0)); }
+        else if (key == 0xDA) { retKey.append(qMakePair(KEY_M, 0)); }
+        else if (key == 0xDB) { retKey.append(qMakePair(KEY_0, FORCE_SHIFT)); /* ? */ }
+        else if (key == 0xDC) { retKey.append(qMakePair(KEY_1, FORCE_SHIFT)); /* ! */ }
+        else if (key == 0xDD) { retKey.append(qMakePair(KEY_COMMA, 0)); }
+        else if (key == 0xDE) { retKey.append(qMakePair(KEY_DOT, 0)); }
 
-        else if (key == 0xE6) { retKey = KEY_SPACE; }
-        else if (key == 0xE7) { retKey = KEY_SPACE; }
-        else if (key == 0xE9) { retKey = KEY_SPACE; }
-        else if (key == 0xEC) { retKey = KEY_2; forceShift = true; /* @ */ }
-        else if (key == 0xEF) { retKey = KEY_ENTER; }
+        else if (key == 0xE6) { retKey.append(qMakePair(KEY_SPACE, 0)); }
+        else if (key == 0xE7) { retKey.append(qMakePair(KEY_SPACE, 0)); }
+        else if (key == 0xE9) { retKey.append(qMakePair(KEY_SPACE, 0)); }
+        else if (key == 0xEC) { retKey.append(qMakePair(KEY_2, FORCE_SHIFT)); /* @ */ }
+        else if (key == 0xEF) { retKey.append(qMakePair(KEY_ENTER, 0)); }
 
-        if (retKey != KEY_RESERVED)
+        if (!retKey.empty())
             break;
     }
 
@@ -135,6 +134,6 @@ void keymapping::process(QByteArray inputReport)
         emit symChanged();
     }
 
-    if (retKey != KEY_RESERVED)
-        emit keyPressed(retKey, forceShift);
+    if (!retKey.empty())
+        emit keyPressed(retKey);
 }

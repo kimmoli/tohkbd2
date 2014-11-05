@@ -66,7 +66,7 @@ Tohkbd::Tohkbd()
     connect(keymap, SIGNAL(ctrlChanged()), this, SLOT(handleCtrlChanged()));
     connect(keymap, SIGNAL(altChanged()), this, SLOT(handleAltChanged()));
     connect(keymap, SIGNAL(symChanged()), this, SLOT(handleSymChanged()));
-    connect(keymap, SIGNAL(keyPressed(int,bool)), this, SLOT(handleKeyPressed(int,bool)));
+    connect(keymap, SIGNAL(keyPressed(QList< QPair<int, int> >)), this, SLOT(handleKeyPressed(QList< QPair<int, int> >)));
 }
 
 
@@ -189,23 +189,30 @@ void Tohkbd::handleGpioInterrupt()
 
 /* Key press handler. Called from keymap->process() if actual key was pressed
  */
-void Tohkbd::handleKeyPressed(int keyCode, bool forceShift)
+void Tohkbd::handleKeyPressed(QList< QPair<int, int> > keyCode)
 {
     if ((capsLockSeq == 1 || capsLockSeq == 2)) /* Abort caps-lock if other key pressed */
         capsLockSeq = 0;
 
     checkDoWeNeedBacklight();
 
-    /* Some of the keys require shift pressed to get correct symbol */
-    if (forceShift)
-        uinputif->sendUinputKeyPress(KEY_LEFTSHIFT, 1);
+    for (int i=0; i<keyCode.count(); i++)
+    {
+        /* Some of the keys require shift pressed to get correct symbol */
+        if (keyCode.at(i).second & FORCE_SHIFT)
+            uinputif->sendUinputKeyPress(KEY_LEFTSHIFT, 1);
+        if (keyCode.at(i).second & FORCE_ALT)
+            uinputif->sendUinputKeyPress(KEY_LEFTALT, 1);
 
-    /* Mimic key pressing */
-    uinputif->sendUinputKeyPress(keyCode, 1);
-    uinputif->sendUinputKeyPress(keyCode, 0);
+        /* Mimic key pressing */
+        uinputif->sendUinputKeyPress(keyCode.at(i).first, 1);
+        uinputif->sendUinputKeyPress(keyCode.at(i).first, 0);
 
-    if (forceShift)
-        uinputif->sendUinputKeyPress(KEY_LEFTSHIFT, 0);
+        if (keyCode.at(i).second & FORCE_ALT)
+            uinputif->sendUinputKeyPress(KEY_LEFTALT, 0);
+        if (keyCode.at(i).second & FORCE_SHIFT)
+            uinputif->sendUinputKeyPress(KEY_LEFTSHIFT, 0);
+    }
 
     if (stickyCtrl)
     {

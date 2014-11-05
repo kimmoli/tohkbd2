@@ -13,6 +13,8 @@
 #include <QTimer>
 #include <QThread>
 #include "worker.h"
+#include <QList>
+#include <QPair>
 
 #include "uinputif.h"
 
@@ -55,7 +57,7 @@ public slots:
     void handleCtrlChanged();
     void handleAltChanged();
     void handleSymChanged();
-    void handleKeyPressed(int keyCode, bool forceShift);
+    void handleKeyPressed(QList< QPair<int, int> > keyCode);
 
     void backlightTimerTimeout();
 
