@@ -199,7 +199,7 @@ void Tohkbd::handleKeyPressed(QList< QPair<int, int> > keyCode)
     for (int i=0; i<keyCode.count(); i++)
     {
         /* Some of the keys require shift pressed to get correct symbol */
-        if (keyCode.at(i).second & FORCE_SHIFT)
+        if ((keyCode.at(i).second & FORCE_SHIFT) || keymap->shiftPressed)
             uinputif->sendUinputKeyPress(KEY_LEFTSHIFT, 1);
         if (keyCode.at(i).second & FORCE_ALT)
             uinputif->sendUinputKeyPress(KEY_LEFTALT, 1);
@@ -210,7 +210,7 @@ void Tohkbd::handleKeyPressed(QList< QPair<int, int> > keyCode)
 
         if (keyCode.at(i).second & FORCE_ALT)
             uinputif->sendUinputKeyPress(KEY_LEFTALT, 0);
-        if (keyCode.at(i).second & FORCE_SHIFT)
+        if ((keyCode.at(i).second & FORCE_SHIFT) || keymap->shiftPressed)
             uinputif->sendUinputKeyPress(KEY_LEFTSHIFT, 0);
     }
 
