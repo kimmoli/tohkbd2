@@ -82,8 +82,10 @@ void keymapping::process(QByteArray inputReport)
         else if (key == 0xCA) { retKey.append(qMakePair(KEY_J, 0)); }
         else if (key == 0xCB) { retKey.append(qMakePair(KEY_K, 0)); }
         else if (key == 0xCC) { retKey.append(qMakePair(KEY_L, 0)); }
-    //    else if (key == 0xCD) { retKey.append(qMakePair(KEY_, 0)); /* Ö */ }
-    //    else if (key == 0xCE) { retKey.append(qMakePair(KEY_, 0)); /* Ä */ }
+        else if (key == 0xCD) { retKey.append(qMakePair(KEY_APOSTROPHE, 0));
+                                retKey.append(qMakePair(KEY_O, 0));/* Ö */ }
+        else if (key == 0xCE) { retKey.append(qMakePair(KEY_APOSTROPHE, FORCE_SHIFT));
+                                retKey.append(qMakePair(KEY_A, 0)); /* Ä */ }
 
         else if (key == 0xD1) { retKey.append(qMakePair(KEY_HOME, 0)); }
         else if (key == 0xD2) { retKey.append(qMakePair(KEY_DOWN, 0)); }
@@ -105,6 +107,7 @@ void keymapping::process(QByteArray inputReport)
         else if (key == 0xE9) { retKey.append(qMakePair(KEY_SPACE, 0)); }
         else if (key == 0xEC) { retKey.append(qMakePair(KEY_2, FORCE_SHIFT)); /* @ */ }
         else if (key == 0xEF) { retKey.append(qMakePair(KEY_ENTER, 0)); }
+        else if (key == 0xEE) { retKey.append(qMakePair(KEY_TAB, 0)); } /* For testing... */
 
         if (!retKey.empty())
             break;
