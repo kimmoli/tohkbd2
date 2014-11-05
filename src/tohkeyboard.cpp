@@ -201,14 +201,18 @@ void Tohkbd::handleKeyPressed(QList< QPair<int, int> > keyCode)
         /* Some of the keys require shift pressed to get correct symbol */
         if ((keyCode.at(i).second & FORCE_SHIFT) || keymap->shiftPressed)
             uinputif->sendUinputKeyPress(KEY_LEFTSHIFT, 1);
-        if (keyCode.at(i).second & FORCE_ALT)
+        if ((keyCode.at(i).second & FORCE_ALT) || keymap->altPressed)
             uinputif->sendUinputKeyPress(KEY_LEFTALT, 1);
+        if ((keyCode.at(i).second & FORCE_RIGHTALT) || keymap->symPressed)
+            uinputif->sendUinputKeyPress(KEY_RIGHTALT, 1);
 
         /* Mimic key pressing */
         uinputif->sendUinputKeyPress(keyCode.at(i).first, 1);
         uinputif->sendUinputKeyPress(keyCode.at(i).first, 0);
 
-        if (keyCode.at(i).second & FORCE_ALT)
+        if ((keyCode.at(i).second & FORCE_RIGHTALT) || keymap->symPressed)
+            uinputif->sendUinputKeyPress(KEY_RIGHTALT, 0);
+        if ((keyCode.at(i).second & FORCE_ALT) || keymap->altPressed)
             uinputif->sendUinputKeyPress(KEY_LEFTALT, 0);
         if ((keyCode.at(i).second & FORCE_SHIFT) || keymap->shiftPressed)
             uinputif->sendUinputKeyPress(KEY_LEFTSHIFT, 0);
@@ -378,4 +382,11 @@ void Tohkbd::fakeKeyPress(const QDBusMessage& msg)
 
     printf("got fake keypress\n");
     keymap->process(args.at(0).toByteArray());
+}
+
+void Tohkbd::fakeVkbChange(const QDBusMessage& msg)
+{
+    QList<QVariant> args = msg.arguments();
+
+    changeActiveLayout(args.at(0).toBool());
 }

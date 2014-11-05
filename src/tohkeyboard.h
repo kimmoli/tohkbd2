@@ -66,6 +66,7 @@ public slots:
 
     /* DBUS */
     void fakeKeyPress(const QDBusMessage& msg);
+    void fakeVkbChange(const QDBusMessage& msg);
 
 private:
 

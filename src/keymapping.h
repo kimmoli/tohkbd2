@@ -5,8 +5,9 @@
 #include <QList>
 #include <QPair>
 
-#define FORCE_SHIFT (1)
-#define FORCE_ALT   (2)
+#define FORCE_SHIFT    (1)
+#define FORCE_ALT      (2)
+#define FORCE_RIGHTALT (3)
 
 class keymapping : public QObject
 {
