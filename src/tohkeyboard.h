@@ -62,6 +62,8 @@ public slots:
     void handleSymChanged();
     void handleKeyPressed(QList< QPair<int, int> > keyCode);
 
+    void handleDconfCurrentLayout();
+
     void backlightTimerTimeout();
 
     /* DBUS */
@@ -73,7 +75,7 @@ private:
     QString readOneLineFromFile(QString name);
     void checkDoWeNeedBacklight();
     QList<unsigned int> readEepromConfig();
-    void changeActiveLayout(bool tohkbd);
+    void changeActiveLayout();
 
     QThread *thread;
     Worker *worker;
@@ -97,6 +99,7 @@ private:
     QString currentActiveLayout;
 
     bool vkbLayoutIsTohkbd;
+    QProcess *process;
 };
 
 

@@ -30,6 +30,7 @@ Tohkbd::Tohkbd()
     stickyCtrl = false;
     capsLockSeq = 0;
     vkbLayoutIsTohkbd = false;
+    currentActiveLayout = QString();
 
     thread = new QThread();
     worker = new Worker();
@@ -272,12 +273,6 @@ void Tohkbd::handleAltChanged()
 {
     if ((capsLockSeq == 1 || capsLockSeq == 2)) /* Abort caps-lock if other key pressed */
         capsLockSeq = 0;
-
-    if (keymap->altPressed)
-    {
-        vkbLayoutIsTohkbd = !vkbLayoutIsTohkbd;
-        changeActiveLayout(vkbLayoutIsTohkbd);
-    }
 }
 
 void Tohkbd::handleSymChanged()
@@ -353,28 +348,58 @@ void Tohkbd::backlightTimerTimeout()
     tca8424->setLeds(LED_BACKLIGHT_OFF);
 }
 
-/* Change virtual keyboard active layout
+/* Change virtual keyboard active layout,
+ * uses private: vkbLayoutIsTohkbd
  * true = change to tohkbd.qml
  * false = change to last non-tohkbd layout
  */
-void Tohkbd::changeActiveLayout(bool tohkbd)
+void Tohkbd::changeActiveLayout()
 {
+    process = new QProcess();
+    QObject::connect(process, SIGNAL(readyRead()), this, SLOT(handleDconfCurrentLayout()));
 
-    MGConfItem* activeLayoutConfItem = new MGConfItem("/sailfish/text_input/active_layout", this);
-
-    QString __currentActiveLayout = activeLayoutConfItem->value().toString();
-
-    printf("Current virtual keyboard layout is %s\n", qPrintable(__currentActiveLayout));
-
-    if (!__currentActiveLayout.contains("tohkbd.qml"))
-        currentActiveLayout = __currentActiveLayout;
-
-    if (tohkbd)
-        activeLayoutConfItem->set("tohkbd.qml");
-    else
-        activeLayoutConfItem->set(currentActiveLayout);
+    process->start("/usr/bin/dconf read /sailfish/text_input/active_layout");
 }
 
+void Tohkbd::handleDconfCurrentLayout()
+{
+    QByteArray ba = process->readAll();
+
+    ba.replace('\n', QString());
+    QString __currentActiveLayout = QString(ba);
+
+    printf("Current layout is %s\n", qPrintable(__currentActiveLayout));
+
+    if (__currentActiveLayout.contains("tohkbd.qml") && vkbLayoutIsTohkbd)
+    {
+        return;
+    }
+    else if (!__currentActiveLayout.contains("tohkbd.qml"))
+    {
+        currentActiveLayout = __currentActiveLayout;
+    }
+
+    QThread::msleep(100);
+    process->terminate();
+
+    process = new QProcess();
+
+    if (vkbLayoutIsTohkbd)
+    {
+        printf("Changing to tohkbd\n");
+        process->start("/usr/bin/dconf write /sailfish/text_input/active_layout \"'tohkbd.qml'\"");
+    }
+    else
+    {
+        printf("Changing to %s\n", qPrintable(currentActiveLayout));
+        process->start(QString("/usr/bin/dconf write /sailfish/text_input/active_layout \"%1\"").arg(currentActiveLayout));
+    }
+
+    QThread::msleep(100);
+    process->terminate();
+}
+
+/** DBUS Test methods */
 
 void Tohkbd::fakeKeyPress(const QDBusMessage& msg)
 {
@@ -388,5 +413,8 @@ void Tohkbd::fakeVkbChange(const QDBusMessage& msg)
 {
     QList<QVariant> args = msg.arguments();
 
-    changeActiveLayout(args.at(0).toBool());
+    printf("got fake vkb-change\n");
+
+    vkbLayoutIsTohkbd = args.at(0).toBool();
+    changeActiveLayout();
 }
