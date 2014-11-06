@@ -21,9 +21,6 @@
 #include <time.h>
 
 static const char conf_devname[] = "tohkbd";
-static const char specialKeys[] = { KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT,
-                                    KEY_KPPLUS, KEY_HOME, KEY_END,
-                                    KEY_PAGEDOWN, KEY_PAGEUP, KEY_RIGHTALT, KEY_DELETE, 0 };
 
 int UinputIf::fd = -1;
 
@@ -63,19 +60,10 @@ int UinputIf::openUinputDevice()
         return false;
     }
 
-    /* Enable most of the keys */
-    for (i = KEY_ESC; i < KEY_NUMLOCK; i++)
+    /* Enable all keys */
+    for (i = KEY_ESC; i < KEY_MAX; i++)
     {
         if (ioctl(fd, UI_SET_KEYBIT, i) < 0)
-        {
-            printf("uinput: error: ioctl UI_SET_KEYBIT\n");
-            return false;
-        }
-    }
-
-    for (i=0; specialKeys[i] != 0; i++)
-    {
-        if (ioctl(fd, UI_SET_KEYBIT, specialKeys[i]) < 0)
         {
             printf("uinput: error: ioctl UI_SET_KEYBIT\n");
             return false;
