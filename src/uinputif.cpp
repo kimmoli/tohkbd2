@@ -75,8 +75,8 @@ int UinputIf::openUinputDevice()
     memset(&uidev, 0, sizeof(uidev));
     strncpy(uidev.name, conf_devname, UINPUT_MAX_NAME_SIZE);
     uidev.id.bustype = BUS_VIRTUAL;
-    uidev.id.vendor  = 0x4b4c;
-    uidev.id.product = 0x4f48;
+    uidev.id.vendor  = 0x1989;
+    uidev.id.product = 0x0003;
     uidev.id.version = 1;
 
     if (write(fd, &uidev, sizeof(uidev)) < 0)
