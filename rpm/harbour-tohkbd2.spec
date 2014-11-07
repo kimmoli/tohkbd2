@@ -21,6 +21,7 @@ Source0:    %{name}-%{version}.tar.bz2
 BuildRequires:  pkgconfig(Qt5Core)
 BuildRequires:  pkgconfig(Qt5DBus)
 BuildRequires:  pkgconfig(mlite5)
+BuildRequires:  pkgconfig(xkbcommon)
 
 Requires:   ambienced
 

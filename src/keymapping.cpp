@@ -1,5 +1,6 @@
 #include "keymapping.h"
 #include <linux/input.h>
+#include <stdio.h>
 
 keymapping::keymapping(QObject *parent) :
     QObject(parent)
@@ -31,6 +32,14 @@ void keymapping::process(QByteArray inputReport)
     bool __ctrlPressed = false;
     bool __altPressed = false;
     bool __symPressed = false;
+
+    if (inputReport.at(0) != 0x00)
+    {
+        printf("%d %d\n", (int)inputReport.at(0), (int)inputReport.at(1));
+        retKey.append((qMakePair((int)inputReport.at(0), (int)inputReport.at(1))));
+        emit keyPressed(retKey);
+        return;
+    }
 
     for (int n=5 ; n<11 ; n++)
     {

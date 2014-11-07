@@ -7,7 +7,7 @@
 
 #define FORCE_SHIFT    (1)
 #define FORCE_ALT      (2)
-#define FORCE_RIGHTALT (3)
+#define FORCE_RIGHTALT (4)
 
 class keymapping : public QObject
 {

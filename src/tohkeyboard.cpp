@@ -219,14 +219,14 @@ void Tohkbd::handleKeyPressed(QList< QPair<int, int> > keyCode)
             uinputif->sendUinputKeyPress(KEY_LEFTSHIFT, 0);
     }
 
+    uinputif->synUinputDevice();
+
     if (stickyCtrl)
     {
         uinputif->sendUinputKeyPress(KEY_LEFTCTRL, 0);
         stickyCtrl = false;
         printf("Ctrl released automatically\n");
     }
-
-    uinputif->synUinputDevice();
 }
 
 /* Shift, Ctrl, Alt and Sym key press and release handlers
@@ -401,6 +401,8 @@ void Tohkbd::handleDconfCurrentLayout()
 
 /** DBUS Test methods */
 
+/* dbus-send --system --print-reply --dest=com.kimmoli.tohkbd2 / com.kimmoli.tohkbd2.fakeKeyPress array:byte:0x00,0x00,0x00,0x00,0x00,0xA3,0x00,0x00,0x00,0x00,0x00
+ */
 void Tohkbd::fakeKeyPress(const QDBusMessage& msg)
 {
     QList<QVariant> args = msg.arguments();
@@ -409,6 +411,8 @@ void Tohkbd::fakeKeyPress(const QDBusMessage& msg)
     keymap->process(args.at(0).toByteArray());
 }
 
+/* dbus-send --system --print-reply --dest=com.kimmoli.tohkbd2 / com.kimmoli.tohkbd2.fakeVkbChange boolean:true
+ */
 void Tohkbd::fakeVkbChange(const QDBusMessage& msg)
 {
     QList<QVariant> args = msg.arguments();
@@ -417,4 +421,46 @@ void Tohkbd::fakeVkbChange(const QDBusMessage& msg)
 
     vkbLayoutIsTohkbd = args.at(0).toBool();
     changeActiveLayout();
+}
+
+
+void Tohkbd::testXkb(const QDBusMessage &msg)
+{
+
+    struct xkb_context *ctx = xkb_context_new(XKB_CONTEXT_NO_FLAGS);
+    if (!ctx)
+        printf("xkb_context failed\n");
+    else
+        printf("xkb context success\n");
+
+    struct xkb_keymap *keymap;
+
+    struct xkb_rule_names names;
+
+    memset(&names, 0, sizeof(names));
+
+    names.rules = NULL;
+    names.model = "pc105";
+    names.layout = "is";
+    names.variant = "dvorak";
+    names.options = "terminate:ctrl_alt_bksp";
+
+    keymap = xkb_keymap_new_from_names(ctx, &names, XKB_MAP_COMPILE_NO_FLAGS);
+
+    if (!keymap)
+        printf("keymap from names failed\n");
+    else
+        printf("keymap from names success\n");
+
+    struct xkb_state *state;
+
+    state = xkb_state_new(keymap);
+    if (!state)
+        printf("state failed\n");
+    else
+        printf("state success\n");
+
+
+
+
 }

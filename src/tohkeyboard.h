@@ -23,6 +23,8 @@
 
 #include <mlite5/MGConfItem>
 
+#include <xkbcommon/xkbcommon.h>
+
 #define SERVICE_NAME "com.kimmoli.tohkbd2"
 
 /* main class */
@@ -69,6 +71,8 @@ public slots:
     /* DBUS */
     void fakeKeyPress(const QDBusMessage& msg);
     void fakeVkbChange(const QDBusMessage& msg);
+
+    void testXkb(const QDBusMessage& msg);
 
 private:
 
