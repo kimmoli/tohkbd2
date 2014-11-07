@@ -460,7 +460,22 @@ void Tohkbd::testXkb(const QDBusMessage &msg)
     else
         printf("state success\n");
 
+    xkb_keycode_t keycode;
+    xkb_keysym_t keysym;
 
+    keycode = KEY_A+8;
+    keysym = xkb_state_key_get_one_sym(state, keycode);
 
+    char keysym_name[64];
+
+    printf("keysym for keycode %d is %d\n", keycode, keysym);
+
+    xkb_keysym_get_name(keysym, keysym_name, sizeof(keysym_name));
+
+    printf("keysym name is %s\n", keysym_name);
+
+    xkb_state_unref(state);
+    xkb_keymap_unref(keymap);
+    xkb_context_unref(ctx);
 
 }
