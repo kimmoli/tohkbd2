@@ -21,6 +21,10 @@
 
 #include <mlite5/MGConfItem>
 
+#include <wayland-client-protocol.h>
+#include <wayland-client.h>
+
+
 /* Main
  */
 Tohkbd::Tohkbd()
@@ -421,8 +425,16 @@ void Tohkbd::fakeVkbChange(const QDBusMessage& msg)
 
     vkbLayoutIsTohkbd = args.at(0).toBool();
     changeActiveLayout();
-}
 
+    printf("homepath is %s\n", qPrintable(QDir::homePath()));
+
+    QSettings *settings = new QSettings(QDir::homePath()+"/.config/FingerTerm/settings.ini", QSettings::IniFormat);
+
+    if (settings->contains("ui/vkbShowMethod"))
+        settings->setValue("ui/vkbShowMethod", args.at(0).toBool() ? "off" : "move" );
+
+    emit keyboardConnectedChanged(args.at(0).toBool());
+}
 
 void Tohkbd::testXkb(const QDBusMessage &msg)
 {
@@ -433,6 +445,12 @@ void Tohkbd::testXkb(const QDBusMessage &msg)
     else
         printf("xkb context success\n");
 
+    int np = xkb_context_num_include_paths(ctx);
+    printf("number of include paths %d\n", np);
+
+    for (int i=0; i<np; i++)
+        printf("%d: %s\n", i, xkb_context_include_path_get(ctx, i));
+
     struct xkb_keymap *keymap;
 
     struct xkb_rule_names names;
@@ -440,10 +458,10 @@ void Tohkbd::testXkb(const QDBusMessage &msg)
     memset(&names, 0, sizeof(names));
 
     names.rules = NULL;
-    names.model = "pc105";
-    names.layout = "is";
-    names.variant = "dvorak";
-    names.options = "terminate:ctrl_alt_bksp";
+    names.model = NULL;
+    names.layout = NULL;
+    names.variant = NULL;
+    names.options = NULL;
 
     keymap = xkb_keymap_new_from_names(ctx, &names, XKB_MAP_COMPILE_NO_FLAGS);
 
@@ -463,7 +481,7 @@ void Tohkbd::testXkb(const QDBusMessage &msg)
     xkb_keycode_t keycode;
     xkb_keysym_t keysym;
 
-    keycode = KEY_A+8;
+    keycode = KEY_A + EVDEV_OFFSET;
     keysym = xkb_state_key_get_one_sym(state, keycode);
 
     char keysym_name[64];
@@ -474,8 +492,41 @@ void Tohkbd::testXkb(const QDBusMessage &msg)
 
     printf("keysym name is %s\n", keysym_name);
 
+    QThread::msleep(400);
+
+    xkb_state_update_key(state, keycode, XKB_KEY_DOWN);
+    QThread::msleep(100);
+    xkb_state_update_key(state, keycode, XKB_KEY_UP);
+
+    QThread::msleep(400);
+
     xkb_state_unref(state);
     xkb_keymap_unref(keymap);
     xkb_context_unref(ctx);
-
 }
+
+void Tohkbd::testWayland(const QDBusMessage& msg)
+{
+    struct wl_display *display;
+    display = wl_display_connect(NULL);
+
+    if (display == NULL)
+        printf("wl_display_connect() failed\n");
+    else
+        printf("wl_display_connect() success\n");
+
+    struct wl_keyboard *keyboard;
+
+    struct wl_registry *registry = wl_display_get_registry(display);
+    if (registry == NULL)
+        printf("wl_display_get_registry() failed\n");
+    else
+        printf("wl_display_get_registry() success\n");
+
+//    wl_registry_add_listener(registry, &registry_listener, touch);
+//    wl_display_dispatch(display);
+//    wl_display_roundtrip(display);
+
+    wl_display_disconnect(display);
+}
+

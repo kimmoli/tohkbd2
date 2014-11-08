@@ -26,6 +26,7 @@
 #include <xkbcommon/xkbcommon.h>
 
 #define SERVICE_NAME "com.kimmoli.tohkbd2"
+#define EVDEV_OFFSET (8)
 
 /* main class */
 
@@ -73,6 +74,11 @@ public slots:
     void fakeVkbChange(const QDBusMessage& msg);
 
     void testXkb(const QDBusMessage& msg);
+    void testWayland(const QDBusMessage& msg);
+
+signals:
+
+    void keyboardConnectedChanged(bool);
 
 private:
 
