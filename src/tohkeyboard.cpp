@@ -211,6 +211,10 @@ void Tohkbd::handleKeyPressed(QList< QPair<int, int> > keyCode)
 
         /* Mimic key pressing */
         uinputif->sendUinputKeyPress(keyCode.at(i).first, 1);
+
+        if (keyCode.at(i).second & SYN_BETWEEN)
+            uinputif->synUinputDevice();
+
         uinputif->sendUinputKeyPress(keyCode.at(i).first, 0);
 
         if ((keyCode.at(i).second & FORCE_ALT) || keymap->altPressed)
@@ -430,6 +434,18 @@ void Tohkbd::fakeVkbChange(const QDBusMessage& msg)
     vkbLayoutIsTohkbd = args.at(0).toBool();
     changeActiveLayout();
 
+}
+
+void Tohkbd::testKeypadSlide(const QDBusMessage &msg)
+{
+    QList<QVariant> args = msg.arguments();
+
+    if (args.count() == 1)
+    {
+        printf("setting SW_KEYPAD_SLIDE to %d\n", args.at(0).toInt());
+        uinputif->sendUinputSwitch(SW_KEYPAD_SLIDE, args.at(0).toInt());
+        uinputif->synUinputDevice();
+    }
 }
 
 void Tohkbd::testXkb(const QDBusMessage &msg)

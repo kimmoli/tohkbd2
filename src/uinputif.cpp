@@ -48,15 +48,24 @@ int UinputIf::openUinputDevice()
         return false;
     }
 
+    /* Enable EV_KEY events */
     if (ioctl(fd, UI_SET_EVBIT, EV_KEY) < 0)
     {
         printf("uinput: error: ioctl UI_SET_EVBIT EV_KEY\n");
         return false;
     }
 
+    /* Enable EV_SYN events */
     if (ioctl(fd, UI_SET_EVBIT, EV_SYN) < 0)
     {
         printf("uinput: error: ioctl UI_SET_EVBIT EV_SYN\n");
+        return false;
+    }
+
+    /* Enable EV_SW events */
+    if (ioctl(fd, UI_SET_EVBIT, EV_SW) < 0)
+    {
+        printf("uinput: error: ioctl UI_SET_EVBIT EV_SW\n");
         return false;
     }
 
@@ -65,12 +74,17 @@ int UinputIf::openUinputDevice()
     {
         if (ioctl(fd, UI_SET_KEYBIT, i) < 0)
         {
-            printf("uinput: error: ioctl UI_SET_KEYBIT\n");
+            printf("uinput: error: ioctl UI_SET_KEYBIT %d\n", i);
             return false;
         }
     }
 
-    //printf("uinput: /dev/uinput opened succesfully.\n");
+    /* Enable SW_KEYPAD_SLIDE */
+    if (ioctl(fd, UI_SET_SWBIT, SW_KEYPAD_SLIDE) < 0)
+    {
+        printf("uinput: error: ioctl UI_SET_SWBIT SW_KEYPAD_SLIDE\n");
+        return false;
+    }
 
     memset(&uidev, 0, sizeof(uidev));
     strncpy(uidev.name, conf_devname, UINPUT_MAX_NAME_SIZE);
@@ -140,6 +154,32 @@ int UinputIf::sendUinputKeyPress(unsigned int code, int val)
     if (write(fd, &ev, sizeof(struct input_event)) < 0)
     {
         printf("uinput: error: EV_KEY write\n");
+        return false;
+    }
+
+    return true;
+}
+
+/*
+ * submits switch event
+ * code = SW_KEYPAD_SLIDE
+ * val = 0 CLOSED, 1 OPEN
+ *
+ */
+
+int UinputIf::sendUinputSwitch(unsigned int code, int val)
+{
+    struct input_event     ev;
+
+    usleep(25000); /* sorcery */
+    memset(&ev, 0, sizeof(struct input_event));
+    gettimeofday(&ev.time, NULL);
+    ev.type = EV_SW;
+    ev.code = code;
+    ev.value = val;
+    if (write(fd, &ev, sizeof(struct input_event)) < 0)
+    {
+        printf("uinput: error: EV_SW write\n");
         return false;
     }
 

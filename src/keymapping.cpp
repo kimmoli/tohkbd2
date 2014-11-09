@@ -117,7 +117,7 @@ void keymapping::process(QByteArray inputReport)
         else if (key == 0xE9) { retKey.append(qMakePair(KEY_SPACE, 0)); }
         else if (key == 0xEC) { retKey.append(qMakePair(KEY_2, FORCE_SHIFT)); /* @ */ }
         else if (key == 0xEF) { retKey.append(qMakePair(KEY_ENTER, 0)); }
-        else if (key == 0xEE) { retKey.append(qMakePair(KEY_TAB, 0)); } /* For testing... */
+        else if (key == 0xEE) { retKey.append(qMakePair(KEY_POWER, SYN_BETWEEN)); } /* For testing... */
 
         if (!retKey.empty())
             break;

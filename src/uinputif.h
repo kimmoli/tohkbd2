@@ -18,6 +18,7 @@ public:
     int closeUinputDevice();
     int synUinputDevice();
     int sendUinputKeyPress(unsigned int code, int val);
+    int sendUinputSwitch(unsigned int code, int val);
 
 signals:
 

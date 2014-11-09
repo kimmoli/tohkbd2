@@ -75,6 +75,8 @@ public slots:
 
     void testXkb(const QDBusMessage& msg);
 
+    void testKeypadSlide(const QDBusMessage& msg);
+
 signals:
 
     void keyboardConnectedChanged(bool);
