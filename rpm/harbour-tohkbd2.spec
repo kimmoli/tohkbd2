@@ -22,7 +22,6 @@ BuildRequires:  pkgconfig(Qt5Core)
 BuildRequires:  pkgconfig(Qt5DBus)
 BuildRequires:  pkgconfig(mlite5)
 BuildRequires:  pkgconfig(xkbcommon)
-BuildRequires:  pkgconfig(wayland-client)
 
 Requires:   ambienced
 

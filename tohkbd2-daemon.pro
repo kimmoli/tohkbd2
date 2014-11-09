@@ -1,7 +1,7 @@
 TARGET = harbour-tohkbd2
 
 CONFIG += link_pkgconfig
-PKGCONFIG += mlite5 xkbcommon wayland-client
+PKGCONFIG += mlite5 xkbcommon
 
 QT += dbus
 QT -= gui

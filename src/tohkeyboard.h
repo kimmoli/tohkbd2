@@ -74,7 +74,6 @@ public slots:
     void fakeVkbChange(const QDBusMessage& msg);
 
     void testXkb(const QDBusMessage& msg);
-    void testWayland(const QDBusMessage& msg);
 
 signals:
 

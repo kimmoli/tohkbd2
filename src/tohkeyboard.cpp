@@ -21,10 +21,6 @@
 
 #include <mlite5/MGConfItem>
 
-#include <wayland-client-protocol.h>
-#include <wayland-client.h>
-
-
 /* Main
  */
 Tohkbd::Tohkbd()
@@ -204,23 +200,27 @@ void Tohkbd::handleKeyPressed(QList< QPair<int, int> > keyCode)
     for (int i=0; i<keyCode.count(); i++)
     {
         /* Some of the keys require shift pressed to get correct symbol */
+        if (keyCode.at(i).second & FORCE_COMPOSE)
+            uinputif->sendUinputKeyPress(KEY_COMPOSE, 1);
+        if ((keyCode.at(i).second & FORCE_RIGHTALT) || keymap->symPressed)
+            uinputif->sendUinputKeyPress(KEY_RIGHTALT, 1);
         if ((keyCode.at(i).second & FORCE_SHIFT) || keymap->shiftPressed)
             uinputif->sendUinputKeyPress(KEY_LEFTSHIFT, 1);
         if ((keyCode.at(i).second & FORCE_ALT) || keymap->altPressed)
             uinputif->sendUinputKeyPress(KEY_LEFTALT, 1);
-        if ((keyCode.at(i).second & FORCE_RIGHTALT) || keymap->symPressed)
-            uinputif->sendUinputKeyPress(KEY_RIGHTALT, 1);
 
         /* Mimic key pressing */
         uinputif->sendUinputKeyPress(keyCode.at(i).first, 1);
         uinputif->sendUinputKeyPress(keyCode.at(i).first, 0);
 
-        if ((keyCode.at(i).second & FORCE_RIGHTALT) || keymap->symPressed)
-            uinputif->sendUinputKeyPress(KEY_RIGHTALT, 0);
         if ((keyCode.at(i).second & FORCE_ALT) || keymap->altPressed)
             uinputif->sendUinputKeyPress(KEY_LEFTALT, 0);
         if ((keyCode.at(i).second & FORCE_SHIFT) || keymap->shiftPressed)
             uinputif->sendUinputKeyPress(KEY_LEFTSHIFT, 0);
+        if ((keyCode.at(i).second & FORCE_RIGHTALT) || keymap->symPressed)
+            uinputif->sendUinputKeyPress(KEY_RIGHTALT, 0);
+        if (keyCode.at(i).second & FORCE_COMPOSE)
+            uinputif->sendUinputKeyPress(KEY_COMPOSE, 0);
     }
 
     uinputif->synUinputDevice();
@@ -401,6 +401,10 @@ void Tohkbd::handleDconfCurrentLayout()
 
     QThread::msleep(100);
     process->terminate();
+
+    /* Not the correct place */
+    emit keyboardConnectedChanged(vkbLayoutIsTohkbd);
+
 }
 
 /** DBUS Test methods */
@@ -426,18 +430,16 @@ void Tohkbd::fakeVkbChange(const QDBusMessage& msg)
     vkbLayoutIsTohkbd = args.at(0).toBool();
     changeActiveLayout();
 
-    printf("homepath is %s\n", qPrintable(QDir::homePath()));
-
-    QSettings *settings = new QSettings(QDir::homePath()+"/.config/FingerTerm/settings.ini", QSettings::IniFormat);
-
-    if (settings->contains("ui/vkbShowMethod"))
-        settings->setValue("ui/vkbShowMethod", args.at(0).toBool() ? "off" : "move" );
-
-    emit keyboardConnectedChanged(args.at(0).toBool());
 }
 
 void Tohkbd::testXkb(const QDBusMessage &msg)
 {
+    QList<QVariant> args = msg.arguments();
+
+    int thisKey = KEY_A;
+
+    if (args.count() == 1)
+        thisKey = args.at(0).toInt();
 
     struct xkb_context *ctx = xkb_context_new(XKB_CONTEXT_NO_FLAGS);
     if (!ctx)
@@ -463,7 +465,8 @@ void Tohkbd::testXkb(const QDBusMessage &msg)
     names.variant = NULL;
     names.options = NULL;
 
-    keymap = xkb_keymap_new_from_names(ctx, &names, XKB_MAP_COMPILE_NO_FLAGS);
+    //keymap = xkb_keymap_new_from_names(ctx, &names, XKB_MAP_COMPILE_NO_FLAGS);
+    keymap = xkb_keymap_new_from_names(ctx, NULL, XKB_MAP_COMPILE_NO_FLAGS);
 
     if (!keymap)
         printf("keymap from names failed\n");
@@ -481,7 +484,7 @@ void Tohkbd::testXkb(const QDBusMessage &msg)
     xkb_keycode_t keycode;
     xkb_keysym_t keysym;
 
-    keycode = KEY_A + EVDEV_OFFSET;
+    keycode = thisKey + EVDEV_OFFSET;
     keysym = xkb_state_key_get_one_sym(state, keycode);
 
     char keysym_name[64];
@@ -504,29 +507,3 @@ void Tohkbd::testXkb(const QDBusMessage &msg)
     xkb_keymap_unref(keymap);
     xkb_context_unref(ctx);
 }
-
-void Tohkbd::testWayland(const QDBusMessage& msg)
-{
-    struct wl_display *display;
-    display = wl_display_connect(NULL);
-
-    if (display == NULL)
-        printf("wl_display_connect() failed\n");
-    else
-        printf("wl_display_connect() success\n");
-
-    struct wl_keyboard *keyboard;
-
-    struct wl_registry *registry = wl_display_get_registry(display);
-    if (registry == NULL)
-        printf("wl_display_get_registry() failed\n");
-    else
-        printf("wl_display_get_registry() success\n");
-
-//    wl_registry_add_listener(registry, &registry_listener, touch);
-//    wl_display_dispatch(display);
-//    wl_display_roundtrip(display);
-
-    wl_display_disconnect(display);
-}
-

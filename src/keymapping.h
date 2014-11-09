@@ -8,6 +8,8 @@
 #define FORCE_SHIFT    (1)
 #define FORCE_ALT      (2)
 #define FORCE_RIGHTALT (4)
+#define FORCE_COMPOSE  (8)
+#define KEEP           (0x10)
 
 class keymapping : public QObject
 {
