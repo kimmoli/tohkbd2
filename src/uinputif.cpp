@@ -24,6 +24,24 @@ static const char conf_devname[] = "tohkbd";
 
 int UinputIf::fd = -1;
 
+static const int eventsToRegister[] = { EV_KEY, EV_SW, EV_SYN,
+                                        -1 };
+
+static const int keysToRegister[] = {  KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT,KEY_HOME, KEY_END, KEY_PAGEDOWN, KEY_PAGEUP,
+                                        KEY_1, KEY_2, KEY_3, KEY_4, KEY_5, KEY_6, KEY_7, KEY_8, KEY_9, KEY_0,
+                                        KEY_A, KEY_B, KEY_C, KEY_D, KEY_E, KEY_F, KEY_G, KEY_H, KEY_I, KEY_J,
+                                        KEY_K, KEY_L, KEY_M, KEY_N, KEY_O, KEY_P, KEY_Q, KEY_R, KEY_S, KEY_T,
+                                        KEY_U, KEY_V, KEY_W, KEY_X, KEY_Y, KEY_Z, KEY_COMMA, KEY_DOT, KEY_SPACE,
+                                        KEY_LEFTALT, KEY_LEFTSHIFT, KEY_LEFTCTRL,
+                                        KEY_RIGHTALT, KEY_RIGHTSHIFT, KEY_RIGHTCTRL,
+                                        KEY_BACKSPACE, KEY_DELETE, KEY_INSERT, KEY_EQUAL, KEY_MINUS, KEY_TAB,
+                                        KEY_COMPOSE, KEY_APOSTROPHE, KEY_SEMICOLON, KEY_ENTER, KEY_ESC,
+                                        KEY_POWER, KEY_PLAYCD, KEY_PAUSECD, KEY_VOLUMEDOWN, KEY_VOLUMEUP,
+                                        -1 };
+
+static const int switchesToRegister[] = { SW_LID, SW_KEYPAD_SLIDE,
+                                          -1 };
+
 UinputIf::UinputIf(QObject *parent) :
     QObject(parent)
 {
@@ -48,42 +66,34 @@ int UinputIf::openUinputDevice()
         return false;
     }
 
-    /* Enable EV_KEY events */
-    if (ioctl(fd, UI_SET_EVBIT, EV_KEY) < 0)
+    /* Enable selected events */
+    for (i=0; eventsToRegister[i] != -1; i++)
     {
-        printf("uinput: error: ioctl UI_SET_EVBIT EV_KEY\n");
-        return false;
+        if (ioctl(fd, UI_SET_EVBIT, eventsToRegister[i]) < 0)
+        {
+            printf("uinput: error: ioctl UI_SET_EVBIT %d\n", i);
+            return false;
+        }
     }
 
-    /* Enable EV_SYN events */
-    if (ioctl(fd, UI_SET_EVBIT, EV_SYN) < 0)
+    /* Enable selected keys */
+    for (i=0; keysToRegister[i] != -1; i++)
     {
-        printf("uinput: error: ioctl UI_SET_EVBIT EV_SYN\n");
-        return false;
-    }
-
-    /* Enable EV_SW events */
-    if (ioctl(fd, UI_SET_EVBIT, EV_SW) < 0)
-    {
-        printf("uinput: error: ioctl UI_SET_EVBIT EV_SW\n");
-        return false;
-    }
-
-    /* Enable all keys */
-    for (i = KEY_ESC; i < KEY_MAX; i++)
-    {
-        if (ioctl(fd, UI_SET_KEYBIT, i) < 0)
+        if (ioctl(fd, UI_SET_KEYBIT, keysToRegister[i]) < 0)
         {
             printf("uinput: error: ioctl UI_SET_KEYBIT %d\n", i);
             return false;
         }
     }
 
-    /* Enable SW_KEYPAD_SLIDE */
-    if (ioctl(fd, UI_SET_SWBIT, SW_KEYPAD_SLIDE) < 0)
+    /* Enable selected switches */
+    for (i=0; switchesToRegister[i] != -1; i++)
     {
-        printf("uinput: error: ioctl UI_SET_SWBIT SW_KEYPAD_SLIDE\n");
-        return false;
+        if (ioctl(fd, UI_SET_SWBIT, switchesToRegister[i]) < 0)
+        {
+            printf("uinput: error: ioctl UI_SET_SWBIT %d\n", i);
+            return false;
+        }
     }
 
     memset(&uidev, 0, sizeof(uidev));

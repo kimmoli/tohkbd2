@@ -48,7 +48,7 @@ Tohkbd::Tohkbd()
 
     /* do this automatically at startup */
     setVddState(true);
-    //setInterruptEnable(true);
+    setInterruptEnable(true);
 
     uinputif = new UinputIf();
     uinputif->openUinputDevice();
@@ -436,14 +436,14 @@ void Tohkbd::fakeVkbChange(const QDBusMessage& msg)
 
 }
 
-void Tohkbd::testKeypadSlide(const QDBusMessage &msg)
+void Tohkbd::testSwitchEvent(const QDBusMessage &msg)
 {
     QList<QVariant> args = msg.arguments();
 
-    if (args.count() == 1)
+    if (args.count() == 2)
     {
-        printf("setting SW_KEYPAD_SLIDE to %d\n", args.at(0).toInt());
-        uinputif->sendUinputSwitch(SW_KEYPAD_SLIDE, args.at(0).toInt());
+        printf("setting %d to %d\n", args.at(0).toInt(), args.at(1).toInt());
+        uinputif->sendUinputSwitch(args.at(0).toInt(), args.at(1).toInt());
         uinputif->synUinputDevice();
     }
 }

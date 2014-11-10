@@ -26,6 +26,7 @@ keymapping::keymapping(QObject *parent) :
 void keymapping::process(QByteArray inputReport)
 {
     char key;
+    int n;
     QList< QPair<int,int> > retKey;
 
     bool __shiftPressed = false;
@@ -33,15 +34,12 @@ void keymapping::process(QByteArray inputReport)
     bool __altPressed = false;
     bool __symPressed = false;
 
-    if (inputReport.at(0) != 0x00)
-    {
-        printf("%d %d\n", (int)inputReport.at(0), (int)inputReport.at(1));
-        retKey.append((qMakePair((int)inputReport.at(0), (int)inputReport.at(1))));
-        emit keyPressed(retKey);
-        return;
-    }
+    printf("Processing report: ");
+    for (n=0 ; n<inputReport.count() ; n++)
+        printf("%02x ", inputReport.at(n));
+    printf("\n");
 
-    for (int n=5 ; n<11 ; n++)
+    for (n=5 ; n<11 ; n++)
     {
         key = inputReport.at(n);
 
