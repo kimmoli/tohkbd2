@@ -156,6 +156,11 @@ void Tohkbd::handleDisplayStatus(const QDBusMessage& msg)
     }
     else if (strcmp(turn, "off") == 0)
     {
+        if (vkbLayoutIsTohkbd)
+        {
+            vkbLayoutIsTohkbd = false;
+            changeActiveLayout();
+        }
         if (backlightTimer->isActive())
         {
             backlightTimer->stop();
@@ -196,6 +201,12 @@ void Tohkbd::handleKeyPressed(QList< QPair<int, int> > keyCode)
         capsLockSeq = 0;
 
     checkDoWeNeedBacklight();
+
+    if (!vkbLayoutIsTohkbd)
+    {
+        vkbLayoutIsTohkbd = true;
+        changeActiveLayout();
+    }
 
     for (int i=0; i<keyCode.count(); i++)
     {
@@ -274,6 +285,7 @@ void Tohkbd::handleCtrlChanged()
     {
         stickyCtrl = !stickyCtrl;
         uinputif->sendUinputKeyPress(KEY_LEFTCTRL, stickyCtrl ? 1 : 0);
+        tca8424->setLeds(stickyCtrl ? LED_SYMLOCK_ON : LED_SYMLOCK_OFF);
     }
 }
 
