@@ -20,7 +20,8 @@ keymapping::keymapping(QObject *parent) :
  *       2  C   <-          ->    a     s     d     f     g     h     j     k     l     ö     ä     alt
  *       3  D   home  down  end   z     x     c     v     b     n     m     ?     !     ,     .
  *       4  E   SYM         ctrl  shift       space space       space shift       @     SYM         return
- *
+ *              (02)        (08)  (10)        (40)  (80)
+ *  (00) values are modifier values, in 4th byte of inputreport for SYM, ctrl, shift and space
  */
 
 void keymapping::process(QByteArray inputReport)
@@ -39,15 +40,17 @@ void keymapping::process(QByteArray inputReport)
         printf("%02x ", inputReport.at(n));
     printf("\n");
 
-    for (n=5 ; n<11 ; n++)
+    for (n=3 ; n<11 ; n++)
     {
+        if (n == 4) { continue; }
+
         key = inputReport.at(n);
 
-        if (key == 0x00) { break; }
-        else if (key == 0xE4 || key == 0xEA) { __shiftPressed = true; }
+        if (key == 0x00) { continue; }
+        else if (key == 0x10 || key == 0xEA) { __shiftPressed = true; }
         else if (key == 0xCF)                { __altPressed = true; }
-        else if (key == 0xE2 || key == 0xBF) { __ctrlPressed = true; }
-        else if (key == 0xE1 || key == 0xED) { __symPressed = true; }
+        else if (key == 0x08 || key == 0xBF) { __ctrlPressed = true; }
+        else if (key == 0x02 || key == 0xED) { __symPressed = true; }
         else if (key == 0xA1) { retKey.append(qMakePair(KEY_ESC, 0)); }
         else if (key == 0xA3) { retKey.append(qMakePair(KEY_1, 0)); }
         else if (key == 0xA4) { retKey.append(qMakePair(KEY_2, 0)); }
@@ -110,8 +113,8 @@ void keymapping::process(QByteArray inputReport)
         else if (key == 0xDD) { retKey.append(qMakePair(KEY_COMMA, 0)); }
         else if (key == 0xDE) { retKey.append(qMakePair(KEY_DOT, 0)); }
 
-        else if (key == 0xE6) { retKey.append(qMakePair(KEY_SPACE, 0)); }
-        else if (key == 0xE7) { retKey.append(qMakePair(KEY_SPACE, 0)); }
+        else if (key == 0x40) { retKey.append(qMakePair(KEY_SPACE, 0)); }
+        else if (key == 0x80) { retKey.append(qMakePair(KEY_SPACE, 0)); }
         else if (key == 0xE9) { retKey.append(qMakePair(KEY_SPACE, 0)); }
         else if (key == 0xEC) { retKey.append(qMakePair(KEY_2, FORCE_SHIFT)); /* @ */ }
         else if (key == 0xEF) { retKey.append(qMakePair(KEY_ENTER, 0)); }
