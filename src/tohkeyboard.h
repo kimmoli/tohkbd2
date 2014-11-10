@@ -23,8 +23,6 @@
 
 #include <mlite5/MGConfItem>
 
-#include <xkbcommon/xkbcommon.h>
-
 #define SERVICE_NAME "com.kimmoli.tohkbd2"
 #define EVDEV_OFFSET (8)
 
