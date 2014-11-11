@@ -66,6 +66,10 @@ public slots:
     void handleDconfCurrentLayout();
 
     void backlightTimerTimeout();
+    void presenceTimerTimeout();
+
+    void emitKeypadSlideEvent(bool openKeypad);
+    bool checkKeypadPresence();
 
     /* DBUS */
     void fakeKeyPress(const QDBusMessage& msg);
@@ -99,10 +103,13 @@ private:
     int gpio_fd;
 
     bool stickyCtrl;
+    bool displayIsOn;
 
     QTimer *backlightTimer;
+    QTimer *presenceTimer;
 
     QString currentActiveLayout;
+    bool keypadIsPresent;
 
     bool vkbLayoutIsTohkbd;
     QProcess *process;

@@ -31,6 +31,9 @@ Tohkbd::Tohkbd()
     capsLockSeq = 0;
     vkbLayoutIsTohkbd = false;
     currentActiveLayout = QString();
+    keypadIsPresent = false;
+    gpio_fd = -1;
+    displayIsOn = false;
 
     thread = new QThread();
     worker = new Worker();
@@ -45,6 +48,11 @@ Tohkbd::Tohkbd()
     backlightTimer->setInterval(2000);
     backlightTimer->setSingleShot(true);
     connect(backlightTimer, SIGNAL(timeout()), this, SLOT(backlightTimerTimeout()));
+
+    presenceTimer = new QTimer(this);
+    presenceTimer->setInterval(2000);
+    presenceTimer->setSingleShot(true);
+    connect(presenceTimer, SIGNAL(timeout()), this, SLOT(presenceTimerTimeout()));
 
     /* do this automatically at startup */
     setVddState(true);
@@ -62,6 +70,8 @@ Tohkbd::Tohkbd()
     QList<unsigned int> eepromConfig = readEepromConfig();
     if (eepromConfig.count() > 0)
         printf("eeprom at 0 = %x\n", eepromConfig.at(0));
+
+    checkKeypadPresence();
 
     connect(keymap, SIGNAL(shiftChanged()), this, SLOT(handleShiftChanged()));
     connect(keymap, SIGNAL(ctrlChanged()), this, SLOT(handleCtrlChanged()));
@@ -108,19 +118,18 @@ bool Tohkbd::setInterruptEnable(bool state)
         return interruptsEnabled;
     }
 
+    printf("worker abort\n");
     worker->abort();
+    printf("worker wait\n");
     thread->wait(); // If the thread is not running, this will immediately return.
-
+    printf("worker done\n");
     interruptsEnabled = false;
 
-    if (gpio_fd >= 0)
-    {
-        releaseTohInterrupt(gpio_fd);
-        gpio_fd = -1;
-    }
+    releaseTohInterrupt(gpio_fd);
 
     if (state)
     {
+        printf("getting interrupt pin\n");
         gpio_fd = getTohInterrupt();
         if (gpio_fd < 0)
         {
@@ -129,14 +138,16 @@ bool Tohkbd::setInterruptEnable(bool state)
         }
         else
         {
-
-            tca8424->reset();
+            printf("got interrupt\n");
+            //tca8424->reset();
             worker->requestWork(gpio_fd);
             printf("worker started\n");
 
             interruptsEnabled = true;
         }
     }
+
+    printf("setInterruptEnable done\n");
 
     return interruptsEnabled;
 }
@@ -153,9 +164,11 @@ void Tohkbd::handleDisplayStatus(const QDBusMessage& msg)
     if (strcmp(turn, "on") == 0)
     {
         checkDoWeNeedBacklight();
+        displayIsOn = true;
     }
     else if (strcmp(turn, "off") == 0)
     {
+        displayIsOn = false;
         if (vkbLayoutIsTohkbd)
         {
             vkbLayoutIsTohkbd = false;
@@ -169,6 +182,40 @@ void Tohkbd::handleDisplayStatus(const QDBusMessage& msg)
     }
 }
 
+/* Check is keypad present
+ */
+
+bool Tohkbd::checkKeypadPresence()
+{
+    bool __prev_keypadPresence = keypadIsPresent;
+    if (!vddEnabled)
+    {
+        /* keyboard is being connected to base */
+        /* TODO: how to detect keyboard is removed ??? */
+        printf("Presence detected, turning power on\n");
+        QThread::msleep(150);
+        setVddState(true);
+        QThread::msleep(150);
+        tca8424->reset();
+        QThread::msleep(150);
+    }
+    if (!tca8424->testComms())
+    {
+        printf("keypad not present, turning power off\n");
+        setVddState(false);
+        keypadIsPresent = false;
+    }
+    else
+    {
+        keypadIsPresent = true;
+        presenceTimer->start();
+    }
+
+    if (__prev_keypadPresence != keypadIsPresent)
+        emitKeypadSlideEvent(keypadIsPresent);
+
+    return keypadIsPresent;
+}
 
 /* GPIO interrupt handler.
  * Called when TOHKBD keyboard part is attached to the base, and
@@ -176,16 +223,11 @@ void Tohkbd::handleDisplayStatus(const QDBusMessage& msg)
  */
 void Tohkbd::handleGpioInterrupt()
 {
-    if (!vddEnabled)
-    {
-        /* keyboard is being connected to base */
-        /* TODO: how to detect keyboard is removed ??? */
-        QThread::msleep(100);
-        setVddState(true);
-        QThread::msleep(100);
+    printf("interrupt!\n");
 
-        if (!tca8424->reset())
-            setVddState(false);
+    if (!keypadIsPresent)
+    {
+        checkKeypadPresence();
     }
     else
     {
@@ -197,6 +239,11 @@ void Tohkbd::handleGpioInterrupt()
  */
 void Tohkbd::handleKeyPressed(QList< QPair<int, int> > keyCode)
 {
+    presenceTimer->start();
+
+    if (!displayIsOn)
+        emitKeypadSlideEvent(true);
+
     if ((capsLockSeq == 1 || capsLockSeq == 2)) /* Abort caps-lock if other key pressed */
         capsLockSeq = 0;
 
@@ -372,6 +419,8 @@ void Tohkbd::backlightTimerTimeout()
  * uses private: vkbLayoutIsTohkbd
  * true = change to tohkbd.qml
  * false = change to last non-tohkbd layout
+ *
+ * TODO: A separate daemon for this
  */
 void Tohkbd::changeActiveLayout()
 {
@@ -396,7 +445,8 @@ void Tohkbd::handleDconfCurrentLayout()
     }
     else if (!__currentActiveLayout.contains("tohkbd.qml"))
     {
-        currentActiveLayout = __currentActiveLayout;
+        if (__currentActiveLayout.contains("qml"))
+            currentActiveLayout = __currentActiveLayout;
     }
 
     QThread::msleep(100);
@@ -421,6 +471,28 @@ void Tohkbd::handleDconfCurrentLayout()
     /* Not the correct place */
     emit keyboardConnectedChanged(vkbLayoutIsTohkbd);
 
+}
+/* SW_KEYPAD_SLIDE controls display on/off
+ */
+
+void Tohkbd::emitKeypadSlideEvent(bool openKeypad)
+{
+    printf("SW_KEYPAD_SLIDE %s\n", openKeypad ? "open" : "close");
+
+    uinputif->sendUinputSwitch(SW_KEYPAD_SLIDE, openKeypad ? 1 : 0);
+    uinputif->synUinputDevice();
+    uinputif->sendUinputSwitch(SW_KEYPAD_SLIDE, openKeypad ? 0 : 1);
+    uinputif->synUinputDevice();
+}
+
+/* Will check is keyboard still there
+ */
+void Tohkbd::presenceTimerTimeout()
+{
+    printf("presence timer triggered\n");
+
+    if (checkKeypadPresence())
+        presenceTimer->start();
 }
 
 /** DBUS Test methods */

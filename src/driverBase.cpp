@@ -28,7 +28,7 @@ int DriverBase::openDeviceFile(const char* name)
 {
     int file = open(name, O_RDWR);
     if (file < 0) {
-        qDebug() << "Device file open failed.";
+        printf("Device file open failed %s\n", name);
         return -1;
     }
     return file;
@@ -37,7 +37,7 @@ int DriverBase::openDeviceFile(const char* name)
 bool DriverBase::setSlaveAddress(int file, unsigned char address)
 {
     if (ioctl(file, I2C_SLAVE, address) < 0) {
-        qDebug() << "ioctl failed.";
+        printf("ioctl failed - i2c address %02x\n", address);
         return false;
     }
     return true;
@@ -47,10 +47,10 @@ bool DriverBase::i2cWrite(int file, char buffer[], int buffer_length)
 {
     if (write(file, buffer, buffer_length) != buffer_length) {
         close(file);
-        qDebug() << "Write failed.";
+        printf("Write failed - %d bytes\n", buffer_length);
         return false;
     }
-    // qDebug() << "Write successfull.";
+    // printf("Write successfull.";
     return true;
 }
 
@@ -58,10 +58,10 @@ bool DriverBase::i2cRead(int file, char buffer[], int howManyBytesToRead)
 {
     if (read(file, buffer, howManyBytesToRead) != howManyBytesToRead) {
        close(file);
-       qDebug() << "Read failed.";
+       printf("Read failed.\n");
        return false;
     }
-    // qDebug() << "Read successfull.";
+    // printf("Read successfull.";
     return true;
 }
 
@@ -91,7 +91,7 @@ QByteArray DriverBase::readBytes(unsigned char address, int howManyBytesToRead)
 
     if (howManyBytesToRead > 255)
     {
-        qDebug() << "Reading too many bytes.";
+        printf("Reading too many bytes.\n");
         return QByteArray();
     }
 

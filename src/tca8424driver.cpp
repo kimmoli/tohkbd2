@@ -1,4 +1,5 @@
 #include "tca8424driver.h"
+#include <QThread>
 
 tca8424driver::tca8424driver(unsigned char address)
 {
@@ -12,7 +13,10 @@ void tca8424driver::init()
     ledState = 0;
 
     reset();
+    QThread::msleep(100);
     setLeds(LED_CAPSLOCK_OFF | LED_SYMLOCK_OFF | LED_BACKLIGHT_OFF);
+
+    printf("tca8424 at %02x initialized\n", tca8424address);
 }
 
 bool tca8424driver::reset()
@@ -64,7 +68,7 @@ void tca8424driver::setLeds(int value)
     char buf[9] = {0x00, 0x06, 0x20, 0x03, 0x00, 0x07, 0x01, 0x00, ledState};
 
     if (!writeBytes(tca8424address, buf, sizeof(buf)))
-        printf("Error: leds() failed\n");
+        printf("Error: leds(%02x %02x) failed\n", value, ledState);
 }
 
 QByteArray tca8424driver::readInputReport()
@@ -98,4 +102,20 @@ QByteArray tca8424driver::readInputReport()
         printf("Error: readInputReport() failed\n");
 
     return ret;
+}
+
+bool tca8424driver::testComms()
+{
+    /* Read 1 byte from tca8424, register address 0x0000
+     * return true if read success
+     */
+    char buf[2] = {0x00, 0x00};
+    QByteArray ret = QByteArray();
+
+    if (writeBytes(tca8424address, buf, sizeof(buf)))
+    {
+        ret =  readBytes(tca8424address, 1);
+    }
+
+    return !ret.isEmpty();
 }

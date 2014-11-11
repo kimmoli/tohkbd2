@@ -20,6 +20,7 @@ public:
     bool reset();
     void setLeds(int value);
     QByteArray readInputReport();
+    bool testComms();
 
 signals:
 

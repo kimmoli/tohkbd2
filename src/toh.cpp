@@ -45,7 +45,8 @@ int releaseTohInterrupt(int fdGpio)
     int fd;
     ssize_t res;
 
-    close(fdGpio);
+    if (fdGpio >= 0)
+        close(fdGpio);
 
     fd = open("/sys/class/gpio/unexport", O_WRONLY);
     if (fd < 0)
