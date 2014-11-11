@@ -169,11 +169,7 @@ void Tohkbd::handleDisplayStatus(const QDBusMessage& msg)
     else if (strcmp(turn, "off") == 0)
     {
         displayIsOn = false;
-        if (vkbLayoutIsTohkbd)
-        {
-            vkbLayoutIsTohkbd = false;
-            changeActiveLayout();
-        }
+
         if (backlightTimer->isActive())
         {
             backlightTimer->stop();
@@ -212,7 +208,13 @@ bool Tohkbd::checkKeypadPresence()
     }
 
     if (__prev_keypadPresence != keypadIsPresent)
+    {
+        emit keyboardConnectedChanged(keypadIsPresent);
         emitKeypadSlideEvent(keypadIsPresent);
+
+        vkbLayoutIsTohkbd = keypadIsPresent;
+        changeActiveLayout();
+    }
 
     return keypadIsPresent;
 }
@@ -248,12 +250,6 @@ void Tohkbd::handleKeyPressed(QList< QPair<int, int> > keyCode)
         capsLockSeq = 0;
 
     checkDoWeNeedBacklight();
-
-    if (!vkbLayoutIsTohkbd)
-    {
-        vkbLayoutIsTohkbd = true;
-        changeActiveLayout();
-    }
 
     for (int i=0; i<keyCode.count(); i++)
     {
@@ -424,6 +420,8 @@ void Tohkbd::backlightTimerTimeout()
  */
 void Tohkbd::changeActiveLayout()
 {
+    printf("Getting current vkb layout\n");
+
     process = new QProcess();
     QObject::connect(process, SIGNAL(readyRead()), this, SLOT(handleDconfCurrentLayout()));
 
@@ -459,7 +457,7 @@ void Tohkbd::handleDconfCurrentLayout()
         printf("Changing to tohkbd\n");
         process->start("/usr/bin/dconf write /sailfish/text_input/active_layout \"'tohkbd.qml'\"");
     }
-    else
+    else if (currentActiveLayout.contains("qml"))
     {
         printf("Changing to %s\n", qPrintable(currentActiveLayout));
         process->start(QString("/usr/bin/dconf write /sailfish/text_input/active_layout \"%1\"").arg(currentActiveLayout));
@@ -467,9 +465,6 @@ void Tohkbd::handleDconfCurrentLayout()
 
     QThread::msleep(100);
     process->terminate();
-
-    /* Not the correct place */
-    emit keyboardConnectedChanged(vkbLayoutIsTohkbd);
 
 }
 /* SW_KEYPAD_SLIDE controls display on/off
@@ -492,7 +487,9 @@ void Tohkbd::presenceTimerTimeout()
     printf("presence timer triggered\n");
 
     if (checkKeypadPresence())
+    {
         presenceTimer->start();
+    }
 }
 
 /** DBUS Test methods */
