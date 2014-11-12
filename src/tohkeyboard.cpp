@@ -287,6 +287,7 @@ void Tohkbd::handleKeyPressed(QList< QPair<int, int> > keyCode)
     {
         uinputif->sendUinputKeyPress(KEY_LEFTCTRL, 0);
         stickyCtrl = false;
+        tca8424->setLeds(LED_SYMLOCK_OFF); /* TODO: Fix correct led when such is in HW */
         printf("Ctrl released automatically\n");
     }
 }
@@ -328,7 +329,7 @@ void Tohkbd::handleCtrlChanged()
     {
         stickyCtrl = !stickyCtrl;
         uinputif->sendUinputKeyPress(KEY_LEFTCTRL, stickyCtrl ? 1 : 0);
-        tca8424->setLeds(stickyCtrl ? LED_SYMLOCK_ON : LED_SYMLOCK_OFF);
+        tca8424->setLeds(stickyCtrl ? LED_SYMLOCK_ON : LED_SYMLOCK_OFF); /* TODO: Fix correct led when such is in HW */
     }
 }
 
