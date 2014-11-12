@@ -41,5 +41,5 @@ rm -rf %{buildroot}
 
 %files
 %defattr(644,root,root,755)
-%{_bindir}/%{name}
+%attr(755,root,root) %{_bindir}/%{name}
 %config /etc/systemd/user/%{name}.service

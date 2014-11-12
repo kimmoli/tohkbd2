@@ -18,8 +18,12 @@ INSTALLS += target systemd
 message($${DEFINES})
 
 SOURCES += \
-    src/dconfreaderwriter.cpp
+    src/dconfreaderwriter.cpp \
+    src/readerwriter.cpp
 
 OTHER_FILES += \
     rpm/$${TARGET}.spec \
     config/$${TARGET}.service
+
+HEADERS += \
+    src/readerwriter.h

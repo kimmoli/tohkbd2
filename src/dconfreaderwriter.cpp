@@ -32,24 +32,17 @@ int main(int argc, char **argv)
 
     printf("Environment %s\n", qPrintable(getenv ("DBUS_SESSION_BUS_ADDRESS")));
 
-    if (!QDBusConnection::sessionBus().isConnected())
+    if (!QDBusConnection::sessionBus().registerService(SERVICE_NAME))
     {
-        printf("Cannot connect to the D-Bus sessionBus\n%s\n", qPrintable(QDBusConnection::sessionBus().lastError().message()));
-        exit(EXIT_FAILURE);
-    }
-    printf("Connected to D-Bus sessionbus\n");
-
-    if (!QDBusConnection::systemBus().registerService(SERVICE_NAME))
-    {
-        printf("Cannot register service to systemBus\n%s\n", qPrintable(QDBusConnection::systemBus().lastError().message()));
+        printf("Cannot register service to sessionBus\n%s\n", qPrintable(QDBusConnection::sessionBus().lastError().message()));
         exit(EXIT_FAILURE);
     }
 
-    printf("Registered %s to D-Bus systembus\n", SERVICE_NAME);
+    printf("Registered %s to D-Bus sessionBus\n", SERVICE_NAME);
 
     ReaderWriter rw;
 
-    QDBusConnection::systemBus().registerObject("/", &rw, QDBusConnection::ExportAllSlots | QDBusConnection::ExportAllSignals);
+    QDBusConnection::sessionBus().registerObject("/", &rw, QDBusConnection::ExportAllSlots | QDBusConnection::ExportAllSignals);
 
     return app.exec();
 }
@@ -84,7 +77,6 @@ static void signalHandler(int sig) /* signal handler function */
         case SIGTERM:
             /* finalize the server */
             printf("Received signal SIGTERM\n");
-            controlVdd(0);
             exit(0);
             break;
     }
