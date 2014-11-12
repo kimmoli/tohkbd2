@@ -1,0 +1,11 @@
+[Unit]
+Description=dconf reader writer
+After=dbus.service
+
+[Service]
+ExecStart=/usr/bin/harbour-dconfreaderwriter
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
