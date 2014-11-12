@@ -99,7 +99,6 @@ bool Tohkbd::setVddState(bool state)
     else
     {
         vddEnabled = state;
-        printf("VDD control OK\n");
     }
 
     return vddEnabled;
@@ -118,36 +117,29 @@ bool Tohkbd::setInterruptEnable(bool state)
         return interruptsEnabled;
     }
 
-    printf("worker abort\n");
     worker->abort();
-    printf("worker wait\n");
     thread->wait(); // If the thread is not running, this will immediately return.
-    printf("worker done\n");
+
     interruptsEnabled = false;
 
     releaseTohInterrupt(gpio_fd);
 
     if (state)
     {
-        printf("getting interrupt pin\n");
         gpio_fd = getTohInterrupt();
         if (gpio_fd < 0)
         {
-            printf("failed to enable interrupt (are you root?)\n");
+            printf("failed to enable interrupt\n");
             interruptsEnabled = false;
         }
         else
         {
-            printf("got interrupt\n");
-            //tca8424->reset();
             worker->requestWork(gpio_fd);
             printf("worker started\n");
 
             interruptsEnabled = true;
         }
     }
-
-    printf("setInterruptEnable done\n");
 
     return interruptsEnabled;
 }
@@ -205,6 +197,8 @@ bool Tohkbd::checkKeypadPresence()
     {
         keypadIsPresent = true;
         presenceTimer->start();
+
+        tca8424->setLeds((stickyCtrl ? LED_SYMLOCK_ON : LED_SYMLOCK_OFF) | ((capsLockSeq == 3) ? LED_CAPSLOCK_ON : LED_CAPSLOCK_OFF));
     }
 
     if (__prev_keypadPresence != keypadIsPresent)
@@ -225,8 +219,6 @@ bool Tohkbd::checkKeypadPresence()
  */
 void Tohkbd::handleGpioInterrupt()
 {
-    printf("interrupt!\n");
-
     if (!keypadIsPresent)
     {
         checkKeypadPresence();
@@ -395,6 +387,8 @@ void Tohkbd::checkDoWeNeedBacklight()
     {
         if (readOneLineFromFile("/sys/devices/virtual/input/input11/als_lux").toInt() < 5)
         {
+            printf("backlight on\n");
+
             tca8424->setLeds(LED_BACKLIGHT_ON);
             backlightTimer->start();
         }
@@ -485,8 +479,6 @@ void Tohkbd::emitKeypadSlideEvent(bool openKeypad)
  */
 void Tohkbd::presenceTimerTimeout()
 {
-    printf("presence timer triggered\n");
-
     if (checkKeypadPresence())
     {
         presenceTimer->start();

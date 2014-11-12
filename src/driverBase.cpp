@@ -47,7 +47,7 @@ bool DriverBase::i2cWrite(int file, char buffer[], int buffer_length)
 {
     if (write(file, buffer, buffer_length) != buffer_length) {
         close(file);
-        printf("Write failed - %d bytes\n", buffer_length);
+        // printf("Write failed - %d bytes\n", buffer_length);
         return false;
     }
     // printf("Write successfull.";
@@ -58,7 +58,7 @@ bool DriverBase::i2cRead(int file, char buffer[], int howManyBytesToRead)
 {
     if (read(file, buffer, howManyBytesToRead) != howManyBytesToRead) {
        close(file);
-       printf("Read failed.\n");
+       // printf("Read failed.\n");
        return false;
     }
     // printf("Read successfull.";
