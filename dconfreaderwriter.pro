@@ -6,6 +6,9 @@ PKGCONFIG += mlite5
 QT += dbus
 QT -= gui
 
+# DBus
+system(qdbusxml2cpp config/com.kimmoli.dconfreaderwriter.xml -i readerwriter.h -a adaptor)
+
 DEFINES += "APPVERSION=\\\"$${SPECVERSION}\\\""
 
 target.path = /usr/bin/
@@ -23,7 +26,8 @@ SOURCES += \
 
 OTHER_FILES += \
     rpm/$${TARGET}.spec \
-    config/$${TARGET}.service
+    config/$${TARGET}.service \
+    config/com.kimmoli.dconfreaderwriter.xml
 
 HEADERS += \
     src/readerwriter.h
