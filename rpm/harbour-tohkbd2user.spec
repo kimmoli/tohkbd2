@@ -40,13 +40,16 @@ rm -rf %{buildroot}
 %qmake5_install
 
 %preun
-dbus-send --type=method_call --dest=com.kimmoli.tohkbd2user / com.kimmoli.tohkbd2user.quit
+DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/100000/dbus/user_bus_socket" \
+  dbus-send --type=method_call --dest=com.kimmoli.tohkbd2user / com.kimmoli.tohkbd2user.quit
 
 %post
-dbus-send --type=method_call --dest=org.freedesktop.DBus / org.freedesktop.DBus.ReloadConfig
+DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/100000/dbus/user_bus_socket" \
+  dbus-send --type=method_call --dest=org.freedesktop.DBus / org.freedesktop.DBus.ReloadConfig
 
 %postun
-dbus-send --type=method_call --dest=org.freedesktop.DBus / org.freedesktop.DBus.ReloadConfig
+DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/100000/dbus/user_bus_socket" \
+  dbus-send --type=method_call --dest=org.freedesktop.DBus / org.freedesktop.DBus.ReloadConfig
 
 %files
 %defattr(644,root,root,755)
