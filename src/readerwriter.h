@@ -5,7 +5,7 @@
 #include <QtDBus/QtDBus>
 #include <mlite5/MGConfItem>
 
-#define SERVICE_NAME "com.kimmoli.tohkbd2-user"
+#define SERVICE_NAME "com.kimmoli.tohkbd2user"
 
 class QDBusInterface;
 class ReaderWriter : public QObject

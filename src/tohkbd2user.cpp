@@ -26,5 +26,7 @@ int main(int argc, char **argv)
 
     rw.registerDBus();
 
+    printf("tohkbd2user registgered to dbus \"%s\"\n", SERVICE_NAME);
+
     return app.exec();
 }

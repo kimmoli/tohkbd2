@@ -13,10 +13,13 @@ DEFINES += "APPVERSION=\\\"$${SPECVERSION}\\\""
 
 target.path = /usr/bin/
 
-systemd.path = /etc/systemd/user/
-systemd.files = config/$${TARGET}.service
+dbusService.files = config/com.kimmoli.tohkbd2user.service
+dbusService.path = /usr/share/dbus-1/services/
 
-INSTALLS += target systemd
+dbusInterface.files = config/com.kimmoli.tohkbd2user.xml
+dbusInterface.path = /usr/share/dbus-1/interfaces/
+
+INSTALLS += target dbusService dbusInterface
 
 message($${DEFINES})
 
@@ -27,7 +30,7 @@ SOURCES += \
 
 OTHER_FILES += \
     rpm/$${TARGET}.spec \
-    config/$${TARGET}.service \
+    config/com.kimmoli.tohkbd2user.service \
     config/com.kimmoli.tohkbd2user.xml
 
 HEADERS += \

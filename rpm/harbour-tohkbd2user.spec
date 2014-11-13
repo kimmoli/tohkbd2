@@ -10,7 +10,7 @@ Name:       harbour-tohkbd2user
 %{!?qtc_make:%define qtc_make make}
 %{?qtc_builddir:%define _builddir %qtc_builddir}
 
-Summary:    dconf reader writer dbus service
+Summary:    tohkbd 2 user daemon
 Version:    0.0.devel
 Release:    1
 Group:      Qt/Qt
@@ -23,7 +23,7 @@ BuildRequires:  pkgconfig(Qt5DBus)
 BuildRequires:  pkgconfig(mlite5)
 
 %description
-Daemon for accessing dconf over dbus
+userspace daemon for tohkbd2
 
 %prep
 %setup -q -n %{name}-%{version}
@@ -51,4 +51,5 @@ dbus-send --type=method_call --dest=org.freedesktop.DBus / org.freedesktop.DBus.
 %files
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/%{name}
-%config /etc/systemd/user/%{name}.service
+%{_datadir}/dbus-1/
+
