@@ -23,6 +23,7 @@ signals:
 public slots:
     QString getActiveLayout();
     void setActiveLayout(const QString &value);
+    void quit();
 
 private:
     bool m_dbusRegistered;

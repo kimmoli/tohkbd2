@@ -39,6 +39,11 @@ void ReaderWriter::registerDBus()
     }
 }
 
+void ReaderWriter::quit()
+{
+    QCoreApplication::postEvent(this, new QEvent(QEvent::User));
+}
+
 void ReaderWriter::setActiveLayout(const QString &value)
 {
     if (value.contains("qml"))

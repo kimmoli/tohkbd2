@@ -7,5 +7,6 @@
         <method name="setActiveLayout">
             <arg name="value" type="s" direction="in" />
         </method>
+        <method name="quit" />
     </interface>
 </node>
