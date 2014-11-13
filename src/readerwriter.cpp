@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include "readerwriter.h"
 
 static const char *SERVICE = SERVICE_NAME;
@@ -6,6 +7,7 @@ static const char *PATH = "/";
 ReaderWriter::ReaderWriter(QObject *parent) :
     QObject(parent)
 {
+    m_dbusRegistered = false;
 }
 
 ReaderWriter::~ReaderWriter()
@@ -15,6 +17,8 @@ ReaderWriter::~ReaderWriter()
         QDBusConnection connection = QDBusConnection::sessionBus();
         connection.unregisterObject(PATH);
         connection.unregisterService(SERVICE);
+
+        printf("tohkbd2user: unregistered from dbus sessionBus\n");
     }
 }
 
@@ -36,26 +40,29 @@ void ReaderWriter::registerDBus()
             return;
         }
         m_dbusRegistered = true;
+
+        printf("tohkbd2user: succesfully registered to dbus sessionBus \"%s\"\n", SERVICE);
     }
 }
 
 void ReaderWriter::quit()
 {
-    QCoreApplication::postEvent(this, new QEvent(QEvent::User));
+    printf("tohkbd2user: quit requested from dbus\n");
+    QCoreApplication::quit();
 }
 
 void ReaderWriter::setActiveLayout(const QString &value)
 {
     if (value.contains("qml"))
     {
-        printf("setting active layout to \"%s\"\n", qPrintable(value));
+        printf("tohkbd2user: setting active layout to \"%s\"\n", qPrintable(value));
 
         MGConfItem ci("/sailfish/text_input/active_layout");
         ci.set(value);
     }
     else
     {
-        printf("value \"%s\" does not look like layout\n", qPrintable(value));
+        printf("tohkbd2user: value \"%s\" does not look like layout, refused to write\n", qPrintable(value));
     }
 }
 
@@ -63,7 +70,7 @@ QString ReaderWriter::getActiveLayout()
 {
     MGConfItem ci("/sailfish/text_input/active_layout");
 
-    printf("active layout is \"%s\"\n", qPrintable(ci.value().toString()));
+    printf("tohkbd2user: active layout is \"%s\"\n", qPrintable(ci.value().toString()));
 
     return ci.value().toString();
 }

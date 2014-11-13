@@ -19,14 +19,12 @@ int main(int argc, char **argv)
     setlinebuf(stdout);
     setlinebuf(stderr);
 
-    printf("Starting tohkbd2user daemon version %s\n", APPVERSION);
+    printf("tohkbd2user: starting daemon version %s\n", APPVERSION);
 
     ReaderWriter rw;
     new Tohkbd2userAdaptor(&rw);
 
     rw.registerDBus();
-
-    printf("tohkbd2user registgered to dbus \"%s\"\n", SERVICE_NAME);
 
     return app.exec();
 }
