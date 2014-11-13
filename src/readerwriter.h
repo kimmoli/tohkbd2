@@ -5,8 +5,9 @@
 #include <QtDBus/QtDBus>
 #include <mlite5/MGConfItem>
 
-#define SERVICE_NAME "com.kimmoli.dconfreaderwriter"
+#define SERVICE_NAME "com.kimmoli.tohkbd2-user"
 
+class QDBusInterface;
 class ReaderWriter : public QObject
 {
     Q_OBJECT
@@ -14,12 +15,17 @@ class ReaderWriter : public QObject
 
 public:
     explicit ReaderWriter(QObject *parent = 0);
+    virtual ~ReaderWriter();
+    void registerDBus();
 
 signals:
 
 public slots:
-    void write(const QDBusMessage &msg);
-    QString read(const QDBusMessage &msg);
+    QString getActiveLayout();
+    void setActiveLayout(const QString &value);
+
+private:
+    bool m_dbusRegistered;
 
 };
 

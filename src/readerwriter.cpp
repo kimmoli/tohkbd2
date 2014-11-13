@@ -1,38 +1,65 @@
 #include "readerwriter.h"
 
+static const char *SERVICE = SERVICE_NAME;
+static const char *PATH = "/";
+
 ReaderWriter::ReaderWriter(QObject *parent) :
     QObject(parent)
 {
 }
 
-
-void ReaderWriter::write(const QDBusMessage &msg)
+ReaderWriter::~ReaderWriter()
 {
-    QList<QVariant> args = msg.arguments();
-
-    if (args.count() == 2)
+    if (m_dbusRegistered)
     {
-        printf("write %s = %s\n", qPrintable(args.at(0).toString()), qPrintable(args.at(1).toString()));
-
-        MGConfItem ci(args.at(0).toString());
-
-        ci.set(args.at(1));
+        QDBusConnection connection = QDBusConnection::sessionBus();
+        connection.unregisterObject(PATH);
+        connection.unregisterService(SERVICE);
     }
 }
 
-QString ReaderWriter::read(const QDBusMessage &msg)
+void ReaderWriter::registerDBus()
 {
-    QList<QVariant> args = msg.arguments();
-
-    if (args.count() == 1)
+    if (!m_dbusRegistered)
     {
-        MGConfItem ci(args.at(0).toString());
+        // DBus
+        QDBusConnection connection = QDBusConnection::sessionBus();
+        if (!connection.registerService(SERVICE))
+        {
+            QCoreApplication::quit();
+            return;
+        }
 
-        printf("read %s = %s\n", qPrintable(args.at(0).toString()), qPrintable(ci.value().toString()));
+        if (!connection.registerObject(PATH, this))
+        {
+            QCoreApplication::quit();
+            return;
+        }
+        m_dbusRegistered = true;
+    }
+}
 
-        return ci.value().toString();
+void ReaderWriter::setActiveLayout(const QString &value)
+{
+    if (value.contains("qml"))
+    {
+        printf("setting active layout to \"%s\"\n", qPrintable(value));
+
+        MGConfItem ci("/sailfish/text_input/active_layout");
+        ci.set(value);
     }
     else
-        return QString();
+    {
+        printf("value \"%s\" does not look like layout\n", qPrintable(value));
+    }
+}
+
+QString ReaderWriter::getActiveLayout()
+{
+    MGConfItem ci("/sailfish/text_input/active_layout");
+
+    printf("active layout is \"%s\"\n", qPrintable(ci.value().toString()));
+
+    return ci.value().toString();
 }
 

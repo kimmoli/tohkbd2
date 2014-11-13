@@ -1,0 +1,3 @@
+[D-BUS Service]
+Name=com.kimmoli.tohkbd2user
+Exec=/usr/bin/harbour-tohkbd2user
