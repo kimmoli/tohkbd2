@@ -410,25 +410,13 @@ void Tohkbd::backlightTimerTimeout()
  * uses private: vkbLayoutIsTohkbd
  * true = change to tohkbd.qml
  * false = change to last non-tohkbd layout
- *
- * TODO: A separate daemon for this
  */
 void Tohkbd::changeActiveLayout()
 {
-    printf("Getting current vkb layout\n");
+    QDBusInterface tohkbd2user("com.kimmoli.tohkbd2user", "/", "com.kimmoli.tohkbd2user");
+    tohkbd2user.setTimeout(2000);
 
-    process = new QProcess();
-    QObject::connect(process, SIGNAL(readyRead()), this, SLOT(handleDconfCurrentLayout()));
-
-    process->start("/usr/bin/dconf read /sailfish/text_input/active_layout");
-}
-
-void Tohkbd::handleDconfCurrentLayout()
-{
-    QByteArray ba = process->readAll();
-
-    ba.replace('\n', QString());
-    QString __currentActiveLayout = QString(ba);
+    QString __currentActiveLayout = tohkbd2user.call(QDBus::AutoDetect, "getActiveLayout").arguments().at(0).toString();
 
     printf("Current layout is %s\n", qPrintable(__currentActiveLayout));
 
@@ -442,25 +430,20 @@ void Tohkbd::handleDconfCurrentLayout()
             currentActiveLayout = __currentActiveLayout;
     }
 
-    QThread::msleep(100);
-    process->terminate();
-
-    process = new QProcess();
-
     if (vkbLayoutIsTohkbd)
     {
         printf("Changing to tohkbd\n");
-        process->start("/usr/bin/dconf write /sailfish/text_input/active_layout \"'tohkbd.qml'\"");
+        QList<QVariant> args;
+        args.append("tohkbd.qml");
+        tohkbd2user.callWithArgumentList(QDBus::AutoDetect, "setActiveLayout", args);
     }
     else if (currentActiveLayout.contains("qml"))
     {
         printf("Changing to %s\n", qPrintable(currentActiveLayout));
-        process->start(QString("/usr/bin/dconf write /sailfish/text_input/active_layout \"%1\"").arg(currentActiveLayout));
+        QList<QVariant> args;
+        args.append(currentActiveLayout);
+        tohkbd2user.callWithArgumentList(QDBus::AutoDetect, "setActiveLayout", args);
     }
-
-    QThread::msleep(100);
-    process->terminate();
-
 }
 /* SW_KEYPAD_SLIDE controls display on/off
  */

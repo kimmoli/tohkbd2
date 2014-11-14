@@ -63,8 +63,6 @@ public slots:
     void handleSymChanged();
     void handleKeyPressed(QList< QPair<int, int> > keyCode);
 
-    void handleDconfCurrentLayout();
-
     void backlightTimerTimeout();
     void presenceTimerTimeout();
 
