@@ -71,6 +71,11 @@ Tohkbd::Tohkbd()
     if (eepromConfig.count() > 0)
         printf("eeprom at 0 = %x\n", eepromConfig.at(0));
 
+    reloadSettings();
+
+    if (currentActiveLayout.isEmpty())
+        changeActiveLayout(true);
+
     checkKeypadPresence();
 
     connect(keymap, SIGNAL(shiftChanged()), this, SLOT(handleShiftChanged()));
@@ -408,10 +413,10 @@ void Tohkbd::backlightTimerTimeout()
 
 /* Change virtual keyboard active layout,
  * uses private: vkbLayoutIsTohkbd
- * true = change to tohkbd.qml
+ * true = change to harbour-tohkbd2.qml
  * false = change to last non-tohkbd layout
  */
-void Tohkbd::changeActiveLayout()
+void Tohkbd::changeActiveLayout(bool justGetIt)
 {
     QDBusInterface tohkbd2user("com.kimmoli.tohkbd2user", "/", "com.kimmoli.tohkbd2user");
     tohkbd2user.setTimeout(2000);
@@ -420,21 +425,30 @@ void Tohkbd::changeActiveLayout()
 
     printf("Current layout is %s\n", qPrintable(__currentActiveLayout));
 
-    if (__currentActiveLayout.contains("tohkbd.qml") && vkbLayoutIsTohkbd)
+    if (__currentActiveLayout.contains("harbour-tohkbd2.qml") && vkbLayoutIsTohkbd)
     {
         return;
     }
-    else if (!__currentActiveLayout.contains("tohkbd.qml"))
+    else if (!__currentActiveLayout.contains("harbour-tohkbd2.qml"))
     {
         if (__currentActiveLayout.contains("qml"))
-            currentActiveLayout = __currentActiveLayout;
+        {
+            if (__currentActiveLayout != currentActiveLayout)
+            {
+                currentActiveLayout = __currentActiveLayout;
+                writeSettings();
+            }
+        }
     }
+
+    if (justGetIt)
+        return;
 
     if (vkbLayoutIsTohkbd)
     {
         printf("Changing to tohkbd\n");
         QList<QVariant> args;
-        args.append("tohkbd.qml");
+        args.append("harbour-tohkbd2.qml");
         tohkbd2user.callWithArgumentList(QDBus::AutoDetect, "setActiveLayout", args);
     }
     else if (currentActiveLayout.contains("qml"))
@@ -467,6 +481,27 @@ void Tohkbd::presenceTimerTimeout()
         presenceTimer->start();
     }
 }
+
+/* Read daemon settings
+ */
+void Tohkbd::reloadSettings()
+{
+    QSettings settings(QSettings::SystemScope, "harbour-tohkbd2", "tohkbd2");
+    settings.beginGroup("vkb");
+    currentActiveLayout = settings.value("activeLayout", "").toString();
+    settings.endGroup();
+}
+
+/* Write settings
+ */
+void Tohkbd::writeSettings()
+{
+    QSettings settings(QSettings::SystemScope, "harbour-tohkbd2", "tohkbd2");
+    settings.beginGroup("vkb");
+    settings.setValue("activeLayout", currentActiveLayout);
+    settings.endGroup();
+}
+
 
 /** DBUS Test methods */
 

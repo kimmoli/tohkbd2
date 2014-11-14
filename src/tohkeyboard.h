@@ -69,6 +69,9 @@ public slots:
     void emitKeypadSlideEvent(bool openKeypad);
     bool checkKeypadPresence();
 
+    void reloadSettings();
+    void writeSettings();
+
     /* DBUS */
     void fakeKeyPress(const QDBusMessage& msg);
     void fakeVkbChange(const QDBusMessage& msg);
@@ -83,7 +86,7 @@ private:
     QString readOneLineFromFile(QString name);
     void checkDoWeNeedBacklight();
     QList<unsigned int> readEepromConfig();
-    void changeActiveLayout();
+    void changeActiveLayout(bool justGetIt = false);
 
     QThread *thread;
     Worker *worker;
