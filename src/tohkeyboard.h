@@ -59,9 +59,9 @@ public slots:
     void handleGpioInterrupt();
 
     /* DBUS methods */
-    void fakeInputReport(const QByteArray &data);
+    Q_NOREPLY void fakeInputReport(const QByteArray &data);
     QString getVersion();
-    void quit();
+    Q_NOREPLY void quit();
 
 signals:
 
