@@ -18,6 +18,7 @@ Worker::Worker(QObject *parent) :
 {
     _working = false;
     _abort = false;
+    _gpio_fd = -1;
 }
 
 void Worker::requestWork(int gpio_fd)

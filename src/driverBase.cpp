@@ -87,7 +87,6 @@ bool DriverBase::writeBytes(unsigned char address, char bytes[], int length)
 QByteArray DriverBase::readBytes(unsigned char address, int howManyBytesToRead)
 {
     QByteArray result;
-    char buffer[256];
 
     if (howManyBytesToRead > 255)
     {
@@ -102,6 +101,7 @@ QByteArray DriverBase::readBytes(unsigned char address, int howManyBytesToRead)
         // set slave address
         if (setSlaveAddress(file, address)) {
             // read from the register
+            char buffer[256];
             if(i2cRead(file, buffer, howManyBytesToRead)) {
                 // convert to QByteArray
                 close(file);
