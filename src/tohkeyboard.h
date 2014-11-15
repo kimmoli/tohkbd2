@@ -28,31 +28,19 @@
 
 /* main class */
 
+class QDBusInterface;
 class Tohkbd: public QObject
 {
     Q_OBJECT
     Q_CLASSINFO("D-Bus Interface", SERVICE_NAME)
 
 public:
-    Tohkbd();
+    explicit Tohkbd(QObject *parent = 0);
+    virtual ~Tohkbd();
 
-    ~Tohkbd()
-    {
-        uinputif->closeUinputDevice();
-
-        worker->abort();
-        thread->wait();
-        delete thread;
-        delete worker;
-    }
+    void registerDBus();
 
 public slots:
-    bool setVddState(bool state);
-
-    /* interrupts */
-    bool setInterruptEnable(bool);
-    void handleGpioInterrupt();
-
     /* dbus signal handler slots */
     void handleDisplayStatus(const QDBusMessage& msg);
 
@@ -63,19 +51,17 @@ public slots:
     void handleSymChanged();
     void handleKeyPressed(QList< QPair<int, int> > keyCode);
 
+    /* timer timeouts */
     void backlightTimerTimeout();
     void presenceTimerTimeout();
 
-    void emitKeypadSlideEvent(bool openKeypad);
-    bool checkKeypadPresence();
+    /* Interrupt */
+    void handleGpioInterrupt();
 
-    void reloadSettings();
-    void writeSettings();
-
-    /* DBUS */
-    void fakeKeyPress(const QDBusMessage& msg);
-    void fakeVkbChange(const QDBusMessage& msg);
-    void testSwitchEvent(const QDBusMessage& msg);
+    /* DBUS methods */
+    void fakeInputReport(const QByteArray &data);
+    QString getVersion();
+    void quit();
 
 signals:
 
@@ -87,6 +73,14 @@ private:
     void checkDoWeNeedBacklight();
     QList<unsigned int> readEepromConfig();
     void changeActiveLayout(bool justGetIt = false);
+    bool setVddState(bool state);
+    bool setInterruptEnable(bool);
+    void emitKeypadSlideEvent(bool openKeypad);
+    bool checkKeypadPresence();
+    void reloadSettings();
+    void writeSettings();
+
+    int gpio_fd;
 
     QThread *thread;
     Worker *worker;
@@ -94,26 +88,23 @@ private:
     tca8424driver *tca8424;
     keymapping *keymap;
 
-    bool vddEnabled;
-    bool interruptsEnabled;
-
     int capsLockSeq;
 
     QMutex mutex;
-
-    int gpio_fd;
-
-    bool stickyCtrl;
-    bool displayIsOn;
 
     QTimer *backlightTimer;
     QTimer *presenceTimer;
 
     QString currentActiveLayout;
-    bool keypadIsPresent;
 
+    bool keypadIsPresent;
     bool vkbLayoutIsTohkbd;
-    QProcess *process;
+    bool dbusRegistered;
+    bool stickyCtrl;
+    bool displayIsOn;
+    bool vddEnabled;
+    bool interruptsEnabled;
+
 };
 
 

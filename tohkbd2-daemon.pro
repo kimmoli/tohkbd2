@@ -6,6 +6,8 @@ PKGCONFIG += mlite5
 QT += dbus
 QT -= gui
 
+system(qdbusxml2cpp config/com.kimmoli.tohkbd2.xml -i src/tohkeyboard.h -a src/adaptor)
+
 DEFINES += "APPVERSION=\\\"$${SPECVERSION}\\\""
 
 target.path = /usr/bin/
@@ -40,7 +42,8 @@ SOURCES += \
     src/uinputif.cpp \
     src/driverBase.cpp \
     src/tca8424driver.cpp \
-    src/keymapping.cpp
+    src/keymapping.cpp \
+    src/adaptor.cpp
 
 HEADERS += \
     src/toh.h \
@@ -49,11 +52,13 @@ HEADERS += \
     src/uinputif.h \
     src/driverBase.h \
     src/tca8424driver.h \
-    src/keymapping.h
+    src/keymapping.h \
+    src/adaptor.h
 
 OTHER_FILES += \
     rpm/$${TARGET}.spec \
     config/$${TARGET}.service \
     config/$${TARGET}.conf \
     config/layouts/$${TARGET}.conf \
-    config/layouts/$${TARGET}.qml
+    config/layouts/$${TARGET}.qml \
+    config/com.kimmoli.tohkbd2.xml

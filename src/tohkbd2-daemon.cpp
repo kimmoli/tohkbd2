@@ -13,6 +13,7 @@
 #include <sys/types.h>
 #include "tohkeyboard.h"
 #include "toh.h"
+#include "adaptor.h"
 
 #include <QtCore/QCoreApplication>
 #include <QDBusConnection>
@@ -31,48 +32,42 @@ int main(int argc, char **argv)
 
     printf("Starting tohkbd daemon version %s\n", APPVERSION);
 
-    QDBusConnection mceSignalconn = QDBusConnection::systemBus();
-    if (!mceSignalconn.isConnected())
+    /* Check that we can connect to dbus systemBus and sessionBus */
+
+    QDBusConnection dbusSystemBus = QDBusConnection::systemBus();
+    if (!dbusSystemBus.isConnected())
     {
         printf("Cannot connect to the D-Bus systemBus\n%s\n",
-               qPrintable(mceSignalconn.lastError().message()));
+               qPrintable(dbusSystemBus.lastError().message()));
         sleep(3);
-        exit(EXIT_FAILURE);
-    }
-    if (!QDBusConnection::systemBus().isConnected())
-    {
-        printf("Cannot connect to the D-Bus systemBus\n%s\n", qPrintable(QDBusConnection::systemBus().lastError().message()));
         exit(EXIT_FAILURE);
     }
     printf("Connected to D-Bus systembus\n");
 
-    printf("Environment %s\n", qPrintable(getenv ("DBUS_SESSION_BUS_ADDRESS")));
-
-    if (!QDBusConnection::sessionBus().isConnected())
+    QDBusConnection dbusSessionBus = QDBusConnection::sessionBus();
+    if (!dbusSessionBus.isConnected())
     {
-        printf("Cannot connect to the D-Bus sessionBus\n%s\n", qPrintable(QDBusConnection::sessionBus().lastError().message()));
+        printf("Cannot connect to the D-Bus sessionBus\n%s\n",
+               qPrintable(dbusSessionBus.lastError().message()));
+        sleep(3);
         exit(EXIT_FAILURE);
     }
+
     printf("Connected to D-Bus sessionbus\n");
-
-    if (!QDBusConnection::systemBus().registerService(SERVICE_NAME))
-    {
-        printf("Cannot register service to systemBus\n%s\n", qPrintable(QDBusConnection::systemBus().lastError().message()));
-        exit(EXIT_FAILURE);
-    }
-
-    printf("Registered %s to D-Bus systembus\n", SERVICE_NAME);
 
 
     Tohkbd tohkbd;
 
-    QDBusConnection::systemBus().registerObject("/", &tohkbd, QDBusConnection::ExportAllSlots | QDBusConnection::ExportAllSignals);
+    /* Register to dbus systemBus */
+    new Tohkbd2Adaptor(&tohkbd);
+    tohkbd.registerDBus();
 
     /* Nokia MCE display_status_ind
      * used to enable and disable keyboard when display is on or off
      */
-    mceSignalconn.connect("com.nokia.mce", "/com/nokia/mce/signal", "com.nokia.mce.signal", "display_status_ind",
+    dbusSystemBus.connect("com.nokia.mce", "/com/nokia/mce/signal", "com.nokia.mce.signal", "display_status_ind",
                           &tohkbd, SLOT(handleDisplayStatus(const QDBusMessage&)));
+
     return app.exec();
 }
 
@@ -100,14 +95,13 @@ static void signalHandler(int sig) /* signal handler function */
     switch(sig)
     {
         case SIGHUP:
-            /* rehash the server */
             printf("Received signal SIGHUP\n");
             break;
+
         case SIGTERM:
-            /* finalize the server */
             printf("Received signal SIGTERM\n");
             controlVdd(0);
-            exit(0);
+            QCoreApplication::quit();
             break;
     }
 }

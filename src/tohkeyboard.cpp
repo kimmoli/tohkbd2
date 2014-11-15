@@ -21,10 +21,16 @@
 
 #include <mlite5/MGConfItem>
 
+static const char *SERVICE = SERVICE_NAME;
+static const char *PATH = "/";
+
 /* Main
  */
-Tohkbd::Tohkbd()
+Tohkbd::Tohkbd(QObject *parent) :
+       QObject(parent)
 {
+
+    dbusRegistered = false;
     interruptsEnabled = false;
     vddEnabled = false;
     stickyCtrl = false;
@@ -85,6 +91,66 @@ Tohkbd::Tohkbd()
     connect(keymap, SIGNAL(keyPressed(QList< QPair<int, int> >)), this, SLOT(handleKeyPressed(QList< QPair<int, int> >)));
 }
 
+/* Remove uinput device, stop threads and unregister from dbus
+ */
+Tohkbd::~Tohkbd()
+{
+    uinputif->closeUinputDevice();
+
+    worker->abort();
+    thread->wait();
+    delete thread;
+    delete worker;
+
+    if (dbusRegistered)
+    {
+        QDBusConnection connection = QDBusConnection::systemBus();
+        connection.unregisterObject(PATH);
+        connection.unregisterService(SERVICE);
+
+        printf("tohkbd2: unregistered from dbus systemBus\n");
+    }
+}
+
+/* Register to dbus
+ */
+void Tohkbd::registerDBus()
+{
+    if (!dbusRegistered)
+    {
+        // DBus
+        QDBusConnection connection = QDBusConnection::systemBus();
+        if (!connection.registerService(SERVICE))
+        {
+            QCoreApplication::quit();
+            return;
+        }
+
+        if (!connection.registerObject(PATH, this))
+        {
+            QCoreApplication::quit();
+            return;
+        }
+        dbusRegistered = true;
+
+        printf("tohkbd2: succesfully registered to dbus systemBus \"%s\"\n", SERVICE);
+    }
+}
+
+/* quit
+ */
+void Tohkbd::quit()
+{
+    printf("Requested to quit tohkbd2 daemon from dbus\n");
+    QCoreApplication::quit();
+}
+
+/* Version
+ */
+QString Tohkbd::getVersion()
+{
+    return QString(APPVERSION);
+}
 
 /* Function to set VDD (3.3V for OH)
  */
@@ -503,39 +569,13 @@ void Tohkbd::writeSettings()
 }
 
 
+
 /** DBUS Test methods */
 
 /* dbus-send --system --print-reply --dest=com.kimmoli.tohkbd2 / com.kimmoli.tohkbd2.fakeKeyPress array:byte:0x00,0x00,0x00,0x00,0x00,0xA3,0x00,0x00,0x00,0x00,0x00
  */
-void Tohkbd::fakeKeyPress(const QDBusMessage& msg)
+void Tohkbd::fakeInputReport(const QByteArray &data)
 {
-    QList<QVariant> args = msg.arguments();
-
-    printf("got fake keypress\n");
-    keymap->process(args.at(0).toByteArray());
-}
-
-/* dbus-send --system --print-reply --dest=com.kimmoli.tohkbd2 / com.kimmoli.tohkbd2.fakeVkbChange boolean:true
- */
-void Tohkbd::fakeVkbChange(const QDBusMessage& msg)
-{
-    QList<QVariant> args = msg.arguments();
-
-    printf("got fake vkb-change\n");
-
-    vkbLayoutIsTohkbd = args.at(0).toBool();
-    changeActiveLayout();
-
-}
-
-void Tohkbd::testSwitchEvent(const QDBusMessage &msg)
-{
-    QList<QVariant> args = msg.arguments();
-
-    if (args.count() == 2)
-    {
-        printf("setting %d to %d\n", args.at(0).toInt(), args.at(1).toInt());
-        uinputif->sendUinputSwitch(args.at(0).toInt(), args.at(1).toInt());
-        uinputif->synUinputDevice();
-    }
+    printf("input report from dbus\n");
+    keymap->process(data);
 }
