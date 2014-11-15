@@ -320,6 +320,27 @@ void Tohkbd::handleKeyPressed(QList< QPair<int, int> > keyCode)
 
     checkDoWeNeedBacklight();
 
+    if (keymap->symPressed && keyCode.at(0).first >= KEY_1 && keyCode.at(0).first <= KEY_0)
+    {
+        /* These are the F1...F10 keys */
+
+        QString cmd;
+
+        if (keyCode.at(0).first == KEY_1) { cmd = "/usr/bin/xdg-open /usr/share/applications/sailfish-browser.desktop"; }
+        else if (keyCode.at(0).first == KEY_2) { cmd = "/usr/bin/xdg-open /usr/share/applications/fingerterm.desktop"; }
+
+        if (!cmd.isEmpty())
+        {
+            printf("starting \"%s\n\"", qPrintable(cmd));
+
+            QProcess proc;
+            proc.startDetached(cmd);
+
+            QThread::msleep(100);
+            return;
+        }
+    }
+
     for (int i=0; i<keyCode.count(); i++)
     {
         /* Some of the keys require shift pressed to get correct symbol */
