@@ -21,8 +21,6 @@
 #include "tca8424driver.h"
 #include "keymapping.h"
 
-#include <mlite5/MGConfItem>
-
 #define SERVICE_NAME "com.kimmoli.tohkbd2"
 #define EVDEV_OFFSET (8)
 
@@ -62,6 +60,9 @@ public slots:
 
     /* Interrupt */
     void handleGpioInterrupt();
+
+    /* Notification */
+    void showNotification(QString text);
 
     /* DBUS methods */
     Q_NOREPLY void fakeInputReport(const QByteArray &data);

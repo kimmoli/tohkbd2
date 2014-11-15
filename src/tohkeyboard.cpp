@@ -19,7 +19,7 @@
 #include "toh.h"
 #include "uinputif.h"
 
-#include <mlite5/MGConfItem>
+#include <mlite5/MNotification>
 
 static const char *SERVICE = SERVICE_NAME;
 static const char *PATH = "/";
@@ -268,14 +268,24 @@ bool Tohkbd::checkKeypadPresence()
     {
         printf("keypad not present, turning power off\n");
         setVddState(false);
+
+        if (keypadIsPresent)
+        {
+            showNotification("Keyboard removed");
+        }
+
         keypadIsPresent = false;
     }
     else
     {
+        if (!keypadIsPresent)
+        {
+            showNotification("Keyboard attached");
+            tca8424->setLeds((stickyCtrl ? LED_SYMLOCK_ON : LED_SYMLOCK_OFF) | ((capsLockSeq == 3) ? LED_CAPSLOCK_ON : LED_CAPSLOCK_OFF));
+        }
+
         keypadIsPresent = true;
         presenceTimer->start();
-
-        tca8424->setLeds((stickyCtrl ? LED_SYMLOCK_ON : LED_SYMLOCK_OFF) | ((capsLockSeq == 3) ? LED_CAPSLOCK_ON : LED_CAPSLOCK_OFF));
     }
 
     if (__prev_keypadPresence != keypadIsPresent)
@@ -328,6 +338,8 @@ void Tohkbd::handleKeyPressed(QList< QPair<int, int> > keyCode)
 
         if (keyCode.at(0).first == KEY_1) { cmd = "/usr/bin/xdg-open /usr/share/applications/sailfish-browser.desktop"; }
         else if (keyCode.at(0).first == KEY_2) { cmd = "/usr/bin/xdg-open /usr/share/applications/fingerterm.desktop"; }
+
+        showNotification(QString("Launching %1").arg(cmd.split("/").last().split(".").first()));
 
         if (!cmd.isEmpty())
         {
@@ -619,6 +631,14 @@ void Tohkbd::writeSettings()
     settings.endGroup();
 }
 
+/* show notification
+ */
+void Tohkbd::showNotification(QString text)
+{
+    MNotification notification(MNotification::DeviceEvent, "", text);
+    notification.setImage("icon-m-keyboard");
+    notification.publish();
+}
 
 
 /** DBUS Test methods */
