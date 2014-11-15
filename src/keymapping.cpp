@@ -150,4 +150,6 @@ void keymapping::process(QByteArray inputReport)
 
     if (!retKey.empty())
         emit keyPressed(retKey);
+    else
+        emit keyReleased();
 }

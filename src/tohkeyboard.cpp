@@ -40,6 +40,7 @@ Tohkbd::Tohkbd(QObject *parent) :
     keypadIsPresent = false;
     gpio_fd = -1;
     displayIsOn = false;
+    keyIsPressed = false;
 
     thread = new QThread();
     worker = new Worker();
@@ -59,6 +60,10 @@ Tohkbd::Tohkbd(QObject *parent) :
     presenceTimer->setInterval(2000);
     presenceTimer->setSingleShot(true);
     connect(presenceTimer, SIGNAL(timeout()), this, SLOT(presenceTimerTimeout()));
+
+    repeatTimer = new QTimer(this);
+    repeatTimer->setSingleShot(true);
+    connect(repeatTimer, SIGNAL(timeout()), this, SLOT(repeatTimerTimeout()));
 
     /* do this automatically at startup */
     setVddState(true);
@@ -89,6 +94,7 @@ Tohkbd::Tohkbd(QObject *parent) :
     connect(keymap, SIGNAL(altChanged()), this, SLOT(handleAltChanged()));
     connect(keymap, SIGNAL(symChanged()), this, SLOT(handleSymChanged()));
     connect(keymap, SIGNAL(keyPressed(QList< QPair<int, int> >)), this, SLOT(handleKeyPressed(QList< QPair<int, int> >)));
+    connect(keymap, SIGNAL(keyReleased()), this, SLOT(handleKeyReleased()));
 }
 
 /* Remove uinput device, stop threads and unregister from dbus
@@ -353,6 +359,29 @@ void Tohkbd::handleKeyPressed(QList< QPair<int, int> > keyCode)
         tca8424->setLeds(LED_SYMLOCK_OFF); /* TODO: Fix correct led when such is in HW */
         printf("Ctrl released automatically\n");
     }
+
+    /* store keycode for repeat */
+    lastKeyCode = keyCode;
+
+    /* Repeat delay first, then repeat rate */
+    repeatTimer->start(keyIsPressed ? REPEAT_RATE : REPEAT_DELAY);
+    keyIsPressed = true;
+}
+
+/* Key repeat timer timeout. Re-handle key pressed, if key still pressed.
+ */
+void Tohkbd::repeatTimerTimeout()
+{
+    if (keyIsPressed)
+        handleKeyPressed(lastKeyCode);
+}
+
+/* Stop repeat timer when key released
+ */
+void Tohkbd::handleKeyReleased()
+{
+    repeatTimer->stop();
+    keyIsPressed = false;
 }
 
 /* Shift, Ctrl, Alt and Sym key press and release handlers
@@ -526,6 +555,7 @@ void Tohkbd::changeActiveLayout(bool justGetIt)
     }
 }
 /* SW_KEYPAD_SLIDE controls display on/off
+ * Note, this requires mce 1.37.1 + wip_configurable_evdev
  */
 
 void Tohkbd::emitKeypadSlideEvent(bool openKeypad)

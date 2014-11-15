@@ -26,6 +26,9 @@
 #define SERVICE_NAME "com.kimmoli.tohkbd2"
 #define EVDEV_OFFSET (8)
 
+#define REPEAT_DELAY (250)
+#define REPEAT_RATE (13)
+
 /* main class */
 
 class QDBusInterface;
@@ -50,10 +53,12 @@ public slots:
     void handleAltChanged();
     void handleSymChanged();
     void handleKeyPressed(QList< QPair<int, int> > keyCode);
+    void handleKeyReleased();
 
     /* timer timeouts */
     void backlightTimerTimeout();
     void presenceTimerTimeout();
+    void repeatTimerTimeout();
 
     /* Interrupt */
     void handleGpioInterrupt();
@@ -94,8 +99,11 @@ private:
 
     QTimer *backlightTimer;
     QTimer *presenceTimer;
+    QTimer *repeatTimer;
 
     QString currentActiveLayout;
+
+    QList< QPair<int, int> > lastKeyCode;
 
     bool keypadIsPresent;
     bool vkbLayoutIsTohkbd;
@@ -104,6 +112,7 @@ private:
     bool displayIsOn;
     bool vddEnabled;
     bool interruptsEnabled;
+    bool keyIsPressed;
 
 };
 

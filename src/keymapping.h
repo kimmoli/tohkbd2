@@ -31,6 +31,7 @@ signals:
     void altChanged();
     void symChanged();
     void keyPressed(QList< QPair<int, int> > keyCode);
+    void keyReleased();
 
 public slots:
 
