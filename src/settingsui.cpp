@@ -29,13 +29,15 @@ QVariantList SettingsUi::getApplications()
 {
     QVariantList tmp;
     QVariantMap map;
-
+    QFileInfoList list;
     QDir dir;
+
     dir.setPath("/usr/share/applications/");
     dir.setFilter(QDir::Files | QDir::NoDotAndDotDot | QDir::NoSymLinks);
     dir.setNameFilters(QStringList() << "*.desktop");
+    dir.setSorting(QDir::Name);
 
-    QFileInfoList list = dir.entryInfoList();
+    list = dir.entryInfoList();
 
     for (int i=0 ; i<list.size() ; i++)
     {
