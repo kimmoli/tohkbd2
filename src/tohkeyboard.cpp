@@ -330,25 +330,37 @@ void Tohkbd::handleKeyPressed(QList< QPair<int, int> > keyCode)
 
     checkDoWeNeedBacklight();
 
+    /* if F1...F10 key is pressed then launch detached process */
     if (keymap->symPressed && keyCode.at(0).first >= KEY_1 && keyCode.at(0).first <= KEY_0)
     {
-        /* These are the F1...F10 keys */
-
         QString cmd;
 
-        if (keyCode.at(0).first == KEY_1) { cmd = "/usr/bin/xdg-open /usr/share/applications/sailfish-browser.desktop"; }
-        else if (keyCode.at(0).first == KEY_2) { cmd = "/usr/bin/xdg-open /usr/share/applications/fingerterm.desktop"; }
+        /* TODO: make these configurable */
 
-        showNotification(QString("Launching %1").arg(cmd.split("/").last().split(".").first()));
+        if (keyCode.at(0).first == KEY_1) {      cmd = "/usr/share/applications/sailfish-browser.desktop"; }
+        else if (keyCode.at(0).first == KEY_2) { cmd = "/usr/share/applications/fingerterm.desktop"; }
+        else if (keyCode.at(0).first == KEY_3) { cmd = "/usr/share/applications/voicecall-ui.desktop"; }
+        else if (keyCode.at(0).first == KEY_4) { cmd = "/usr/share/applications/sailfish-maps.desktop"; }
+        else if (keyCode.at(0).first == KEY_5) { cmd = "/usr/share/applications/jolla-camera.desktop"; }
+        else if (keyCode.at(0).first == KEY_6) { cmd = "/usr/share/applications/jolla-gallery.desktop"; }
+        else if (keyCode.at(0).first == KEY_7) { cmd = "/usr/share/applications/jolla-clock.desktop"; }
+        else if (keyCode.at(0).first == KEY_8) { cmd = "/usr/share/applications/jolla-email.desktop"; }
+        else if (keyCode.at(0).first == KEY_9) { cmd = "/usr/share/applications/jolla-mediaplayer.desktop"; }
+        else if (keyCode.at(0).first == KEY_0) { cmd = "/usr/share/applications/jolla-settings.desktop"; }
 
         if (!cmd.isEmpty())
         {
-            printf("starting \"%s\n\"", qPrintable(cmd));
+            QString appName = readOneLineFromFile(cmd, "Name=").split("=").last();
+
+            printf("Launching \"%s\n\"", qPrintable(appName));
+            showNotification(QString("Launching %1").arg(appName));
 
             QProcess proc;
-            proc.startDetached(cmd);
+            proc.startDetached("/usr/bin/xdg-open" , QStringList() << cmd);
 
             QThread::msleep(100);
+
+            /* Don't process further */
             return;
         }
     }
@@ -474,17 +486,41 @@ void Tohkbd::handleSymChanged()
 /* Read first line from a text file
  * returns empty QString if failed
  */
-QString Tohkbd::readOneLineFromFile(QString name)
+QString Tohkbd::readOneLineFromFile(const QString &fileName)
 {
     QString line;
 
-    QFile inputFile( name );
+    QFile inputFile( fileName );
 
     if ( inputFile.open( QIODevice::ReadOnly | QIODevice::Text ) )
     {
        QTextStream in( &inputFile );
        line = in.readLine();
        inputFile.close();
+    }
+
+    return line;
+}
+
+/* Return line from a text file starting with pattern
+ * returns empty QString if failed
+ */
+QString Tohkbd::readOneLineFromFile(const QString &fileName, const QString &pattern)
+{
+    QString line;
+
+    QFile inputFile( fileName );
+
+    if ( inputFile.open( QIODevice::ReadOnly | QIODevice::Text ) )
+    {
+        QTextStream in( &inputFile );
+        while (!in.atEnd())
+        {
+            line = in.readLine();
+            if (line.startsWith(pattern))
+                break;
+        }
+        inputFile.close();
     }
 
     return line;
