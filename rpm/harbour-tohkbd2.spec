@@ -45,12 +45,12 @@ rm -rf %{buildroot}
 %files
 %defattr(644,root,root,755)
 %attr(6711,root,root) %{_bindir}/%{name}
-%{_datadir}/%{name}
-%config /etc/systemd/user
-%config /etc/udev/rules.d
-%config /etc/dbus-1/system.d
-%config /usr/share/maliit/plugins/com/jolla/layouts
-%{_datadir}/ambience/%{name}
+%{_datadir}/%{name}/i18n/
+%{_sysconfdir}/systemd/user/
+%{_sysconfdir}/udev/rules.d/
+%{_sysconfdir}/dbus-1/system.d/
+%{_datadir}/maliit/plugins/com/jolla/layouts/
+%{_datadir}/ambience/%{name}/
 
 %post
 #reload udev rules
