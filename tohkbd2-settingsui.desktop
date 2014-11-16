@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+X-Nemo-Application-Type=silica-qt5
+Name=tohkbd2-settingsui
+Icon=tohkbd2-settingsui
+Exec=tohkbd2-settingsui
+

@@ -1,0 +1,4 @@
+*~
+*.pro.users
+src/adaptor.*
+i18n/*.qm
