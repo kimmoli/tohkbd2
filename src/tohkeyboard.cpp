@@ -492,30 +492,6 @@ QString Tohkbd::readOneLineFromFile(const QString &fileName)
     return line;
 }
 
-/* Return line from a text file starting with pattern
- * returns empty QString if failed
- */
-QString Tohkbd::readOneLineFromFile(const QString &fileName, const QString &pattern)
-{
-    QString line;
-
-    QFile inputFile( fileName );
-
-    if ( inputFile.open( QIODevice::ReadOnly | QIODevice::Text ) )
-    {
-        QTextStream in( &inputFile );
-        while (!in.atEnd())
-        {
-            line = in.readLine();
-            if (line.startsWith(pattern))
-                break;
-        }
-        inputFile.close();
-    }
-
-    return line;
-}
-
 /* Read eeprom configuration words to a QList from config_data
  * returns empty QList if failed
  */

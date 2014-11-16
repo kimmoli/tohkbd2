@@ -77,7 +77,6 @@ signals:
 private:
 
     QString readOneLineFromFile(const QString &fileName);
-    QString readOneLineFromFile(const QString &fileName, const QString &pattern);
     void checkDoWeNeedBacklight();
     QList<unsigned int> readEepromConfig();
     void changeActiveLayout(bool justGetIt = false);
