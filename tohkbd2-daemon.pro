@@ -7,6 +7,8 @@ QT += dbus
 QT -= gui
 
 system(qdbusxml2cpp config/com.kimmoli.tohkbd2.xml -i src/tohkeyboard.h -a src/adaptor)
+#system(lupdate src -ts $$PWD/i18n/*.ts)
+system(lrelease $$PWD/i18n/*.ts)
 
 DEFINES += "APPVERSION=\\\"$${SPECVERSION}\\\""
 
@@ -30,7 +32,10 @@ images.files = ambience/images/*
 vkblayout.path = /usr/share/maliit/plugins/com/jolla/layouts/
 vkblayout.files = config/layouts/$${TARGET}.conf config/layouts/$${TARGET}.qml
 
-INSTALLS += target systemd udevrule dbusconf ambience images vkblayout
+translations.path = /usr/share/$${TARGET}/i18n
+translations.files = i18n/translations_*.qm
+
+INSTALLS += target systemd udevrule dbusconf ambience images vkblayout translations
 
 message($${DEFINES})
 
@@ -62,3 +67,6 @@ OTHER_FILES += \
     config/layouts/$${TARGET}.conf \
     config/layouts/$${TARGET}.qml \
     config/com.kimmoli.tohkbd2.xml
+
+TRANSLATIONS += i18n/translations_fi.ts \
+                i18n/translations_en.ts

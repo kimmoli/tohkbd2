@@ -20,6 +20,7 @@
 #include "uinputif.h"
 
 #include <mlite5/MNotification>
+#include <mlite5/MDesktopEntry>
 
 static const char *SERVICE = SERVICE_NAME;
 static const char *PATH = "/";
@@ -29,7 +30,6 @@ static const char *PATH = "/";
 Tohkbd::Tohkbd(QObject *parent) :
        QObject(parent)
 {
-
     dbusRegistered = false;
     interruptsEnabled = false;
     vddEnabled = false;
@@ -271,7 +271,7 @@ bool Tohkbd::checkKeypadPresence()
 
         if (keypadIsPresent)
         {
-            showNotification("Keyboard removed");
+            showNotification(tr("Keyboard removed"));
             presenceTimer->stop();
             handleKeyReleased();
         }
@@ -282,7 +282,7 @@ bool Tohkbd::checkKeypadPresence()
     {
         if (!keypadIsPresent)
         {
-            showNotification("Keyboard attached");
+            showNotification(tr("Keyboard connected"));
             tca8424->setLeds((stickyCtrl ? LED_SYMLOCK_ON : LED_SYMLOCK_OFF) | ((capsLockSeq == 3) ? LED_CAPSLOCK_ON : LED_CAPSLOCK_OFF));
             presenceTimer->start();
         }
@@ -339,24 +339,11 @@ void Tohkbd::handleKeyPressed(QList< QPair<int, int> > keyCode)
 
         if (!cmd.isEmpty())
         {
-            QString trCatalog = readOneLineFromFile(cmd, "X-MeeGo-Translation-Catalog=").split("=").last();
-            QString appName;
+            MDesktopEntry app(cmd);
 
-            if (!trCatalog.isEmpty())
-            {
-                QTranslator translator;
-                QString trAppName = readOneLineFromFile(cmd, "X-MeeGo-Logical-Id=").split("=").last();
-                translator.load(QLocale(), trCatalog, "-", "/usr/share/translations");
-                appName = translator.translate(NULL, qPrintable(trAppName));
-            }
-            else
-            {
-                appName = readOneLineFromFile(cmd, "Name=").split("=").last();
-            }
-            /* Todo: Check also is there Name[nn]= localized app name */
+            printf("Starting \"%s\"\n" ,qPrintable(app.name()));
 
-            printf("Launching \"%s\n\"", qPrintable(appName));
-            showNotification(QString("Launching %1").arg(appName));
+            showNotification(tr("Starting %1...").arg(app.name()));
 
             QProcess proc;
             proc.startDetached("/usr/bin/xdg-open" , QStringList() << cmd);

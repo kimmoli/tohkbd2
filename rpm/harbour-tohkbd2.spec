@@ -45,14 +45,12 @@ rm -rf %{buildroot}
 %files
 %defattr(644,root,root,755)
 %attr(6711,root,root) %{_bindir}/%{name}
-%config /etc/systemd/user/%{name}.service
-%config /etc/udev/rules.d/95-%{name}.rules
-%config /etc/dbus-1/system.d/%{name}.conf
-%config /usr/share/maliit/plugins/com/jolla/layouts/%{name}.conf
-%config /usr/share/maliit/plugins/com/jolla/layouts/%{name}.qml
+/usr/share/%{name}/
+%config /etc/systemd/user/
+%config /etc/udev/rules.d/
+%config /etc/dbus-1/system.d/
+%config /usr/share/maliit/plugins/com/jolla/layouts/
 %{_datadir}/ambience/%{name}
-%{_datadir}/ambience/%{name}/%{name}.ambience
-%{_datadir}/ambience/%{name}/images/*
 
 %post
 #reload udev rules
