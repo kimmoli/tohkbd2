@@ -333,24 +333,14 @@ void Tohkbd::handleKeyPressed(QList< QPair<int, int> > keyCode)
     /* if F1...F10 key is pressed then launch detached process */
     if (keymap->symPressed && keyCode.at(0).first >= KEY_1 && keyCode.at(0).first <= KEY_0)
     {
-        QString cmd;
-
-        /* TODO: make these configurable */
-
-        if (keyCode.at(0).first == KEY_1) {      cmd = "/usr/share/applications/sailfish-browser.desktop"; }
-        else if (keyCode.at(0).first == KEY_2) { cmd = "/usr/share/applications/fingerterm.desktop"; }
-        else if (keyCode.at(0).first == KEY_3) { cmd = "/usr/share/applications/voicecall-ui.desktop"; }
-        else if (keyCode.at(0).first == KEY_4) { cmd = "/usr/share/applications/sailfish-maps.desktop"; }
-        else if (keyCode.at(0).first == KEY_5) { cmd = "/usr/share/applications/jolla-camera.desktop"; }
-        else if (keyCode.at(0).first == KEY_6) { cmd = "/usr/share/applications/jolla-gallery.desktop"; }
-        else if (keyCode.at(0).first == KEY_7) { cmd = "/usr/share/applications/jolla-clock.desktop"; }
-        else if (keyCode.at(0).first == KEY_8) { cmd = "/usr/share/applications/jolla-email.desktop"; }
-        else if (keyCode.at(0).first == KEY_9) { cmd = "/usr/share/applications/jolla-mediaplayer.desktop"; }
-        else if (keyCode.at(0).first == KEY_0) { cmd = "/usr/share/applications/jolla-settings.desktop"; }
+        QString cmd = applicationShortcuts[keyCode.at(0).first];
 
         if (!cmd.isEmpty())
         {
             QString appName = readOneLineFromFile(cmd, "Name=").split("=").last();
+            /* Todo: how to use translations from sailfish?
+             * Required info is in X-MeeGo-Translation-Catalog and X-MeeGo-Logical-Id
+             */
 
             printf("Launching \"%s\n\"", qPrintable(appName));
             showNotification(QString("Launching %1").arg(appName));
@@ -654,6 +644,30 @@ void Tohkbd::reloadSettings()
     QSettings settings(QSettings::SystemScope, "harbour-tohkbd2", "tohkbd2");
     settings.beginGroup("vkb");
     currentActiveLayout = settings.value("activeLayout", "").toString();
+    settings.endGroup();
+
+    settings.beginGroup("applicationshortcuts");
+
+    /* These are the default values */
+    if (applicationShortcuts.isEmpty())
+    {
+        applicationShortcuts[KEY_1] = "/usr/share/applications/sailfish-browser.desktop";
+        applicationShortcuts[KEY_2] = "/usr/share/applications/fingerterm.desktop";
+        applicationShortcuts[KEY_3] = "/usr/share/applications/voicecall-ui.desktop";
+        applicationShortcuts[KEY_4] = "/usr/share/applications/sailfish-maps.desktop";
+        applicationShortcuts[KEY_5] = "/usr/share/applications/jolla-camera.desktop";
+        applicationShortcuts[KEY_6] = "/usr/share/applications/jolla-gallery.desktop";
+        applicationShortcuts[KEY_7] = "/usr/share/applications/jolla-clock.desktop";
+        applicationShortcuts[KEY_8] = "/usr/share/applications/jolla-email.desktop";
+        applicationShortcuts[KEY_9] = "/usr/share/applications/jolla-mediaplayer.desktop";
+        applicationShortcuts[KEY_0] = "/usr/share/applications/jolla-settings.desktop";
+    }
+
+    for (int i = KEY_1 ; i<=KEY_0 ; i++)
+    {
+        applicationShortcuts[i] = settings.value(QString("KEY_F%1").arg((i-KEY_1)+1), applicationShortcuts[i]).toString();
+        printf("app shortcut F%d : %s\n", ((i-KEY_1)+1), qPrintable(applicationShortcuts[i]));
+    }
     settings.endGroup();
 }
 

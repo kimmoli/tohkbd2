@@ -15,6 +15,7 @@
 #include "worker.h"
 #include <QList>
 #include <QPair>
+#include <QHash>
 
 #include "uinputif.h"
 
@@ -106,6 +107,7 @@ private:
     QString currentActiveLayout;
 
     QList< QPair<int, int> > lastKeyCode;
+    QHash<int, QString> applicationShortcuts;
 
     bool keypadIsPresent;
     bool vkbLayoutIsTohkbd;
