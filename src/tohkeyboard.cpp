@@ -272,6 +272,8 @@ bool Tohkbd::checkKeypadPresence()
         if (keypadIsPresent)
         {
             showNotification("Keyboard removed");
+            presenceTimer->stop();
+            handleKeyReleased();
         }
 
         keypadIsPresent = false;
@@ -282,10 +284,10 @@ bool Tohkbd::checkKeypadPresence()
         {
             showNotification("Keyboard attached");
             tca8424->setLeds((stickyCtrl ? LED_SYMLOCK_ON : LED_SYMLOCK_OFF) | ((capsLockSeq == 3) ? LED_CAPSLOCK_ON : LED_CAPSLOCK_OFF));
+            presenceTimer->start();
         }
 
         keypadIsPresent = true;
-        presenceTimer->start();
     }
 
     if (__prev_keypadPresence != keypadIsPresent)
