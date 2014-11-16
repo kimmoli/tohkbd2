@@ -332,8 +332,8 @@ void Tohkbd::handleKeyPressed(QList< QPair<int, int> > keyCode)
 
     checkDoWeNeedBacklight();
 
-    /* if F1...F10 key is pressed then launch detached process */
-    if (keymap->symPressed && keyCode.at(0).first >= KEY_1 && keyCode.at(0).first <= KEY_0)
+    /* if F1...F12 key is pressed then launch detached process */
+    if (keymap->symPressed && keyCode.at(0).first >= KEY_1 && keyCode.at(0).first <= KEY_EQUAL)
     {
         QString cmd = applicationShortcuts[keyCode.at(0).first];
 
@@ -343,7 +343,7 @@ void Tohkbd::handleKeyPressed(QList< QPair<int, int> > keyCode)
 
             printf("Starting \"%s\"\n" ,qPrintable(app.name()));
 
-            showNotification(tr("Starting %1...").arg(app.name()));
+            showNotification(tr("Starting %1...").arg(app.name()).toLower());
 
             QProcess proc;
             proc.startDetached("/usr/bin/xdg-open" , QStringList() << cmd);
@@ -637,9 +637,11 @@ void Tohkbd::reloadSettings()
         applicationShortcuts[KEY_8] = "/usr/share/applications/jolla-email.desktop";
         applicationShortcuts[KEY_9] = "/usr/share/applications/jolla-mediaplayer.desktop";
         applicationShortcuts[KEY_0] = "/usr/share/applications/jolla-settings.desktop";
+        applicationShortcuts[KEY_MINUS] = "/usr/share/applications/jolla-calculator.desktop";
+        applicationShortcuts[KEY_EQUAL] = "/usr/share/applications/jolla-messages.desktop";
     }
 
-    for (int i = KEY_1 ; i<=KEY_0 ; i++)
+    for (int i = KEY_1 ; i<=KEY_EQUAL ; i++)
     {
         applicationShortcuts[i] = settings.value(QString("KEY_F%1").arg((i-KEY_1)+1), applicationShortcuts[i]).toString();
         printf("app shortcut F%d : %s\n", ((i-KEY_1)+1), qPrintable(applicationShortcuts[i]));
