@@ -337,10 +337,21 @@ void Tohkbd::handleKeyPressed(QList< QPair<int, int> > keyCode)
 
         if (!cmd.isEmpty())
         {
-            QString appName = readOneLineFromFile(cmd, "Name=").split("=").last();
-            /* Todo: how to use translations from sailfish?
-             * Required info is in X-MeeGo-Translation-Catalog and X-MeeGo-Logical-Id
-             */
+            QString trCatalog = readOneLineFromFile(cmd, "X-MeeGo-Translation-Catalog=").split("=").last();
+            QString appName;
+
+            if (!trCatalog.isEmpty())
+            {
+                QTranslator translator;
+                QString trAppName = readOneLineFromFile(cmd, "X-MeeGo-Logical-Id=").split("=").last();
+                translator.load(QLocale(), trCatalog, "-", "/usr/share/translations");
+                appName = translator.translate(NULL, qPrintable(trAppName));
+            }
+            else
+            {
+                appName = readOneLineFromFile(cmd, "Name=").split("=").last();
+            }
+            /* Todo: Check also is there Name[nn]= localized app name */
 
             printf("Launching \"%s\n\"", qPrintable(appName));
             showNotification(QString("Launching %1").arg(appName));
