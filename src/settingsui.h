@@ -20,6 +20,7 @@ public:
     Q_INVOKABLE QVariantList getApplications();
     Q_INVOKABLE QVariantList getCurrentShortcuts();
     Q_INVOKABLE void startApplication(QString appname);
+    Q_INVOKABLE void setShortcut(QString key, QString appPath);
 
 signals:
     void versionChanged();

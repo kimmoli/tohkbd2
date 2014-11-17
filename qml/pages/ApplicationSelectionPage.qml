@@ -5,7 +5,9 @@ Page
 {
     id: page
 
-    signal selected(string filePath)
+    property string keyId: ""
+
+    signal selected(string keyId, string filePath)
 
     SilicaGridView
     {
@@ -71,7 +73,7 @@ Page
                 anchors.fill: parent
                 onClicked:
                 {
-                    selected(filePath)
+                    selected(keyId, filePath)
                     pageStack.pop()
                 }
 

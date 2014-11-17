@@ -101,7 +101,7 @@ Page
 
                     height: Theme.itemSizeMedium
 
-                    onClicked: pageStack.push(appSelector, {"filePaths": [], "currentIndex": model.index})
+                    onClicked: pageStack.push(appSelector, {"keyId": key})
                 }
 
             }
@@ -116,7 +116,8 @@ Page
         {
             onSelected:
             {
-                console.log(filePath)
+                console.log(keyId + " = " + filePath)
+                settingsui.setShortcut(keyId, filePath)
             }
         }
     }

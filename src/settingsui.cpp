@@ -9,6 +9,7 @@
 #include <QProcess>
 #include <QThread>
 #include <QSettings>
+#include <QDebug>
 
 #include <mlite5/MDesktopEntry>
 
@@ -105,4 +106,9 @@ QVariantList SettingsUi::getCurrentShortcuts()
     settings.endGroup();
 
     return tmp;
+}
+
+void SettingsUi::setShortcut(QString key, QString appPath)
+{
+    qDebug() << "setting" << key << "to" << appPath;
 }
