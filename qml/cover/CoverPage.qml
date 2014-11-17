@@ -10,7 +10,7 @@ CoverBackground
     CoverPlaceholder
     {
         text: "Tohkbd2-settings-u"
-        icon.source: "/usr/share/icons/hicolor/86x86/apps/tohkbd2-settings-u.png"
+        icon.source: "/usr/share/icons/hicolor/86x86/apps/tohkbd2-settingsui.png"
     }
 
     CoverActionList

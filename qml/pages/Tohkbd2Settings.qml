@@ -23,8 +23,8 @@ Page
                 onClicked: pageStack.push(Qt.resolvedUrl("AboutPage.qml"),
                                           { "version": settingsui.version,
                                               "year": "2014",
-                                              "name": "The Otherhalf Keyboard 2 settings UI",
-                                              "imagelocation": "/usr/share/icons/hicolor/86x86/apps/tohkbd2-settings-u.png"} )
+                                              "name": "TOHKBD2 Settings",
+                                              "imagelocation": "/usr/share/icons/hicolor/86x86/apps/tohkbd2-settingsui.png"} )
             }
         }
 
@@ -38,30 +38,72 @@ Page
             spacing: Theme.paddingLarge
             PageHeader
             {
-                title: "Tohkbd2-settings-u"
-            }
-            Label
-            {
-                id: hoppa
-                x: Theme.paddingLarge
-                text: "Hello you"
-                color: Theme.primaryColor
-                // font.pixelSize: Theme.fontSizeExtraLarge
-            }
-            Button
-            {
-                text: "valitse"
-                onClicked: pageStack.push(appSelector, {"filePaths": [], "currentIndex": -1})
-
+                title: "Shortcuts"
             }
 
-            Button
+            Repeater
             {
-                text: "starttaa"
-                onClicked:
+                model: shortcutsModel
+                ListItem
                 {
-                    settingsui.startApplication(appname)
+                    id: shortcutItem
+
+                    Label
+                    {
+                        id: keyName
+                        anchors
+                        {
+                            left: parent.left
+                            leftMargin: Theme.paddingMedium
+                            verticalCenter: parent.verticalCenter
+                        }
+                        width: Theme.itemSizeExtraSmall
+                        font.pixelSize: Theme.fontSizeMedium
+                        font.bold: true
+                        text: key
+                    }
+
+                    Image
+                    {
+                        id: appIcon
+                        source: iconId
+                        y: Math.round((parent.height - height) / 2)
+                        property real size: Theme.iconSizeLauncher
+
+                        sourceSize.width: size
+                        sourceSize.height: size
+                        width: size
+                        height: size
+
+                        anchors
+                        {
+                            left: keyName.right
+                            leftMargin: Theme.paddingMedium
+                            verticalCenter: parent.verticalCenter
+                        }
+
+                    }
+                    Label
+                    {
+                        anchors
+                        {
+                            left: appIcon.right
+                            leftMargin: Theme.paddingLarge
+//                            right: column.right
+//                            rightMargin: Theme.paddingMedium
+                            verticalCenter: parent.verticalCenter
+                        }
+                        color: shortcutItem.highlighted ? Theme.highlightColor : Theme.primaryColor
+                        font.pixelSize: Theme.fontSizeMedium
+                        truncationMode: TruncationMode.Fade
+                        text: name
+                    }
+
+                    height: Theme.itemSizeMedium
+
+                    onClicked: pageStack.push(appSelector, {"filePaths": [], "currentIndex": model.index})
                 }
+
             }
 
         }
@@ -74,8 +116,6 @@ Page
         {
             onSelected:
             {
-                hoppa.text = filePath
-                appname = filePath
                 console.log(filePath)
             }
         }

@@ -18,6 +18,7 @@ public:
 
     QString readVersion();
     Q_INVOKABLE QVariantList getApplications();
+    Q_INVOKABLE QVariantList getCurrentShortcuts();
     Q_INVOKABLE void startApplication(QString appname);
 
 signals:

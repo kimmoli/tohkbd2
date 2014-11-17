@@ -32,20 +32,35 @@ ApplicationWindow
 
         Component.onCompleted:
         {
+            var i
             var tmp = settingsui.getApplications()
-
-            for (var i=0 ; i<tmp.length; i++)
+            for (i=0 ; i<tmp.length; i++)
             {
                 applicationsModel.append({"name": tmp[i]["name"],
                                           "iconId": tmp[i]["iconId"],
                                           "filePath": tmp[i]["filePath"]})
             }
+
+            tmp = settingsui.getCurrentShortcuts()
+            for (i=0 ; i<tmp.length; i++)
+            {
+                shortcutsModel.append({"key": tmp[i]["key"],
+                                      "name": tmp[i]["name"],
+                                      "iconId": tmp[i]["iconId"],
+                                      "filePath": tmp[i]["filePath"]})
+            }
+
         }
     }
 
     ListModel
     {
         id: applicationsModel
+    }
+
+    ListModel
+    {
+        id: shortcutsModel
     }
 }
 
