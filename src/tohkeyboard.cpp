@@ -659,6 +659,28 @@ void Tohkbd::writeSettings()
     settings.endGroup();
 }
 
+/* set shortcut path (dbus call method)
+ */
+void Tohkbd::setShortcut(const QString &key, const QString &appPath)
+{
+    printf("shortcut %s = %s\n", qPrintable(key), qPrintable(appPath));
+
+    if (key.startsWith("F") && appPath.contains(".desktop"))
+    {
+        QSettings settings(QSettings::SystemScope, "harbour-tohkbd2", "tohkbd2");
+
+        settings.beginGroup("applicationshortcuts");
+        settings.setValue(QString("KEY_%1").arg(key), appPath);
+
+        for (int i = KEY_1 ; i<=KEY_EQUAL ; i++)
+        {
+            applicationShortcuts[i] = settings.value(QString("KEY_F%1").arg((i-KEY_1)+1), applicationShortcuts[i]).toString();
+        }
+
+        settings.endGroup();
+    }
+}
+
 /* show notification
  */
 void Tohkbd::showNotification(QString text)

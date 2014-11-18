@@ -69,6 +69,7 @@ public slots:
     Q_NOREPLY void fakeInputReport(const QByteArray &data);
     QString getVersion();
     Q_NOREPLY void quit();
+    Q_NOREPLY void setShortcut(const QString &key, const QString &appPath);
 
 signals:
 

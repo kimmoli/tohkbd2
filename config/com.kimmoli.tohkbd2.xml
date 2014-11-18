@@ -8,6 +8,10 @@
         <method name="fakeInputReport">
             <arg name="value" type="ay" direction="in" />
         </method>
+        <method name="setShortcut">
+            <arg name="key" type="s" direction="in" />
+            <arg name="appPath" type="s" direction="in" />
+        </method>
         <signal name="keyboardConnectedChanged">
             <arg name="connected" type="b" direction="out" />
         </signal>
