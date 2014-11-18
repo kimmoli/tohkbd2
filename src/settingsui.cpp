@@ -10,6 +10,7 @@
 #include <QThread>
 #include <QSettings>
 #include <QDebug>
+#include <QtDBus/QtDBus>
 
 #include <mlite5/MDesktopEntry>
 
@@ -110,5 +111,14 @@ QVariantList SettingsUi::getCurrentShortcuts()
 
 void SettingsUi::setShortcut(QString key, QString appPath)
 {
-    qDebug() << "setting" << key << "to" << appPath;
+    qDebug() << "setting shortcut" << key << "to" << appPath;
+
+    QDBusInterface tohkbd2daemon("com.kimmoli.tohkbd2", "/", "com.kimmoli.tohkbd2", QDBusConnection::systemBus());
+    tohkbd2daemon.setTimeout(2000);
+    QList<QVariant> args;
+    args.append(key);
+    args.append(appPath);
+    tohkbd2daemon.callWithArgumentList(QDBus::AutoDetect, "setShortcut", args);
+
+    emit shortcutsChanged();
 }

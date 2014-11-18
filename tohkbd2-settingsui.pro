@@ -4,6 +4,8 @@
 
 TARGET = tohkbd2-settingsui
 
+QT += dbus
+
 CONFIG += sailfishapp
 CONFIG += link_pkgconfig
 PKGCONFIG += mlite5 sailfishapp

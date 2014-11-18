@@ -24,6 +24,7 @@ public:
 
 signals:
     void versionChanged();
+    void shortcutsChanged();
 
     //private:
 
