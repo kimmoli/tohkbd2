@@ -26,5 +26,7 @@ OTHER_FILES += qml/tohkbd2-settingsui.qml \
     rpm/tohkbd2-settingsui.spec \
 	tohkbd2-settingsui.png \
     tohkbd2-settingsui.desktop \
-    qml/pages/ApplicationSelectionPage.qml
+    qml/pages/ApplicationSelectionPage.qml \
+    qml/pages/Shortcuts.qml \
+    qml/pages/KeyboardLayout.qml
 

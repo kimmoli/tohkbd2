@@ -11,8 +11,6 @@ Page
 
     allowedOrientations: Orientation.Portrait | Orientation.Landscape | Orientation.LandscapeInverted
 
-    property string appname: ""
-
     SilicaFlickable
     {
         anchors.fill: parent
@@ -40,90 +38,47 @@ Page
             spacing: Theme.paddingLarge
             PageHeader
             {
-                title: "Shortcuts"
+                title: "Settings"
             }
 
             Repeater
             {
-                model: shortcutsModel
+                model: settingslist
                 ListItem
                 {
-                    id: shortcutItem
-
-                    Label
-                    {
-                        id: keyName
-                        anchors
-                        {
-                            left: parent.left
-                            leftMargin: Theme.paddingMedium
-                            verticalCenter: parent.verticalCenter
-                        }
-                        width: Theme.itemSizeExtraSmall
-                        font.pixelSize: Theme.fontSizeMedium
-                        font.bold: true
-                        text: key
-                    }
+                    height: Theme.itemSizeSmall
 
                     Image
                     {
-                        id: appIcon
+                        id: name
+                        x: Theme.paddingLarge
                         source: iconId
-                        y: Math.round((parent.height - height) / 2)
-                        property real size: Theme.iconSizeLauncher
-
-                        sourceSize.width: size
-                        sourceSize.height: size
-                        width: size
-                        height: size
-
-                        anchors
-                        {
-                            left: keyName.right
-                            leftMargin: Theme.paddingMedium
-                            verticalCenter: parent.verticalCenter
-                        }
-
+                        anchors.verticalCenter: parent.verticalCenter
                     }
                     Label
                     {
-                        anchors
-                        {
-                            left: appIcon.right
-                            leftMargin: Theme.paddingLarge
-//                            right: column.right
-//                            rightMargin: Theme.paddingMedium
-                            verticalCenter: parent.verticalCenter
-                        }
-                        color: shortcutItem.highlighted ? Theme.highlightColor : Theme.primaryColor
-                        font.pixelSize: Theme.fontSizeMedium
-                        truncationMode: TruncationMode.Fade
-                        text: name
+                        text: labelId
+                        anchors.left: name.right
+                        anchors.leftMargin: Theme.paddingLarge
+                        anchors.verticalCenter: parent.verticalCenter
                     }
 
-                    height: Theme.itemSizeMedium
-
-                    onClicked: pageStack.push(appSelector, {"keyId": key})
+                    onClicked: pageStack.push(Qt.resolvedUrl(pageId))
                 }
-
             }
-
         }
     }
 
-    Component
+    ListModel
     {
-        id: appSelector
-        ApplicationSelectionPage
+        id: settingslist
+
+        Component.onCompleted:
         {
-            onSelected:
-            {
-                console.log(keyId + " = " + filePath)
-                settingsui.setShortcut(keyId, filePath)
-            }
+            settingslist.append({"labelId":"Shortcuts", "iconId":"image://theme/icon-m-shortcut", "pageId":"Shortcuts.qml"})
+            settingslist.append({"labelId":"Layout", "iconId":"image://theme/icon-m-keyboard", "pageId":"KeyboardLayout.qml"})
         }
     }
-
 
 }
 
