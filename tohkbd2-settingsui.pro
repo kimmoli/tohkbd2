@@ -28,5 +28,6 @@ OTHER_FILES += qml/tohkbd2-settingsui.qml \
     tohkbd2-settingsui.desktop \
     qml/pages/ApplicationSelectionPage.qml \
     qml/pages/Shortcuts.qml \
-    qml/pages/KeyboardLayout.qml
+    qml/pages/KeyboardLayout.qml \
+    qml/pages/CustomizeKeys.qml
 

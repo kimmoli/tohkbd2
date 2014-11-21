@@ -44,6 +44,7 @@ Page
             Repeater
             {
                 model: settingslist
+
                 ListItem
                 {
                     height: Theme.itemSizeSmall
@@ -75,8 +76,10 @@ Page
 
         Component.onCompleted:
         {
-            settingslist.append({"labelId":"Shortcuts", "iconId":"image://theme/icon-m-shortcut", "pageId":"Shortcuts.qml"})
-            settingslist.append({"labelId":"Layout", "iconId":"image://theme/icon-m-keyboard", "pageId":"KeyboardLayout.qml"})
+            settingslist.append({"labelId":"Shortcuts",         "iconId":"image://theme/icon-m-shortcut",       "pageId":"Shortcuts.qml"})
+            settingslist.append({"labelId":"Layout",            "iconId":"image://theme/icon-m-keyboard",       "pageId":"KeyboardLayout.qml"})
+            settingslist.append({"labelId":"Customize mapping", "iconId":"image://theme/icon-m-developer-mode", "pageId":"CustomizeKeys.qml"})
+            settingslist.append({"labelId":"Report a bug",      "iconId":"image://theme/icon-m-crash-reporter", "pageId":"BugReporter.qml"})
         }
     }
 
