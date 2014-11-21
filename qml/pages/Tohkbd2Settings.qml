@@ -9,6 +9,8 @@ Page
 {
     id: page
 
+    allowedOrientations: Orientation.Portrait | Orientation.Landscape | Orientation.LandscapeInverted
+
     property string appname: ""
 
     SilicaFlickable

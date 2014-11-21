@@ -5,6 +5,8 @@ Page
 {
     id: page
 
+    allowedOrientations: Orientation.Portrait | Orientation.Landscape | Orientation.LandscapeInverted
+
     property string keyId: ""
 
     signal selected(string keyId, string filePath)
@@ -14,7 +16,7 @@ Page
         id: gridView
 
         anchors.fill: parent
-        cellWidth: page.width / 4
+        cellWidth: page.width / ((orientation === Orientation.Portrait) ? 4 : 7)
         cellHeight: Screen.height / 6
         header: Item
         {
