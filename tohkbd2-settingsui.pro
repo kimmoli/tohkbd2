@@ -29,5 +29,6 @@ OTHER_FILES += qml/tohkbd2-settingsui.qml \
     qml/pages/ApplicationSelectionPage.qml \
     qml/pages/Shortcuts.qml \
     qml/pages/KeyboardLayout.qml \
-    qml/pages/CustomizeKeys.qml
+    qml/pages/CustomizeKeys.qml \
+    qml/pages/BugReporter.qml
 
