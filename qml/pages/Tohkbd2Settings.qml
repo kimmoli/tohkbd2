@@ -33,13 +33,27 @@ Page
         Column
         {
             id: column
-
             width: page.width
-            spacing: Theme.paddingLarge
+
             PageHeader
             {
                 title: "Settings"
             }
+
+            Label
+            {
+                x: Theme.paddingLarge
+                width: parent.width - 2*Theme.paddingLarge
+                text: "Daemon version: " + daemonVersion
+                truncationMode: TruncationMode.Fade
+            }
+
+            Item
+            {
+                height: Theme.itemSizeSmall
+                width: 1
+            }
+
 
             Repeater
             {
@@ -48,6 +62,8 @@ Page
                 ListItem
                 {
                     height: Theme.itemSizeSmall
+                    enabled: isEnabled
+                    opacity: enabled ? 1 : 0.5
 
                     Image
                     {
@@ -76,10 +92,10 @@ Page
 
         Component.onCompleted:
         {
-            settingslist.append({"labelId":"Shortcuts",         "iconId":"image://theme/icon-m-shortcut",       "pageId":"Shortcuts.qml"})
-            settingslist.append({"labelId":"Layout",            "iconId":"image://theme/icon-m-keyboard",       "pageId":"KeyboardLayout.qml"})
-            settingslist.append({"labelId":"Customize mapping", "iconId":"image://theme/icon-m-developer-mode", "pageId":"CustomizeKeys.qml"})
-            settingslist.append({"labelId":"Report a bug",      "iconId":"image://theme/icon-m-crash-reporter", "pageId":"BugReporter.qml"})
+            settingslist.append({"labelId":"Shortcuts",         "iconId":"image://theme/icon-m-shortcut",       "pageId":"Shortcuts.qml",       "isEnabled":(daemonVersion !== "N/A")})
+            settingslist.append({"labelId":"Layout",            "iconId":"image://theme/icon-m-keyboard",       "pageId":"KeyboardLayout.qml",  "isEnabled":(daemonVersion !== "N/A")})
+            settingslist.append({"labelId":"Customize mapping", "iconId":"image://theme/icon-m-developer-mode", "pageId":"CustomizeKeys.qml",   "isEnabled":(daemonVersion !== "N/A")})
+            settingslist.append({"labelId":"Report a bug",      "iconId":"image://theme/icon-m-crash-reporter", "pageId":"BugReporter.qml",     "isEnabled":true})
         }
     }
 

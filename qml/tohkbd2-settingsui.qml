@@ -12,6 +12,7 @@ ApplicationWindow
 
     property string coverActionLeftIcon: "image://theme/icon-cover-pause"
     property string coverActionRightIcon: "image://theme/icon-cover-play"
+    property string daemonVersion : "---"
 
     initialPage: Qt.resolvedUrl("pages/Tohkbd2Settings.qml")
     cover: Qt.resolvedUrl("cover/CoverPage.qml")
@@ -32,6 +33,7 @@ ApplicationWindow
 
         Component.onCompleted:
         {
+            daemonVersion = readDaemonVersion()
             var i
             var tmp = settingsui.getApplications()
             for (i=0 ; i<tmp.length; i++)

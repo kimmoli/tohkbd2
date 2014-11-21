@@ -122,3 +122,24 @@ void SettingsUi::setShortcut(QString key, QString appPath)
 
     emit shortcutsChanged();
 }
+
+QString SettingsUi::readDaemonVersion()
+{
+    QDBusInterface getDaemonVersionCall("com.kimmoli.tohkbd2", "/", "com.kimmoli.tohkbd2", QDBusConnection::systemBus());
+    getDaemonVersionCall.setTimeout(2000);
+
+    QDBusMessage getDaemonVersionReply = getDaemonVersionCall.call(QDBus::AutoDetect, "getVersion");
+
+    if (getDaemonVersionReply.type() == QDBusMessage::ErrorMessage)
+    {
+        qDebug() << "Error reading daemon version:" << getDaemonVersionReply.errorMessage();
+        return QString("N/A");
+    }
+
+    QString daemonVersion = getDaemonVersionReply.arguments().at(0).toString();
+
+    qDebug() << "Daemon version is" << daemonVersion;
+
+    return daemonVersion;
+
+}
