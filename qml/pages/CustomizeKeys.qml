@@ -11,8 +11,6 @@ Page
 
     allowedOrientations: Orientation.Portrait | Orientation.Landscape | Orientation.LandscapeInverted
 
-    property string appname: ""
-
     SilicaFlickable
     {
         anchors.fill: parent
