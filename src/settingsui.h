@@ -22,6 +22,7 @@ public:
     Q_INVOKABLE void startApplication(QString appname);
     Q_INVOKABLE void setShortcut(QString key, QString appPath);
     Q_INVOKABLE QString readDaemonVersion();
+    Q_INVOKABLE void setShortcutsToDefault();
 
 signals:
     void versionChanged();

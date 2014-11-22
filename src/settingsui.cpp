@@ -133,6 +133,17 @@ void SettingsUi::setShortcut(QString key, QString appPath)
     emit shortcutsChanged();
 }
 
+void SettingsUi::setShortcutsToDefault()
+{
+    qDebug() << "setting all shortcuts to default";
+
+    QDBusInterface tohkbd2daemon("com.kimmoli.tohkbd2", "/", "com.kimmoli.tohkbd2", QDBusConnection::systemBus());
+    tohkbd2daemon.setTimeout(2000);
+    tohkbd2daemon.call(QDBus::AutoDetect, "setShortcutsToDefault");
+
+    emit shortcutsChanged();
+}
+
 QString SettingsUi::readDaemonVersion()
 {
     QDBusInterface getDaemonVersionCall("com.kimmoli.tohkbd2", "/", "com.kimmoli.tohkbd2", QDBusConnection::systemBus());

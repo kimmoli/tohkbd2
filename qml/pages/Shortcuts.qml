@@ -22,6 +22,7 @@ Page
             MenuItem
             {
                 text: "Reset all to defaults"
+                onClicked: settingsui.setShortcutsToDefault()
             }
         }
 
