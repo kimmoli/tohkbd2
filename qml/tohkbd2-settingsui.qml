@@ -68,7 +68,6 @@ ApplicationWindow
                                       "filePath": tmp[i]["filePath"],
                                       "isAndroid": tmp[i]["isAndroid"]})
         }
-
     }
 
     function updateShortcutsModel()
@@ -86,9 +85,7 @@ ApplicationWindow
                                   "filePath": tmp[i]["filePath"],
                                   "isAndroid": tmp[i]["isAndroid"]})
         }
-
     }
-
 }
 
 

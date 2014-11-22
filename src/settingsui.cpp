@@ -11,7 +11,7 @@
 #include <QSettings>
 #include <QDebug>
 #include <QtDBus/QtDBus>
-#include <QtAlgorithms>
+#include <algorithm>
 
 #include <mlite5/MDesktopEntry>
 
@@ -73,7 +73,7 @@ QVariantList SettingsUi::getApplications()
     }
 
     // sort them by application name
-    qSort(tmp.begin(), tmp.end(), appNameLessThan);
+    std::sort(tmp.begin(), tmp.end(), appNameLessThan);
 
     return tmp;
 }
