@@ -11,6 +11,7 @@
 #include <QSettings>
 #include <QDebug>
 #include <QtDBus/QtDBus>
+#include <QtAlgorithms>
 
 #include <mlite5/MDesktopEntry>
 
@@ -29,6 +30,11 @@ SettingsUi::~SettingsUi()
 QString SettingsUi::readVersion()
 {
     return APPVERSION;
+}
+
+bool appNameLessThan(const QVariant &v1, const QVariant &v2)
+{
+    return v1.toMap()["name"].toString() < v2.toMap()["name"].toString();
 }
 
 QVariantList SettingsUi::getApplications()
@@ -62,6 +68,10 @@ QVariantList SettingsUi::getApplications()
             tmp.append(map);
         }
     }
+
+    // sort them by application name
+    qSort(tmp.begin(), tmp.end(), appNameLessThan);
+
     return tmp;
 }
 
