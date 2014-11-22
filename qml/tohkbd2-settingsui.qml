@@ -34,41 +34,13 @@ ApplicationWindow
         Component.onCompleted:
         {
             daemonVersion = readDaemonVersion()
-            var i
-            var tmp = settingsui.getApplications()
-            for (i=0 ; i<tmp.length; i++)
-            {
-                applicationsModel.append({"name": tmp[i]["name"],
-                                          "iconId": tmp[i]["iconId"],
-                                          "filePath": tmp[i]["filePath"]})
-            }
-
-            tmp = settingsui.getCurrentShortcuts()
-            for (i=0 ; i<tmp.length; i++)
-            {
-                shortcutsModel.append({"key": tmp[i]["key"],
-                                      "name": tmp[i]["name"],
-                                      "iconId": tmp[i]["iconId"],
-                                      "filePath": tmp[i]["filePath"]})
-            }
-
+            updateApplicationsModel()
+            updateShortcutsModel()
         }
 
         onShortcutsChanged:
         {
-            var i
-            var tmp = settingsui.getCurrentShortcuts()
-
-            shortcutsModel.clear()
-
-            for (i=0 ; i<tmp.length; i++)
-            {
-                shortcutsModel.append({"key": tmp[i]["key"],
-                                      "name": tmp[i]["name"],
-                                      "iconId": tmp[i]["iconId"],
-                                      "filePath": tmp[i]["filePath"]})
-            }
-
+            updateShortcutsModel()
         }
     }
 
@@ -81,6 +53,42 @@ ApplicationWindow
     {
         id: shortcutsModel
     }
+
+    function updateApplicationsModel()
+    {
+        var i
+        var tmp = settingsui.getApplications()
+
+        applicationsModel.clear()
+
+        for (i=0 ; i<tmp.length; i++)
+        {
+            applicationsModel.append({"name": tmp[i]["name"],
+                                      "iconId": tmp[i]["iconId"],
+                                      "filePath": tmp[i]["filePath"],
+                                      "isAndroid": tmp[i]["isAndroid"]})
+        }
+
+    }
+
+    function updateShortcutsModel()
+    {
+        var i
+        var tmp = settingsui.getCurrentShortcuts()
+
+        shortcutsModel.clear()
+
+        for (i=0 ; i<tmp.length; i++)
+        {
+            shortcutsModel.append({"key": tmp[i]["key"],
+                                  "name": tmp[i]["name"],
+                                  "iconId": tmp[i]["iconId"],
+                                  "filePath": tmp[i]["filePath"],
+                                  "isAndroid": tmp[i]["isAndroid"]})
+        }
+
+    }
+
 }
 
 

@@ -52,7 +52,18 @@ Page
                 height: size
 
             }
-
+            Image
+            {
+                anchors
+                {
+                    top: appIcon.top
+                    right: appIcon.right
+                    topMargin: -16
+                    rightMargin: -16
+                }
+                visible: isAndroid
+                source: "image://theme/icon-s-android"
+            }
             Label
             {
                 id: appTitle

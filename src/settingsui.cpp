@@ -65,6 +65,9 @@ QVariantList SettingsUi::getApplications()
                 map.insert("iconId", QString("%1").arg(app.icon()));
             else
                 map.insert("iconId", QString("/usr/share/icons/hicolor/86x86/apps/%1.png").arg(app.icon()));
+
+            map.insert("isAndroid", app.exec().contains("apkd-launcher"));
+
             tmp.append(map);
         }
     }
@@ -110,6 +113,8 @@ QVariantList SettingsUi::getCurrentShortcuts()
             map.insert("iconId", QString("%1").arg(app.icon()));
         else
             map.insert("iconId", QString("/usr/share/icons/hicolor/86x86/apps/%1.png").arg(app.icon()));
+
+        map.insert("isAndroid", app.exec().contains("apkd-launcher"));
 
         tmp.append(map);
     }
