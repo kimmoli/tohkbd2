@@ -16,6 +16,7 @@ Page
     SilicaFlickable
     {
         anchors.fill: parent
+        VerticalScrollDecorator {}
 
         PullDownMenu
         {
@@ -59,6 +60,7 @@ Page
                         font.pixelSize: Theme.fontSizeMedium
                         font.bold: true
                         text: key
+                        color: shortcutItem.highlighted ? Theme.highlightColor : Theme.primaryColor
                     }
 
                     Image

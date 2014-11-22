@@ -14,6 +14,7 @@ Page
     SilicaGridView
     {
         id: gridView
+        VerticalScrollDecorator {}
 
         anchors.fill: parent
         cellWidth: page.width / ((orientation === Orientation.Portrait) ? 4 : 7)

@@ -61,15 +61,16 @@ Page
 
                 ListItem
                 {
+                    id: listItem
                     height: Theme.itemSizeSmall
                     enabled: isEnabled
-                    opacity: enabled ? 1 : 0.5
+                    opacity: enabled ? 1.0 : 0.4
 
                     Image
                     {
                         id: name
                         x: Theme.paddingLarge
-                        source: iconId
+                        source: listItem.highlighted ? iconId + "?" + Theme.highlightColor : iconId
                         anchors.verticalCenter: parent.verticalCenter
                     }
                     Label
@@ -78,6 +79,7 @@ Page
                         anchors.left: name.right
                         anchors.leftMargin: Theme.paddingLarge
                         anchors.verticalCenter: parent.verticalCenter
+                        color: listItem.highlighted ? Theme.highlightColor : Theme.primaryColor
                     }
 
                     onClicked: pageStack.push(Qt.resolvedUrl(pageId))
