@@ -16,6 +16,7 @@
 #include <QQmlContext>
 #include <QCoreApplication>
 #include "settingsui.h"
+#include "IconProvider.h"
 
 
 int main(int argc, char *argv[])
@@ -24,6 +25,10 @@ int main(int argc, char *argv[])
 
     QScopedPointer<QGuiApplication> app(SailfishApp::application(argc, argv));
     QScopedPointer<QQuickView> view(SailfishApp::createView());
+
+    QQmlEngine *engine = view->engine();
+    engine->addImageProvider(QLatin1String("tohkbd2"), new IconProvider);
+
     view->setSource(SailfishApp::pathTo("qml/tohkbd2-settingsui.qml"));
     view->show();
 

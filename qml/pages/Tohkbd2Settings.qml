@@ -94,7 +94,7 @@ Page
         {
             settingslist.append({"labelId":"Shortcuts",         "iconId":"image://theme/icon-m-shortcut",       "pageId":"Shortcuts.qml",       "isEnabled":(daemonVersion !== "N/A")})
             settingslist.append({"labelId":"Layout",            "iconId":"image://theme/icon-m-keyboard",       "pageId":"KeyboardLayout.qml",  "isEnabled":(daemonVersion !== "N/A")})
-            settingslist.append({"labelId":"Customize mapping", "iconId":"image://theme/icon-m-developer-mode", "pageId":"CustomizeKeys.qml",   "isEnabled":(daemonVersion !== "N/A")})
+            settingslist.append({"labelId":"Customize mapping", "iconId":"image://tohkbd2/icon-m-test",         "pageId":"CustomizeKeys.qml",   "isEnabled":(daemonVersion !== "N/A")})
             settingslist.append({"labelId":"Report a bug",      "iconId":"image://theme/icon-m-crash-reporter", "pageId":"BugReporter.qml",     "isEnabled":true})
         }
     }

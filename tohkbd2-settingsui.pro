@@ -17,7 +17,8 @@ message($${DEFINES})
 SOURCES += src/tohkbd2-settingsui.cpp \
 	src/settingsui.cpp
 	
-HEADERS += src/settingsui.h
+HEADERS += src/settingsui.h \
+    src/IconProvider.h
 
 OTHER_FILES += qml/tohkbd2-settingsui.qml \
     qml/cover/CoverPage.qml \
