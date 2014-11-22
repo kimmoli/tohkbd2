@@ -55,6 +55,7 @@ Page
             }
             Image
             {
+                id: androidIcon
                 anchors
                 {
                     top: appIcon.top
@@ -81,9 +82,30 @@ Page
                 elide: Text.ElideRight
                 color: Theme.primaryColor
             }
+            Label
+            {
+                id: isShortcut
+                text: ""
+                font.pixelSize: Theme.fontSizeMedium
+                font.bold: true
+                anchors.centerIn: appIcon
+                Component.onCompleted:
+                {
+                    var i
+                    for (i = 0 ; i< shortcutsModel.count ; i++)
+                        if (shortcutsModel.get(i).filePath === filePath)
+                        {
+                            isShortcut.text = shortcutsModel.get(i).key
+                            appIcon.opacity = 0.4
+                            androidIcon.opacity = 0.4
+                            bgItem.enabled = false
+                        }
+                }
+            }
 
             BackgroundItem
             {
+                id: bgItem
                 anchors.fill: parent
                 onClicked:
                 {
