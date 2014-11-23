@@ -25,9 +25,6 @@
 #define SERVICE_NAME "com.kimmoli.tohkbd2"
 #define EVDEV_OFFSET (8)
 
-#define REPEAT_DELAY (250)
-#define REPEAT_RATE (13)
-
 /* main class */
 
 class QDBusInterface;
@@ -98,6 +95,9 @@ private:
     keymapping *keymap;
 
     int capsLockSeq;
+    int backlightLuxThreshold;
+    int keyRepeatDelay;
+    int keyRepeatRate;
 
     QMutex mutex;
 

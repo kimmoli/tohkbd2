@@ -394,7 +394,7 @@ void Tohkbd::handleKeyPressed(QList< QPair<int, int> > keyCode)
     lastKeyCode = keyCode;
 
     /* Repeat delay first, then repeat rate */
-    repeatTimer->start(keyIsPressed ? REPEAT_RATE : REPEAT_DELAY);
+    repeatTimer->start(keyIsPressed ? keyRepeatRate : keyRepeatDelay);
     keyIsPressed = true;
 }
 
@@ -515,7 +515,7 @@ void Tohkbd::checkDoWeNeedBacklight()
 {
     if (!backlightTimer->isActive())
     {
-        if (readOneLineFromFile("/sys/devices/virtual/input/input11/als_lux").toInt() < 5)
+        if (readOneLineFromFile("/sys/devices/virtual/input/input11/als_lux").toInt() < backlightLuxThreshold)
         {
             printf("backlight on\n");
 
@@ -645,6 +645,9 @@ void Tohkbd::reloadSettings()
 
     settings.beginGroup("generalsettings");
     backlightTimer->setInterval(settings.value("backlightTimeout", 2000).toInt());
+    backlightLuxThreshold = settings.value("backlightLuxThreshold", 5).toInt();
+    keyRepeatDelay = settings.value("keyRepeatDelay", 250).toInt();
+    keyRepeatRate = settings.value("keyRepeatRate", 13).toInt();
     settings.endGroup();
 }
 
