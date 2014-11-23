@@ -10,9 +10,20 @@ ApplicationWindow
 {
     id: apppage
 
+    onApplicationActiveChanged:
+    {
+        if (!applicationActive && bugReportPageOpen)
+        {
+            bugReportPageOpen = false
+            pageStack.pop()
+        }
+    }
+
     property string coverActionLeftIcon: "image://theme/icon-cover-pause"
     property string coverActionRightIcon: "image://theme/icon-cover-play"
     property string daemonVersion : "---"
+
+    property bool bugReportPageOpen: false
 
     property var settings
 

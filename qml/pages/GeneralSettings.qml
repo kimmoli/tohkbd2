@@ -42,7 +42,6 @@ Page
                 value: settings["backlightTimeout"]
                 valueText: value + " ms"
                 stepSize: 100
-                enabled: autoBacklightSwitch.checked
 
                 property bool wasChanged: false
                 onValueChanged: wasChanged = true
@@ -65,7 +64,6 @@ Page
                 value: settings["backlightLuxThreshold"]
                 valueText: value + " lux"
                 stepSize: 1
-                enabled: autoBacklightSwitch.checked
 
                 property bool wasChanged: false
                 onValueChanged: wasChanged = true

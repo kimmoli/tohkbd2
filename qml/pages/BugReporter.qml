@@ -27,7 +27,30 @@ Page
             {
                 title: "Report a bug"
             }
+            Label
+            {
+                text: "Launching email application..."
+                anchors.horizontalCenter: column.horizontalCenter
+            }
+
+            ProgressBar
+            {
+                width: page.width - 2*Theme.paddingLarge
+                anchors.horizontalCenter: column.horizontalCenter
+                indeterminate: true
+            }
+
         }
     }
+
+    Component.onCompleted:
+    {
+        bugReportPageOpen = true
+        Qt.openUrlExternally("mailto: toho@saunalahti.fi" +
+                                     "?subject=Tohkbd2 bug report" +
+                                     "&body=Write here what is wrong...")
+    }
+
+
 }
 
