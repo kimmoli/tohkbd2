@@ -51,8 +51,11 @@ Tohkbd::Tohkbd(QObject *parent) :
     connect(thread, SIGNAL(started()), worker, SLOT(doWork()));
     connect(worker, SIGNAL(finished()), thread, SLOT(quit()), Qt::DirectConnection);
 
+    QList<unsigned int> eepromConfig = readEepromConfig();
+    if (eepromConfig.count() > 0)
+        printf("eeprom at 0 = %x\n", eepromConfig.at(0));
+
     backlightTimer = new QTimer(this);
-    backlightTimer->setInterval(2000);
     backlightTimer->setSingleShot(true);
     connect(backlightTimer, SIGNAL(timeout()), this, SLOT(backlightTimerTimeout()));
 
@@ -65,6 +68,8 @@ Tohkbd::Tohkbd(QObject *parent) :
     repeatTimer->setSingleShot(true);
     connect(repeatTimer, SIGNAL(timeout()), this, SLOT(repeatTimerTimeout()));
 
+    reloadSettings();
+
     /* do this automatically at startup */
     setVddState(true);
     setInterruptEnable(true);
@@ -74,15 +79,6 @@ Tohkbd::Tohkbd(QObject *parent) :
 
     tca8424 = new tca8424driver(0x3b);
     keymap = new keymapping();
-
-    /*
-     * TODO: Change keyboard mapping "getEepromConfig(int number)"
-     */
-    QList<unsigned int> eepromConfig = readEepromConfig();
-    if (eepromConfig.count() > 0)
-        printf("eeprom at 0 = %x\n", eepromConfig.at(0));
-
-    reloadSettings();
 
     if (currentActiveLayout.isEmpty())
         changeActiveLayout(true);
@@ -565,7 +561,7 @@ void Tohkbd::changeActiveLayout(bool justGetIt)
             if (__currentActiveLayout != currentActiveLayout)
             {
                 currentActiveLayout = __currentActiveLayout;
-                writeSettings();
+                saveActiveLayout();
             }
         }
     }
@@ -646,11 +642,15 @@ void Tohkbd::reloadSettings()
         printf("app shortcut F%d : %s\n", ((i-KEY_1)+1), qPrintable(applicationShortcuts[i]));
     }
     settings.endGroup();
+
+    settings.beginGroup("generalsettings");
+    backlightTimer->setInterval(settings.value("backlightTimeout", 2000).toInt());
+    settings.endGroup();
 }
 
-/* Write settings
+/* Save activeLayout to settings
  */
-void Tohkbd::writeSettings()
+void Tohkbd::saveActiveLayout()
 {
     QSettings settings(QSettings::SystemScope, "harbour-tohkbd2", "tohkbd2");
     settings.beginGroup("vkb");
@@ -676,6 +676,21 @@ void Tohkbd::setShortcut(const QString &key, const QString &appPath)
             applicationShortcuts[i] = settings.value(QString("KEY_F%1").arg((i-KEY_1)+1), applicationShortcuts[i]).toString();
         }
 
+        settings.endGroup();
+    }
+}
+
+/* Set integer setting and save it to settings
+ */
+void Tohkbd::setSettingInt(const QString &key, const int &value)
+{
+    QSettings settings(QSettings::SystemScope, "harbour-tohkbd2", "tohkbd2");
+
+    if (key == "backlightTimeout" && value >= 100 && value <= 5000)
+    {
+        backlightTimer->setInterval(value);
+        settings.beginGroup("generalsettings");
+        settings.setValue("backlightTimeout", value);
         settings.endGroup();
     }
 }
