@@ -57,6 +57,7 @@ QVariantList SettingsUi::getApplications()
 
         if (!app.hidden() && !app.icon().isEmpty() && !app.noDisplay() && !app.notShowIn().contains("X-Meego"))
         {
+            map.clear();
             map.insert("filePath", list.at(i).absoluteFilePath());
             map.insert("name", app.name());
             if (app.icon().startsWith("icon-launcher-") || app.icon().startsWith("icon-l-") || app.icon().startsWith("icons-Applications"))
@@ -78,6 +79,20 @@ QVariantList SettingsUi::getApplications()
     return tmp;
 }
 
+QVariantMap SettingsUi::getCurrentSettings()
+{
+    QVariantMap map;
+
+    QSettings settings("harbour-tohkbd2", "tohkbd2");
+    settings.beginGroup("generalsettings");
+
+    map.insert("backlightTimeout", settings.value("backlightTimeout", 2000).toInt());
+
+    settings.endGroup();
+
+    return map;
+}
+
 void SettingsUi::startApplication(QString appname)
 {
     QProcess proc;
@@ -97,6 +112,7 @@ QVariantList SettingsUi::getCurrentShortcuts()
     for (int i = KEY_1 ; i<=KEY_EQUAL ; i++)
     {
         QString appPath = settings.value(QString("KEY_F%1").arg((i-KEY_1)+1), "none" ).toString();
+        map.clear();
         map.insert("key", QString("F%1").arg((i-KEY_1)+1));
         map.insert("filePath", appPath);
 

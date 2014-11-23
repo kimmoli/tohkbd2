@@ -19,6 +19,7 @@ public:
     QString readVersion();
     Q_INVOKABLE QVariantList getApplications();
     Q_INVOKABLE QVariantList getCurrentShortcuts();
+    Q_INVOKABLE QVariantMap getCurrentSettings();
     Q_INVOKABLE void startApplication(QString appname);
     Q_INVOKABLE void setShortcut(QString key, QString appPath);
     Q_INVOKABLE QString readDaemonVersion();

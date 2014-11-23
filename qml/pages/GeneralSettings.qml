@@ -46,7 +46,7 @@ Page
                 label: "Timeout"
                 minimumValue: 100
                 maximumValue: 5000
-                value: 2000
+                value: settings["backlightTimeout"]
                 valueText: value + " ms"
                 stepSize: 100
                 enabled: autoBacklightSwitch.checked

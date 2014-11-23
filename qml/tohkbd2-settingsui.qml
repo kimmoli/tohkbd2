@@ -14,6 +14,8 @@ ApplicationWindow
     property string coverActionRightIcon: "image://theme/icon-cover-play"
     property string daemonVersion : "---"
 
+    property var settings
+
     initialPage: Qt.resolvedUrl("pages/Tohkbd2Settings.qml")
     cover: Qt.resolvedUrl("cover/CoverPage.qml")
 
@@ -36,6 +38,7 @@ ApplicationWindow
             daemonVersion = readDaemonVersion()
             updateApplicationsModel()
             updateShortcutsModel()
+            settings = settingsui.getCurrentSettings()
         }
 
         onShortcutsChanged:
