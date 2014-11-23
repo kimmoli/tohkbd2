@@ -138,6 +138,18 @@ void SettingsUi::setShortcut(QString key, QString appPath)
     emit shortcutsChanged();
 }
 
+void SettingsUi::setSettingInt(QString key, int value)
+{
+    qDebug() << "setting" << key << "to" << value;
+
+    QDBusInterface tohkbd2daemon("com.kimmoli.tohkbd2", "/", "com.kimmoli.tohkbd2", QDBusConnection::systemBus());
+    tohkbd2daemon.setTimeout(2000);
+    QList<QVariant> args;
+    args.append(key);
+    args.append(value);
+    tohkbd2daemon.callWithArgumentList(QDBus::AutoDetect, "setSettingInt", args);
+}
+
 void SettingsUi::setShortcutsToDefault()
 {
     qDebug() << "setting all shortcuts to default";

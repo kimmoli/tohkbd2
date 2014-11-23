@@ -50,6 +50,17 @@ Page
                 valueText: value + " ms"
                 stepSize: 100
                 enabled: autoBacklightSwitch.checked
+
+                property bool wasChanged: false
+                onValueChanged: wasChanged = true
+                onReleased:
+                {
+                    if (wasChanged)
+                    {
+                        wasChanged = false
+                        settingsui.setSettingInt("backlightTimeout", value)
+                    }
+                }
             }
             Slider
             {
