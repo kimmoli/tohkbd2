@@ -32,13 +32,6 @@ Page
             {
                 text: "Backlight"
             }
-            TextSwitch
-            {
-                id: autoBacklightSwitch
-                text: "Automatic backlight"
-                x: Theme.paddingLarge
-                checked: true
-            }
             Slider
             {
                 width: parent.width - 2*Theme.paddingLarge
@@ -69,10 +62,21 @@ Page
                 label: "Brightness threshold"
                 minimumValue: 1
                 maximumValue: 50
-                value: 5
+                value: settings["backlightLuxThreshold"]
                 valueText: value + " lux"
                 stepSize: 1
                 enabled: autoBacklightSwitch.checked
+
+                property bool wasChanged: false
+                onValueChanged: wasChanged = true
+                onReleased:
+                {
+                    if (wasChanged)
+                    {
+                        wasChanged = false
+                        settingsui.setSettingInt("backlightLuxThreshold", value)
+                    }
+                }
             }
 
             SectionHeader
@@ -86,9 +90,20 @@ Page
                 label: "Delay"
                 minimumValue: 50
                 maximumValue: 500
-                value: 250
+                value: settings["keyRepeatDelay"]
                 valueText: value + " ms"
                 stepSize: 10
+
+                property bool wasChanged: false
+                onValueChanged: wasChanged = true
+                onReleased:
+                {
+                    if (wasChanged)
+                    {
+                        wasChanged = false
+                        settingsui.setSettingInt("keyRepeatDelay", value)
+                    }
+                }
             }
             Slider
             {
@@ -97,9 +112,26 @@ Page
                 label: "Rate"
                 minimumValue: 25
                 maximumValue: 100
-                value: 25
+                value: settings["keyRepeatRate"]
                 valueText: value + " ms"
                 stepSize: 1
+
+                property bool wasChanged: false
+                onValueChanged: wasChanged = true
+                onReleased:
+                {
+                    if (wasChanged)
+                    {
+                        wasChanged = false
+                        settingsui.setSettingInt("keyRepeatRate", value)
+                    }
+                }
+            }
+            TextField
+            {
+                width: parent.width - Theme.paddingLarge
+                anchors.horizontalCenter: parent.horizontalCenter
+                placeholderText: "Test here"
             }
         }
     }
