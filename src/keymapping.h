@@ -10,7 +10,6 @@
 #define FORCE_RIGHTALT (4)
 #define FORCE_COMPOSE  (8)
 #define KEEP           (0x10)
-#define SYN_BETWEEN    (0x20)
 
 class keymapping : public QObject
 {

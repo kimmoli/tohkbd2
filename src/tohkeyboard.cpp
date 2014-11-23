@@ -370,8 +370,7 @@ void Tohkbd::handleKeyPressed(QList< QPair<int, int> > keyCode)
         /* Mimic key pressing */
         uinputif->sendUinputKeyPress(keyCode.at(i).first, 1);
 
-        if (keyCode.at(i).second & SYN_BETWEEN)
-            uinputif->synUinputDevice();
+        QThread::msleep(25);
 
         uinputif->sendUinputKeyPress(keyCode.at(i).first, 0);
 

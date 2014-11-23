@@ -130,7 +130,6 @@ int UinputIf::synUinputDevice()
 {
     struct input_event     ev;
 
-    usleep(40000);
     memset(&ev, 0, sizeof(struct input_event));
     gettimeofday(&ev.time, NULL);
     ev.type = EV_SYN;
@@ -156,7 +155,6 @@ int UinputIf::sendUinputKeyPress(unsigned int code, int val)
 {
     struct input_event     ev;
 
-    usleep(25000); /* sorcery */
     memset(&ev, 0, sizeof(struct input_event));
     gettimeofday(&ev.time, NULL);
     ev.type = EV_KEY;
@@ -182,7 +180,6 @@ int UinputIf::sendUinputSwitch(unsigned int code, int val)
 {
     struct input_event     ev;
 
-    usleep(25000); /* sorcery */
     memset(&ev, 0, sizeof(struct input_event));
     gettimeofday(&ev.time, NULL);
     ev.type = EV_SW;
