@@ -394,7 +394,7 @@ void Tohkbd::handleKeyPressed(QList< QPair<int, int> > keyCode)
     lastKeyCode = keyCode;
 
     /* Repeat delay first, then repeat rate */
-    repeatTimer->start(keyIsPressed ? keyRepeatRate : keyRepeatDelay);
+    repeatTimer->start(keyIsPressed ? (keyRepeatRate-24) : keyRepeatDelay);
     keyIsPressed = true;
 }
 
@@ -647,7 +647,7 @@ void Tohkbd::reloadSettings()
     backlightTimer->setInterval(settings.value("backlightTimeout", 2000).toInt());
     backlightLuxThreshold = settings.value("backlightLuxThreshold", 5).toInt();
     keyRepeatDelay = settings.value("keyRepeatDelay", 250).toInt();
-    keyRepeatRate = settings.value("keyRepeatRate", 13).toInt();
+    keyRepeatRate = settings.value("keyRepeatRate", 25).toInt();
     settings.endGroup();
 }
 
@@ -694,6 +694,27 @@ void Tohkbd::setSettingInt(const QString &key, const int &value)
         backlightTimer->setInterval(value);
         settings.beginGroup("generalsettings");
         settings.setValue("backlightTimeout", value);
+        settings.endGroup();
+    }
+    else if (key == "backlightLuxThreshold" && value >= 1 && value <= 50)
+    {
+        backlightLuxThreshold = value;
+        settings.beginGroup("generalsettings");
+        settings.setValue("backlightLuxThreshold", value);
+        settings.endGroup();
+    }
+    else if (key == "keyRepeatDelay" && value >= 50 && value <= 500)
+    {
+        keyRepeatDelay = value;
+        settings.beginGroup("generalsettings");
+        settings.setValue("keyRepeatDelay", value);
+        settings.endGroup();
+    }
+    else if (key == "keyRepeatRate" && value >= 25 && value <= 100)
+    {
+        keyRepeatRate = value;
+        settings.beginGroup("generalsettings");
+        settings.setValue("keyRepeatRate", value);
         settings.endGroup();
     }
 }
