@@ -11,73 +11,82 @@ Page
 
     allowedOrientations: Orientation.Portrait | Orientation.Landscape | Orientation.LandscapeInverted
 
-    SilicaFlickable
+    property bool zoomin: false
+
+    SlideshowView
     {
-        anchors.fill: parent
+        anchors.centerIn: parent
+        anchors.verticalCenterOffset: (Theme.paddingLarge + 50)/2
 
-        contentHeight: column.height
+        visible: !fullimage.visible
 
-        Column
+        id: view
+        width: 540
+        height: 284
+        itemWidth: 540
+
+        model: 5
+        delegate: Item
         {
-            id: column
-
-            width: page.width
-
-            PageHeader
+            width: view.itemWidth
+            height: view.height + Theme.paddingLarge + 50
+            Image
             {
-                title: "Keyboard layout"
+                id: img
+                source: "../images/layout_qwertz.png"
+                width: parent.width - Theme.paddingLarge
+                height: view.height
+                anchors.top: parent.top
+                anchors.horizontalCenter: parent.horizontalCenter
+                fillMode: Image.PreserveAspectFit
             }
-            Repeater
+            Text
             {
-                model: layoutslist
+                anchors.top: img.bottom
+                anchors.topMargin: Theme.paddingLarge
+                anchors.horizontalCenter: parent.horizontalCenter
+                text: index == 0 ? "QWERTZ" : "item " + index
+                color: "white"
+                font.pixelSize: 50
+            }
 
-                ListItem
+
+            MouseArea
+            {
+                enabled: !zoomin
+                anchors.fill: parent
+                onClicked:
                 {
-                    id: listItem
-                    height: Theme.itemSizeSmall
-
-                    Switch
-                    {
-                        id: sw
-                        checked: selected
-                        anchors.verticalCenter: parent.verticalCenter
-                        x: Theme.paddingLarge
-                    }
-                    Label
-                    {
-                        text: labelId
-                        anchors.left: sw.right
-                        anchors.leftMargin: Theme.paddingSmall
-                        anchors.verticalCenter: parent.verticalCenter
-                        color: listItem.highlighted ? Theme.highlightColor : Theme.primaryColor
-                    }
-
-                    onClicked: enableLayout(index)
+                    zoomin = true
+                    fullimage.width = 960
                 }
+
             }
         }
     }
 
-    ListModel
+    Image
     {
-        id: layoutslist
+        id: fullimage
+        anchors.centerIn: parent
+        width: 540
+        height: 540
+        fillMode: Image.PreserveAspectFit
+        source: "../images/layout_qwertz.png"
+        visible: width>540
 
-        Component.onCompleted:
+        Behavior on width { NumberAnimation {} }
+
+        MouseArea
         {
-            layoutslist.append({"labelId":"QWERTY",   "selected":true})
-            layoutslist.append({"labelId":"QWERTZ",   "selected":false})
-            layoutslist.append({"labelId":"AZERTY",   "selected":false})
-            layoutslist.append({"labelId":"Scandic",  "selected":false})
-            layoutslist.append({"labelId":"Cyrillic", "selected":false})
+            enabled: zoomin
+            anchors.fill: parent
+            onClicked:
+            {
+                zoomin = false
+                fullimage.width = 540
+            }
         }
-    }
-
-    function enableLayout(index)
-    {
-        var i
-        for (i=0 ; i<layoutslist.count ; i++)
-            layoutslist.setProperty(i, "selected", i === index)
-
-        // TODO: Send selected layout to daemon
     }
 }
+

@@ -32,5 +32,7 @@ OTHER_FILES += qml/tohkbd2-settingsui.qml \
     qml/pages/KeyboardLayout.qml \
     qml/pages/CustomizeKeys.qml \
     qml/pages/BugReporter.qml \
-    qml/pages/GeneralSettings.qml
+    qml/pages/GeneralSettings.qml \
+    qml/icons/icon-m-test.png \
+    qml/images/layout_qwertz.png
 
