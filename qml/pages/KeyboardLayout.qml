@@ -11,6 +11,8 @@ Page
 
     allowedOrientations: Orientation.Portrait | Orientation.Landscape | Orientation.LandscapeInverted
 
+    backNavigation: !zoomin
+
     property bool zoomin: false
 
     SlideshowView
@@ -18,14 +20,14 @@ Page
         anchors.centerIn: parent
         anchors.verticalCenterOffset: (Theme.paddingLarge + 50)/2
 
-        visible: !fullimage.visible
+        visible: !fullimageview.visible
 
         id: view
         width: 540
         height: 284
         itemWidth: 540
 
-        model: 5
+        model: layoutsmodel
         delegate: Item
         {
             width: view.itemWidth
@@ -33,7 +35,7 @@ Page
             Image
             {
                 id: img
-                source: "../images/layout_qwertz.png"
+                source: imagesource
                 width: parent.width - Theme.paddingLarge
                 height: view.height
                 anchors.top: parent.top
@@ -45,20 +47,21 @@ Page
                 anchors.top: img.bottom
                 anchors.topMargin: Theme.paddingLarge
                 anchors.horizontalCenter: parent.horizontalCenter
-                text: index == 0 ? "QWERTZ" : "item " + index
-                color: "white"
-                font.pixelSize: 50
+                text: layoutname
+                color: Theme.primaryColor
+                font.pixelSize: Theme.fontSizeHuge
             }
 
 
             MouseArea
             {
-                enabled: !zoomin
+                enabled: !zoomin && view.currentIndex == index
                 anchors.fill: parent
                 onClicked:
                 {
                     zoomin = true
-                    fullimage.width = 960
+                    fullimageview.width = 960
+                    fullimageview.source = imagesource
                 }
 
             }
@@ -67,26 +70,107 @@ Page
 
     Image
     {
-        id: fullimage
+        id: fullimageview
         anchors.centerIn: parent
         width: 540
         height: 540
         fillMode: Image.PreserveAspectFit
-        source: "../images/layout_qwertz.png"
-        visible: width>540
-
+        visible: width > 540
         Behavior on width { NumberAnimation {} }
 
-        MouseArea
+        PinchArea
         {
-            enabled: zoomin
+            id: pinchArea
+            property real minScale: 1.0
+            property real maxScale: 2.5
+
             anchors.fill: parent
-            onClicked:
+            enabled: zoomin
+            pinch.target: fullimageview
+            pinch.minimumScale: minScale * 0.5 // This is to create "bounce back effect"
+            pinch.maximumScale: maxScale * 1.5 // when over zoomed
+
+
+            onPinchFinished:
             {
-                zoomin = false
-                fullimage.width = 540
+                if (fullimageview.scale < pinchArea.minScale)
+                {
+                    bounceBackAnimation.to = pinchArea.minScale
+                    bounceBackAnimation.start()
+                }
+                else if (fullimageview.scale > pinchArea.maxScale)
+                {
+                    bounceBackAnimation.to = pinchArea.maxScale
+                    bounceBackAnimation.start()
+                }
             }
+
+            NumberAnimation
+            {
+                id: bounceBackAnimation
+                target: fullimageview
+                duration: 250
+                property: "scale"
+                from: fullimageview.scale
+            }
+
+            MouseArea
+            {
+                property real iX
+                property real iY
+                property real movementX : 0
+                property real movementY : 0
+
+                anchors.fill: parent
+                enabled: zoomin
+
+                onDoubleClicked:
+                {
+                    fullimageview.scale = 1
+                    fullimageview.anchors.horizontalCenterOffset = 0
+                    fullimageview.anchors.verticalCenterOffset = 0
+                    fullimageview.width = 540
+                    zoomin = false
+                    pinchArea.scale = 1
+                }
+
+                onPressed:
+                {
+                    iX = mouseX
+                    iY = mouseY
+                }
+                onPositionChanged:
+                {
+                    var dX = mouseX - iX
+                    iX = mouseX
+                    movementX += dX
+                    var dY = mouseY - iY
+                    iY = mouseY
+                    movementY += dY
+
+                    fullimageview.anchors.horizontalCenterOffset += movementX
+                    fullimageview.anchors.verticalCenterOffset += movementY
+                }
+            }
+
+        }
+    }
+
+    ListModel
+    {
+        id: layoutsmodel
+
+        Component.onCompleted:
+        {
+            layoutsmodel.append({"imagesource":"../images/layout_qwerty.png", "layoutname":"QWERTY"})
+            layoutsmodel.append({"imagesource":"../images/layout_qwertz.png", "layoutname":"QWERTZ"})
+            layoutsmodel.append({"imagesource":"../images/layout_azerty.png", "layoutname":"AZERTY"})
+            layoutsmodel.append({"imagesource":"../images/layout_nordic.png", "layoutname":"Nordic"})
+            layoutsmodel.append({"imagesource":"../images/layout_cyrillic.png", "layoutname":"Cyrillic"})
+
+            console.log("Theme.fontSizeHuge " + Theme.fontSizeHuge)
         }
     }
 }
+
 

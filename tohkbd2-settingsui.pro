@@ -34,5 +34,10 @@ OTHER_FILES += qml/tohkbd2-settingsui.qml \
     qml/pages/BugReporter.qml \
     qml/pages/GeneralSettings.qml \
     qml/icons/icon-m-test.png \
-    qml/images/layout_qwertz.png
+    qml/images/layout_qwertz.png \
+    qml/images/layout_qwertz.png \
+    qml/images/layout_qwerty.png \
+    qml/images/layout_nordic.png \
+    qml/images/layout_cyrillic.png \
+    qml/images/layout_azerty.png
 
