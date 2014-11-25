@@ -19,40 +19,31 @@ Page
     SlideshowView
     {
         anchors.centerIn: parent
-        anchors.verticalCenterOffset: (Theme.paddingLarge + 50)/2
 
         visible: !fullimageview.visible
 
         id: view
-        width: 540
+        width: page.width
         height: 284
         itemWidth: 540
+        clip: true
 
         model: layoutsmodel
+
         delegate: Item
         {
             width: view.itemWidth
-            height: view.height + Theme.paddingLarge + 50
+            height: view.height
             Image
             {
                 id: img
                 source: imagesource
-                width: parent.width - Theme.paddingLarge
+                width: 540 - Theme.paddingLarge
                 height: view.height
                 anchors.top: parent.top
                 anchors.horizontalCenter: parent.horizontalCenter
                 fillMode: Image.PreserveAspectFit
             }
-            Text
-            {
-                anchors.top: img.bottom
-                anchors.topMargin: Theme.paddingLarge
-                anchors.horizontalCenter: parent.horizontalCenter
-                text: layoutname
-                color: Theme.primaryColor
-                font.pixelSize: Theme.fontSizeHuge
-            }
-
 
             MouseArea
             {
@@ -65,9 +56,21 @@ Page
                     fullimageview.anchors.horizontalCenterOffset = 0
                     fullimageview.source = imagesource
                 }
-
             }
         }
+    }
+    Text
+    {
+        id: layoutlabel
+        anchors.top: view.bottom
+        anchors.topMargin: Theme.paddingLarge
+        anchors.horizontalCenter: page.horizontalCenter
+        text: layoutsmodel.count < 5 ? "" : layoutsmodel.get(view.currentIndex).layoutname
+        color: Theme.primaryColor
+        font.pixelSize: Theme.fontSizeLarge
+        opacity: fullimageview.visible ? 0 : 1
+
+        Behavior on opacity { NumberAnimation {} }
     }
 
     Image
