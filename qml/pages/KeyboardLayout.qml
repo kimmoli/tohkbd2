@@ -93,7 +93,8 @@ Page
 
             onDoubleClicked:
             {
-                fullimageview.anchors.horizontalCenterOffset = 0
+                bounceBackAnimation.to = 0
+                bounceBackAnimation.start()
                 fullimageview.height = 284
                 zoomin = false
             }
@@ -122,7 +123,6 @@ Page
         id: bounceBackAnimation
 
         target: fullimageview
-        duration: 250
         property: "anchors.horizontalCenterOffset"
         from: fullimageview.anchors.horizontalCenterOffset
     }
