@@ -10,6 +10,7 @@ Page
     id: page
 
     allowedOrientations: Orientation.Portrait | Orientation.Landscape | Orientation.LandscapeInverted
+    onOrientationChanged: if (zoomin) checkLimits()
 
     backNavigation: !zoomin
 
@@ -60,7 +61,8 @@ Page
                 onClicked:
                 {
                     zoomin = true
-                    fullimageview.width = 960
+                    fullimageview.height = 540
+                    fullimageview.anchors.horizontalCenterOffset = 0
                     fullimageview.source = imagesource
                 }
 
@@ -72,89 +74,71 @@ Page
     {
         id: fullimageview
         anchors.centerIn: parent
-        width: 540
-        height: 540
+        width: 960*(540/284)
+        height: 284
         fillMode: Image.PreserveAspectFit
-        visible: width > 540
-        Behavior on width { NumberAnimation {} }
+        visible: height > 284
+        Behavior on height { NumberAnimation {} }
 
-        PinchArea
+        MouseArea
         {
-            id: pinchArea
-            property real minScale: 1.0
-            property real maxScale: 2.5
+            property real iX
+            property real movementX : 0
 
             anchors.fill: parent
             enabled: zoomin
-            pinch.target: fullimageview
-            pinch.minimumScale: minScale * 0.5 // This is to create "bounce back effect"
-            pinch.maximumScale: maxScale * 1.5 // when over zoomed
 
-
-            onPinchFinished:
+            onDoubleClicked:
             {
-                if (fullimageview.scale < pinchArea.minScale)
-                {
-                    bounceBackAnimation.to = pinchArea.minScale
-                    bounceBackAnimation.start()
-                }
-                else if (fullimageview.scale > pinchArea.maxScale)
-                {
-                    bounceBackAnimation.to = pinchArea.maxScale
-                    bounceBackAnimation.start()
-                }
+                fullimageview.anchors.horizontalCenterOffset = 0
+                fullimageview.height = 284
+                zoomin = false
             }
 
-            NumberAnimation
+            onPressed:
             {
-                id: bounceBackAnimation
-                target: fullimageview
-                duration: 250
-                property: "scale"
-                from: fullimageview.scale
+                iX = mouseX
             }
-
-            MouseArea
+            onPositionChanged:
             {
-                property real iX
-                property real iY
-                property real movementX : 0
-                property real movementY : 0
+                var dX = mouseX - iX
+                iX = mouseX
+                movementX += dX
 
-                anchors.fill: parent
-                enabled: zoomin
-
-                onDoubleClicked:
-                {
-                    fullimageview.scale = 1
-                    fullimageview.anchors.horizontalCenterOffset = 0
-                    fullimageview.anchors.verticalCenterOffset = 0
-                    fullimageview.width = 540
-                    zoomin = false
-                    pinchArea.scale = 1
-                }
-
-                onPressed:
-                {
-                    iX = mouseX
-                    iY = mouseY
-                }
-                onPositionChanged:
-                {
-                    var dX = mouseX - iX
-                    iX = mouseX
-                    movementX += dX
-                    var dY = mouseY - iY
-                    iY = mouseY
-                    movementY += dY
-
-                    fullimageview.anchors.horizontalCenterOffset += movementX
-                    fullimageview.anchors.verticalCenterOffset += movementY
-                }
+                fullimageview.anchors.horizontalCenterOffset += movementX
             }
-
+            onReleased:
+            {
+                checkLimits()
+            }
         }
     }
+
+    NumberAnimation
+    {
+        id: bounceBackAnimation
+
+        target: fullimageview
+        duration: 250
+        property: "anchors.horizontalCenterOffset"
+        from: fullimageview.anchors.horizontalCenterOffset
+    }
+
+    function checkLimits()
+    {
+        var limits = fullimageview.width/2-page.width/2
+        if (fullimageview.anchors.horizontalCenterOffset < -limits)
+        {
+            bounceBackAnimation.to = -limits
+            bounceBackAnimation.start()
+        }
+        if (fullimageview.anchors.horizontalCenterOffset > limits)
+        {
+            bounceBackAnimation.to = limits
+            bounceBackAnimation.start()
+        }
+    }
+
 
     ListModel
     {
@@ -167,8 +151,6 @@ Page
             layoutsmodel.append({"imagesource":"../images/layout_azerty.png", "layoutname":"AZERTY"})
             layoutsmodel.append({"imagesource":"../images/layout_nordic.png", "layoutname":"Nordic"})
             layoutsmodel.append({"imagesource":"../images/layout_cyrillic.png", "layoutname":"Cyrillic"})
-
-            console.log("Theme.fontSizeHuge " + Theme.fontSizeHuge)
         }
     }
 }
