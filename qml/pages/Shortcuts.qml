@@ -98,8 +98,6 @@ Page
                         {
                             left: appIcon.right
                             leftMargin: Theme.paddingLarge
-//                            right: column.right
-//                            rightMargin: Theme.paddingMedium
                             verticalCenter: parent.verticalCenter
                         }
                         color: shortcutItem.highlighted ? Theme.highlightColor : Theme.primaryColor

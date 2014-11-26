@@ -10,7 +10,6 @@ Page
     id: page
 
     allowedOrientations: Orientation.Portrait | Orientation.Landscape | Orientation.LandscapeInverted
-    onOrientationChanged: if (zoomin) checkLimits()
 
     backNavigation: !zoomin
 
@@ -73,75 +72,41 @@ Page
         Behavior on opacity { NumberAnimation {} }
     }
 
-    Image
+    SilicaFlickable
     {
-        id: fullimageview
-        anchors.centerIn: parent
-        width: 960*(540/284)
-        height: 284
-        fillMode: Image.PreserveAspectFit
-        visible: height > 284
-        Behavior on height { NumberAnimation {} }
+        visible: contentHeight > 284
+        height: contentHeight
+        width: parent.width
+
+        anchors.verticalCenter: parent.verticalCenter
+
+        contentHeight: fullimageview.height
+        contentWidth: fullimageview.width
+
+        Image
+        {
+            id: fullimageview
+            anchors.verticalCenter: parent.verticalCenter
+            width: 960*(540/284)
+            height: 284
+            fillMode: Image.PreserveAspectFit
+            visible: height > 284
+            Behavior on height { NumberAnimation {} }
+        }
 
         MouseArea
         {
-            property real iX
-            property real movementX : 0
-
             anchors.fill: parent
             enabled: zoomin
 
-            onDoubleClicked:
+            onClicked:
             {
-                bounceBackAnimation.to = 0
-                bounceBackAnimation.start()
+                console.log("clicked")
                 fullimageview.height = 284
                 zoomin = false
             }
-
-            onPressed:
-            {
-                iX = mouseX
-            }
-            onPositionChanged:
-            {
-                var dX = mouseX - iX
-                iX = mouseX
-                movementX += dX
-
-                fullimageview.anchors.horizontalCenterOffset += movementX
-            }
-            onReleased:
-            {
-                checkLimits()
-            }
         }
     }
-
-    NumberAnimation
-    {
-        id: bounceBackAnimation
-
-        target: fullimageview
-        property: "anchors.horizontalCenterOffset"
-        from: fullimageview.anchors.horizontalCenterOffset
-    }
-
-    function checkLimits()
-    {
-        var limits = fullimageview.width/2-page.width/2
-        if (fullimageview.anchors.horizontalCenterOffset < -limits)
-        {
-            bounceBackAnimation.to = -limits
-            bounceBackAnimation.start()
-        }
-        if (fullimageview.anchors.horizontalCenterOffset > limits)
-        {
-            bounceBackAnimation.to = limits
-            bounceBackAnimation.start()
-        }
-    }
-
 
     ListModel
     {
