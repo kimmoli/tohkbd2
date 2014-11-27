@@ -11,21 +11,51 @@ Page
 
     allowedOrientations: Orientation.Portrait | Orientation.Landscape | Orientation.LandscapeInverted
 
+    backNavigation: false
+
     SilicaFlickable
     {
-        anchors.fill: parent
+        width: 1600
+        height: 500
+        anchors.verticalCenter: parent.verticalCenter
+        contentWidth: 1600
+        contentHeight: 500
 
-        contentHeight: column.height
 
-        Column
+        GridView
         {
-            id: column
+            id: sgv
+            width: 1600
+            height: 500
+            model: 80
 
-            width: page.width
-            spacing: Theme.paddingLarge
-            PageHeader
+            anchors.verticalCenter: parent.verticalCenter
+
+            cellHeight: 100
+            cellWidth: 100
+
+            delegate: Rectangle
             {
-                title: "Customize mappings"
+                width: 100
+                height: 100
+                border.width: 1
+                border.color: "white"
+                color: "transparent"
+
+                Label
+                {
+                    anchors.left: parent.left
+                    anchors.top: parent.top
+                    color: "blue"
+                    text: index
+                }
+                Label
+                {
+                    anchors.left: parent.left
+                    anchors.bottom: parent.bottom
+                    color: "white"
+                    text: index
+                }
             }
         }
     }
