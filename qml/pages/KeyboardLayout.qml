@@ -52,8 +52,9 @@ Page
                 {
                     zoomin = true
                     fullimageview.height = 540
-                    fullimageview.anchors.horizontalCenterOffset = 0
+                    //fullimageview.anchors.horizontalCenterOffset = 0
                     fullimageview.source = imagesource
+                    fullimageviewFlickable.contentX = (fullimageview.width - page.width)/2
                 }
             }
         }
@@ -74,20 +75,20 @@ Page
 
     SilicaFlickable
     {
-        visible: contentHeight > 284
-        height: contentHeight
+        id: fullimageviewFlickable
+        visible: fullimageview.height > 284
+        height: fullimageview.height
         width: parent.width
-
-        anchors.verticalCenter: parent.verticalCenter
 
         contentHeight: fullimageview.height
         contentWidth: fullimageview.width
+        anchors.verticalCenter: parent.verticalCenter
 
         Image
         {
             id: fullimageview
-            anchors.verticalCenter: parent.verticalCenter
-            width: 960*(540/284)
+            //anchors.verticalCenter: parent.verticalCenter
+            width: 1826
             height: 284
             fillMode: Image.PreserveAspectFit
             visible: height > 284
