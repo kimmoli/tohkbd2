@@ -39,5 +39,6 @@ OTHER_FILES += qml/tohkbd2-settingsui.qml \
     qml/images/layout_qwerty.png \
     qml/images/layout_nordic.png \
     qml/images/layout_cyrillic.png \
-    qml/images/layout_azerty.png
+    qml/images/layout_azerty.png \
+    qml/icons/icon-m-keyframe.png
 

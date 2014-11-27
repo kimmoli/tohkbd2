@@ -45,20 +45,27 @@ Page
                 {
                     id: shortcutItem
 
-                    Label
+                    Image
                     {
-                        id: keyName
+                        id: keyFrame
+                        property string sourceFile:"image://tohkbd2/icon-m-keyframe"
+                        source: shortcutItem.highlighted ? sourceFile + "?" + Theme.highlightColor : sourceFile
                         anchors
                         {
                             left: parent.left
                             leftMargin: Theme.paddingMedium
                             verticalCenter: parent.verticalCenter
                         }
-                        width: Theme.itemSizeExtraSmall
-                        font.pixelSize: Theme.fontSizeMedium
-                        font.bold: true
-                        text: key
-                        color: shortcutItem.highlighted ? Theme.highlightColor : Theme.primaryColor
+
+                        Label
+                        {
+                            id: keyName
+                            anchors.centerIn: parent
+                            font.pixelSize: Theme.fontSizeMedium
+                            font.bold: true
+                            text: key
+                            color: shortcutItem.highlighted ? Theme.highlightColor : Theme.primaryColor
+                        }
                     }
 
                     Image
@@ -75,7 +82,7 @@ Page
 
                         anchors
                         {
-                            left: keyName.right
+                            left: keyFrame.right
                             leftMargin: Theme.paddingMedium
                             verticalCenter: parent.verticalCenter
                         }
