@@ -46,6 +46,7 @@ rm -rf %{buildroot}
 %files
 %defattr(644,root,root,755)
 %attr(6711,root,root) %{_bindir}/%{name}
+%{_datadir}/%{name}/
 %{_datadir}/%{name}/i18n/
 %{_sysconfdir}/systemd/user/
 %{_sysconfdir}/udev/rules.d/

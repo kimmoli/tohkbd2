@@ -782,7 +782,7 @@ void Tohkbd::setSettingInt(const QString &key, const int &value)
 void Tohkbd::showNotification(QString text)
 {
     MNotification notification(MNotification::DeviceEvent, "", text);
-    notification.setImage("icon-m-keyboard");
+    notification.setImage("/usr/share/harbour-tohkbd2/icon-system-keyboard.png");
     notification.publish();
 }
 

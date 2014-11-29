@@ -35,7 +35,10 @@ vkblayout.files = config/layouts/$${TARGET}.conf config/layouts/$${TARGET}.qml
 translations.path = /usr/share/$${TARGET}/i18n
 translations.files = i18n/translations_*.qm
 
-INSTALLS += target systemd udevrule dbusconf ambience images vkblayout translations
+icons.path = /usr/share/$${TARGET}
+icons.files = config/icon-system-keyboard.png
+
+INSTALLS += target systemd udevrule dbusconf ambience images vkblayout translations icons
 
 message($${DEFINES})
 
@@ -67,7 +70,8 @@ OTHER_FILES += \
     config/$${TARGET}.conf \
     config/layouts/$${TARGET}.conf \
     config/layouts/$${TARGET}.qml \
-    config/com.kimmoli.tohkbd2.xml
+    config/com.kimmoli.tohkbd2.xml \
+    config/icon-system-keyboard.png
 
 TRANSLATIONS += i18n/translations_fi.ts \
                 i18n/translations_en.ts
