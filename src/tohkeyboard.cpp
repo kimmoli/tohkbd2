@@ -34,7 +34,6 @@ Tohkbd::Tohkbd(QObject *parent) :
     dbusRegistered = false;
     interruptsEnabled = false;
     vddEnabled = false;
-    stickyCtrl = false;
     capsLockSeq = 0;
     vkbLayoutIsTohkbd = false;
     currentActiveLayout = QString();
@@ -69,8 +68,6 @@ Tohkbd::Tohkbd(QObject *parent) :
     repeatTimer->setSingleShot(true);
     connect(repeatTimer, SIGNAL(timeout()), this, SLOT(repeatTimerTimeout()));
 
-    reloadSettings();
-
     /* do this automatically at startup */
     setVddState(true);
     setInterruptEnable(true);
@@ -80,6 +77,8 @@ Tohkbd::Tohkbd(QObject *parent) :
 
     tca8424 = new tca8424driver(0x3b);
     keymap = new keymapping();
+
+    reloadSettings();
 
     if (currentActiveLayout.isEmpty())
         changeActiveLayout(true);
@@ -280,7 +279,7 @@ bool Tohkbd::checkKeypadPresence()
         if (!keypadIsPresent)
         {
             showNotification(tr("Keyboard connected"));
-            tca8424->setLeds((stickyCtrl ? LED_SYMLOCK_ON : LED_SYMLOCK_OFF) | ((capsLockSeq == 3) ? LED_CAPSLOCK_ON : LED_CAPSLOCK_OFF));
+            tca8424->setLeds((keymap->ctrlPressed ? LED_SYMLOCK_ON : LED_SYMLOCK_OFF) | ((capsLockSeq == 3) ? LED_CAPSLOCK_ON : LED_CAPSLOCK_OFF));
             presenceTimer->start();
         }
 
@@ -357,7 +356,7 @@ void Tohkbd::handleKeyPressed(QList< QPair<int, int> > keyCode)
     if (keymap->symPressed && keyCode.at(0).first == KEY_UP)
     {
         uinputif->sendUinputKeyPress(KEY_VOLUMEUP, 1);
-        QThread::msleep(25);
+        QThread::msleep(KEYREPEAT_RATE);
         uinputif->sendUinputKeyPress(KEY_VOLUMEUP, 0);
         processAllKeys = false;
     }
@@ -365,7 +364,7 @@ void Tohkbd::handleKeyPressed(QList< QPair<int, int> > keyCode)
     if (keymap->symPressed && keyCode.at(0).first == KEY_DOWN)
     {
         uinputif->sendUinputKeyPress(KEY_VOLUMEDOWN, 1);
-        QThread::msleep(25);
+        QThread::msleep(KEYREPEAT_RATE);
         uinputif->sendUinputKeyPress(KEY_VOLUMEDOWN, 0);
         processAllKeys = false;
     }
@@ -383,12 +382,16 @@ void Tohkbd::handleKeyPressed(QList< QPair<int, int> > keyCode)
                 uinputif->sendUinputKeyPress(KEY_LEFTSHIFT, 1);
             if ((keyCode.at(i).second & FORCE_ALT) || keymap->altPressed)
                 uinputif->sendUinputKeyPress(KEY_LEFTALT, 1);
+            if ((keyCode.at(i).second & FORCE_CTRL) || keymap->ctrlPressed)
+                uinputif->sendUinputKeyPress(KEY_LEFTCTRL, 1);
 
             /* Mimic key pressing */
             uinputif->sendUinputKeyPress(keyCode.at(i).first, 1);
-            QThread::msleep(25);
+            QThread::msleep(KEYREPEAT_RATE);
             uinputif->sendUinputKeyPress(keyCode.at(i).first, 0);
 
+            if ((keyCode.at(i).second & FORCE_CTRL) || keymap->ctrlPressed)
+                uinputif->sendUinputKeyPress(KEY_LEFTCTRL, 0);
             if ((keyCode.at(i).second & FORCE_ALT) || keymap->altPressed)
                 uinputif->sendUinputKeyPress(KEY_LEFTALT, 0);
             if ((keyCode.at(i).second & FORCE_SHIFT) || keymap->shiftPressed)
@@ -401,14 +404,6 @@ void Tohkbd::handleKeyPressed(QList< QPair<int, int> > keyCode)
     }
 
     uinputif->synUinputDevice();
-
-    if (stickyCtrl)
-    {
-        uinputif->sendUinputKeyPress(KEY_LEFTCTRL, 0);
-        stickyCtrl = false;
-        tca8424->setLeds(LED_SYMLOCK_OFF); /* TODO: Fix correct led when such is in HW */
-        printf("Ctrl released automatically\n");
-    }
 
     /* store keycode for repeat */
     lastKeyCode = keyCode;
@@ -431,6 +426,10 @@ void Tohkbd::repeatTimerTimeout()
 void Tohkbd::handleKeyReleased()
 {
     repeatTimer->stop();
+
+    if (keyIsPressed)
+        keymap->releaseStickyModifiers();
+
     keyIsPressed = false;
 }
 
@@ -467,11 +466,9 @@ void Tohkbd::handleCtrlChanged()
     if ((capsLockSeq == 1 || capsLockSeq == 2)) /* Abort caps-lock if other key pressed */
         capsLockSeq = 0;
 
-    if (keymap->ctrlPressed)
+    if (keymap->stickyCtrlEnabled)
     {
-        stickyCtrl = !stickyCtrl;
-        uinputif->sendUinputKeyPress(KEY_LEFTCTRL, stickyCtrl ? 1 : 0);
-        tca8424->setLeds(stickyCtrl ? LED_SYMLOCK_ON : LED_SYMLOCK_OFF); /* TODO: Fix correct led when such is in HW */
+        tca8424->setLeds(keymap->ctrlPressed ? LED_SYMLOCK_ON : LED_SYMLOCK_OFF); /* TODO: Fix correct led when such is in HW */
     }
 }
 
@@ -672,6 +669,9 @@ void Tohkbd::reloadSettings()
     backlightEnabled = settings.value("backlightEnabled", BACKLIGHT_ENABLED).toBool();
     keyRepeatDelay = settings.value("keyRepeatDelay", KEYREPEAT_DELAY).toInt();
     keyRepeatRate = settings.value("keyRepeatRate", KEYREPEAT_RATE).toInt();
+    keymap->stickyCtrlEnabled = settings.value("stickyCtrlEnabled", STICKY_CTRL_ENABLED).toBool();
+    keymap->stickyAltEnabled = settings.value("stickyAltEnabled", STICKY_ALT_ENABLED).toBool();
+    keymap->stickySymEnabled = settings.value("stickySymEnabled", STICKY_SYM_ENABLED).toBool();
     settings.endGroup();
 }
 

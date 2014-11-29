@@ -10,6 +10,7 @@
 #define FORCE_RIGHTALT (4)
 #define FORCE_COMPOSE  (8)
 #define KEEP           (0x10)
+#define FORCE_CTRL     (0x20)
 
 class keymapping : public QObject
 {
@@ -19,10 +20,16 @@ public:
 
     void process(QByteArray inputReport);
 
+    void releaseStickyModifiers();
+
     bool shiftPressed;
     bool ctrlPressed;
     bool altPressed;
     bool symPressed;
+
+    bool stickyCtrlEnabled;
+    bool stickyAltEnabled;
+    bool stickySymEnabled;
 
 signals:
     void shiftChanged();

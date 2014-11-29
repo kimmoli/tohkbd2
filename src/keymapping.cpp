@@ -9,6 +9,10 @@ keymapping::keymapping(QObject *parent) :
     ctrlPressed = false;
     altPressed = false;
     symPressed = false;
+
+    stickyCtrlEnabled = false;
+    stickyAltEnabled = false;
+    stickySymEnabled = false;
 }
 
 /* REV 2 Keyboard mapping
@@ -126,19 +130,35 @@ void keymapping::process(QByteArray inputReport)
         emit shiftChanged();
     }
 
-    if (__ctrlPressed != ctrlPressed)
+    /* Toggle ctrl when only ctrl is pressed */
+    if (stickyCtrlEnabled && __ctrlPressed && retKey.empty())
+    {
+        ctrlPressed = !ctrlPressed;
+        emit ctrlChanged();
+    }
+    else if (!stickyCtrlEnabled && (__ctrlPressed != ctrlPressed))
     {
         ctrlPressed = __ctrlPressed;
         emit ctrlChanged();
     }
 
-    if (__altPressed != altPressed)
+    if (stickyAltEnabled && __altPressed)
+    {
+        altPressed = !altPressed;
+        emit altChanged();
+    }
+    else if (__altPressed != altPressed)
     {
         altPressed = __altPressed;
         emit altChanged();
     }
 
-    if (__symPressed != symPressed)
+    if (stickySymEnabled && __symPressed)
+    {
+        symPressed = !symPressed;
+        emit symChanged();
+    }
+    else if (__symPressed != symPressed)
     {
         symPressed = __symPressed;
         emit symChanged();
@@ -148,4 +168,23 @@ void keymapping::process(QByteArray inputReport)
         emit keyPressed(retKey);
     else
         emit keyReleased();
+}
+
+void keymapping::releaseStickyModifiers()
+{
+    if (ctrlPressed)
+    {
+        ctrlPressed = false;
+        emit ctrlChanged();
+    }
+    if (altPressed)
+    {
+        altPressed = false;
+        emit altChanged();
+    }
+    if (symPressed)
+    {
+        symPressed = false;
+        emit symChanged();
+    }
 }

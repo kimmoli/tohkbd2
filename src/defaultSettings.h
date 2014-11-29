@@ -20,5 +20,8 @@
 #define KEYREPEAT_DELAY 250
 #define KEYREPEAT_RATE 25
 
+#define STICKY_CTRL_ENABLED true
+#define STICKY_ALT_ENABLED false
+#define STICKY_SYM_ENABLED false
 
 #endif // DEFAULTSSETTINGS_H
