@@ -32,6 +32,14 @@ Page
             {
                 text: "Backlight"
             }
+            TextSwitch
+            {
+                text: "Enabled"
+                description: "Automatic backlight enable or always off"
+                onCheckedChanged: settingsui.setSettingInt("backlightEnabled", checked ? 1 : 0)
+                width: parent.width - 2*Theme.paddingLarge
+                Component.onCompleted: checked = settings["backlightEnabled"]
+            }
             Slider
             {
                 width: parent.width - 2*Theme.paddingLarge

@@ -91,6 +91,7 @@ QVariantMap SettingsUi::getCurrentSettings()
     map.insert("backlightLuxThreshold", settings.value("backlightLuxThreshold", 5).toInt());
     map.insert("keyRepeatDelay", settings.value("keyRepeatDelay", 250).toInt());
     map.insert("keyRepeatRate", settings.value("keyRepeatRate", 25).toInt());
+    map.insert("backlightEnabled", settings.value("backlightEnabled", true).toBool());
 
     settings.endGroup();
 
