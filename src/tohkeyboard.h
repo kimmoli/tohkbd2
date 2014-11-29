@@ -119,6 +119,7 @@ private:
     bool vddEnabled;
     bool interruptsEnabled;
     bool keyIsPressed;
+    bool backlightEnabled;
 
 };
 

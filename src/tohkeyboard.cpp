@@ -533,19 +533,22 @@ QList<unsigned int> Tohkbd::readEepromConfig()
  */
 void Tohkbd::checkDoWeNeedBacklight()
 {
-    if (!backlightTimer->isActive())
+    if (backlightEnabled)
     {
-        if (readOneLineFromFile("/sys/devices/virtual/input/input11/als_lux").toInt() < backlightLuxThreshold)
+        if (!backlightTimer->isActive())
         {
-            printf("backlight on\n");
+            if (readOneLineFromFile("/sys/devices/virtual/input/input11/als_lux").toInt() < backlightLuxThreshold)
+            {
+                printf("backlight on\n");
 
-            tca8424->setLeds(LED_BACKLIGHT_ON);
+                tca8424->setLeds(LED_BACKLIGHT_ON);
+                backlightTimer->start();
+            }
+        }
+        else
+        {
             backlightTimer->start();
         }
-    }
-    else
-    {
-        backlightTimer->start();
     }
 }
 
@@ -666,6 +669,7 @@ void Tohkbd::reloadSettings()
     settings.beginGroup("generalsettings");
     backlightTimer->setInterval(settings.value("backlightTimeout", BACKLIGHT_TIMEOUT).toInt());
     backlightLuxThreshold = settings.value("backlightLuxThreshold", BACKLIGHT_LUXTHRESHOLD).toInt();
+    backlightEnabled = settings.value("backlightEnabled", BACKLIGHT_ENABLED).toBool();
     keyRepeatDelay = settings.value("keyRepeatDelay", KEYREPEAT_DELAY).toInt();
     keyRepeatRate = settings.value("keyRepeatRate", KEYREPEAT_RATE).toInt();
     settings.endGroup();
@@ -762,6 +766,13 @@ void Tohkbd::setSettingInt(const QString &key, const int &value)
         keyRepeatRate = value;
         settings.beginGroup("generalsettings");
         settings.setValue("keyRepeatRate", value);
+        settings.endGroup();
+    }
+    else if (key == "backlightEnabled" && (value == 0 || value == 1))
+    {
+        backlightEnabled = (value == 1);
+        settings.beginGroup("generalsettings");
+        settings.setValue("backlightEnabled", (value == 1));
         settings.endGroup();
     }
 }
