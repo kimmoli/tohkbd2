@@ -319,6 +319,8 @@ void Tohkbd::handleGpioInterrupt()
  */
 void Tohkbd::handleKeyPressed(QList< QPair<int, int> > keyCode)
 {
+    bool processAllKeys = true;
+
     presenceTimer->start();
 
     if (!displayIsOn)
@@ -352,33 +354,50 @@ void Tohkbd::handleKeyPressed(QList< QPair<int, int> > keyCode)
         }
     }
 
-    for (int i=0; i<keyCode.count(); i++)
+    if (keymap->symPressed && keyCode.at(0).first == KEY_UP)
     {
-        /* Some of the keys require shift pressed to get correct symbol */
-        if (keyCode.at(i).second & FORCE_COMPOSE)
-            uinputif->sendUinputKeyPress(KEY_COMPOSE, 1);
-        if ((keyCode.at(i).second & FORCE_RIGHTALT) || keymap->symPressed)
-            uinputif->sendUinputKeyPress(KEY_RIGHTALT, 1);
-        if ((keyCode.at(i).second & FORCE_SHIFT) || keymap->shiftPressed)
-            uinputif->sendUinputKeyPress(KEY_LEFTSHIFT, 1);
-        if ((keyCode.at(i).second & FORCE_ALT) || keymap->altPressed)
-            uinputif->sendUinputKeyPress(KEY_LEFTALT, 1);
-
-        /* Mimic key pressing */
-        uinputif->sendUinputKeyPress(keyCode.at(i).first, 1);
-
+        uinputif->sendUinputKeyPress(KEY_VOLUMEUP, 1);
         QThread::msleep(25);
+        uinputif->sendUinputKeyPress(KEY_VOLUMEUP, 0);
+        processAllKeys = false;
+    }
 
-        uinputif->sendUinputKeyPress(keyCode.at(i).first, 0);
+    if (keymap->symPressed && keyCode.at(0).first == KEY_DOWN)
+    {
+        uinputif->sendUinputKeyPress(KEY_VOLUMEDOWN, 1);
+        QThread::msleep(25);
+        uinputif->sendUinputKeyPress(KEY_VOLUMEDOWN, 0);
+        processAllKeys = false;
+    }
 
-        if ((keyCode.at(i).second & FORCE_ALT) || keymap->altPressed)
-            uinputif->sendUinputKeyPress(KEY_LEFTALT, 0);
-        if ((keyCode.at(i).second & FORCE_SHIFT) || keymap->shiftPressed)
-            uinputif->sendUinputKeyPress(KEY_LEFTSHIFT, 0);
-        if ((keyCode.at(i).second & FORCE_RIGHTALT) || keymap->symPressed)
-            uinputif->sendUinputKeyPress(KEY_RIGHTALT, 0);
-        if (keyCode.at(i).second & FORCE_COMPOSE)
-            uinputif->sendUinputKeyPress(KEY_COMPOSE, 0);
+    if (processAllKeys)
+    {
+        for (int i=0; i<keyCode.count(); i++)
+        {
+            /* Some of the keys require shift pressed to get correct symbol */
+            if (keyCode.at(i).second & FORCE_COMPOSE)
+                uinputif->sendUinputKeyPress(KEY_COMPOSE, 1);
+            if ((keyCode.at(i).second & FORCE_RIGHTALT) || keymap->symPressed)
+                uinputif->sendUinputKeyPress(KEY_RIGHTALT, 1);
+            if ((keyCode.at(i).second & FORCE_SHIFT) || keymap->shiftPressed)
+                uinputif->sendUinputKeyPress(KEY_LEFTSHIFT, 1);
+            if ((keyCode.at(i).second & FORCE_ALT) || keymap->altPressed)
+                uinputif->sendUinputKeyPress(KEY_LEFTALT, 1);
+
+            /* Mimic key pressing */
+            uinputif->sendUinputKeyPress(keyCode.at(i).first, 1);
+            QThread::msleep(25);
+            uinputif->sendUinputKeyPress(keyCode.at(i).first, 0);
+
+            if ((keyCode.at(i).second & FORCE_ALT) || keymap->altPressed)
+                uinputif->sendUinputKeyPress(KEY_LEFTALT, 0);
+            if ((keyCode.at(i).second & FORCE_SHIFT) || keymap->shiftPressed)
+                uinputif->sendUinputKeyPress(KEY_LEFTSHIFT, 0);
+            if ((keyCode.at(i).second & FORCE_RIGHTALT) || keymap->symPressed)
+                uinputif->sendUinputKeyPress(KEY_RIGHTALT, 0);
+            if (keyCode.at(i).second & FORCE_COMPOSE)
+                uinputif->sendUinputKeyPress(KEY_COMPOSE, 0);
+        }
     }
 
     uinputif->synUinputDevice();
