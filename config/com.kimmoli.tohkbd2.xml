@@ -12,6 +12,7 @@
             <arg name="key" type="s" direction="in" />
             <arg name="appPath" type="s" direction="in" />
         </method>
+        <method name="setShortcutsToDefault" />
         <method name="setSettingInt">
             <arg name="key" type="s" direction="in" />
             <arg name="value" type="i" direction="in" />

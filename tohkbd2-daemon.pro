@@ -58,7 +58,8 @@ HEADERS += \
     src/driverBase.h \
     src/tca8424driver.h \
     src/keymapping.h \
-    src/adaptor.h
+    src/adaptor.h \
+    src/defaultSettings.h
 
 OTHER_FILES += \
     rpm/$${TARGET}.spec \

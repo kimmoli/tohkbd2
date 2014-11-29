@@ -18,6 +18,7 @@
 #include "tohkeyboard.h"
 #include "toh.h"
 #include "uinputif.h"
+#include "defaultSettings.h"
 
 #include <mlite5/MNotification>
 #include <mlite5/MDesktopEntry>
@@ -394,7 +395,7 @@ void Tohkbd::handleKeyPressed(QList< QPair<int, int> > keyCode)
     lastKeyCode = keyCode;
 
     /* Repeat delay first, then repeat rate */
-    repeatTimer->start(keyIsPressed ? (keyRepeatRate-24) : keyRepeatDelay);
+    repeatTimer->start(keyIsPressed ? (keyRepeatRate-(KEYREPEAT_RATE-1)) : keyRepeatDelay);
     keyIsPressed = true;
 }
 
@@ -622,18 +623,18 @@ void Tohkbd::reloadSettings()
     /* These are the default values */
     if (applicationShortcuts.isEmpty())
     {
-        applicationShortcuts[KEY_1] = "/usr/share/applications/sailfish-browser.desktop";
-        applicationShortcuts[KEY_2] = "/usr/share/applications/fingerterm.desktop";
-        applicationShortcuts[KEY_3] = "/usr/share/applications/voicecall-ui.desktop";
-        applicationShortcuts[KEY_4] = "/usr/share/applications/sailfish-maps.desktop";
-        applicationShortcuts[KEY_5] = "/usr/share/applications/jolla-camera.desktop";
-        applicationShortcuts[KEY_6] = "/usr/share/applications/jolla-gallery.desktop";
-        applicationShortcuts[KEY_7] = "/usr/share/applications/jolla-clock.desktop";
-        applicationShortcuts[KEY_8] = "/usr/share/applications/jolla-email.desktop";
-        applicationShortcuts[KEY_9] = "/usr/share/applications/jolla-mediaplayer.desktop";
-        applicationShortcuts[KEY_0] = "/usr/share/applications/jolla-settings.desktop";
-        applicationShortcuts[KEY_MINUS] = "/usr/share/applications/jolla-calculator.desktop";
-        applicationShortcuts[KEY_EQUAL] = "/usr/share/applications/jolla-messages.desktop";
+        applicationShortcuts[KEY_1] = SHORTCUT_KEY_F1;
+        applicationShortcuts[KEY_2] = SHORTCUT_KEY_F2;
+        applicationShortcuts[KEY_3] = SHORTCUT_KEY_F3;
+        applicationShortcuts[KEY_4] = SHORTCUT_KEY_F4;
+        applicationShortcuts[KEY_5] = SHORTCUT_KEY_F5;
+        applicationShortcuts[KEY_6] = SHORTCUT_KEY_F6;
+        applicationShortcuts[KEY_7] = SHORTCUT_KEY_F7;
+        applicationShortcuts[KEY_8] = SHORTCUT_KEY_F8;
+        applicationShortcuts[KEY_9] = SHORTCUT_KEY_F9;
+        applicationShortcuts[KEY_0] = SHORTCUT_KEY_F10;
+        applicationShortcuts[KEY_MINUS] = SHORTCUT_KEY_F11;
+        applicationShortcuts[KEY_EQUAL] = SHORTCUT_KEY_F12;
     }
 
     for (int i = KEY_1 ; i<=KEY_EQUAL ; i++)
@@ -644,10 +645,10 @@ void Tohkbd::reloadSettings()
     settings.endGroup();
 
     settings.beginGroup("generalsettings");
-    backlightTimer->setInterval(settings.value("backlightTimeout", 2000).toInt());
-    backlightLuxThreshold = settings.value("backlightLuxThreshold", 5).toInt();
-    keyRepeatDelay = settings.value("keyRepeatDelay", 250).toInt();
-    keyRepeatRate = settings.value("keyRepeatRate", 25).toInt();
+    backlightTimer->setInterval(settings.value("backlightTimeout", BACKLIGHT_TIMEOUT).toInt());
+    backlightLuxThreshold = settings.value("backlightLuxThreshold", BACKLIGHT_LUXTHRESHOLD).toInt();
+    keyRepeatDelay = settings.value("keyRepeatDelay", KEYREPEAT_DELAY).toInt();
+    keyRepeatRate = settings.value("keyRepeatRate", KEYREPEAT_RATE).toInt();
     settings.endGroup();
 }
 
@@ -681,6 +682,33 @@ void Tohkbd::setShortcut(const QString &key, const QString &appPath)
 
         settings.endGroup();
     }
+}
+
+/* Restore all shortcuts to default values
+ */
+void Tohkbd::setShortcutsToDefault()
+{
+    QSettings settings(QSettings::SystemScope, "harbour-tohkbd2", "tohkbd2");
+    settings.beginGroup("applicationshortcuts");
+
+    applicationShortcuts[KEY_1] = SHORTCUT_KEY_F1;
+    applicationShortcuts[KEY_2] = SHORTCUT_KEY_F2;
+    applicationShortcuts[KEY_3] = SHORTCUT_KEY_F3;
+    applicationShortcuts[KEY_4] = SHORTCUT_KEY_F4;
+    applicationShortcuts[KEY_5] = SHORTCUT_KEY_F5;
+    applicationShortcuts[KEY_6] = SHORTCUT_KEY_F6;
+    applicationShortcuts[KEY_7] = SHORTCUT_KEY_F7;
+    applicationShortcuts[KEY_8] = SHORTCUT_KEY_F8;
+    applicationShortcuts[KEY_9] = SHORTCUT_KEY_F9;
+    applicationShortcuts[KEY_0] = SHORTCUT_KEY_F10;
+    applicationShortcuts[KEY_MINUS] = SHORTCUT_KEY_F11;
+    applicationShortcuts[KEY_EQUAL] = SHORTCUT_KEY_F12;
+
+    for (int i = KEY_1 ; i<=KEY_EQUAL ; i++)
+    {
+        settings.setValue(QString("KEY_F%1").arg((i-KEY_1)+1), applicationShortcuts[i]);
+    }
+    settings.endGroup();
 }
 
 /* Set integer setting and save it to settings

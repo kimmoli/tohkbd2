@@ -67,6 +67,7 @@ public slots:
     QString getVersion();
     Q_NOREPLY void quit();
     Q_NOREPLY void setShortcut(const QString &key, const QString &appPath);
+    Q_NOREPLY void setShortcutsToDefault();
     Q_NOREPLY void setSettingInt(const QString &key, const int &value);
 
 signals:
