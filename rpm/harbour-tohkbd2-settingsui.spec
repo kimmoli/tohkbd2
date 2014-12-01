@@ -2,7 +2,7 @@
 # spec file for tohkbd2-settingsui, The Otherhalf Keyboard 2 settings UI
 # 
 
-Name:       tohkbd2-settingsui
+Name:       harbour-tohkbd2-settingsui
 
 %{!?qtc_qmake:%define qtc_qmake %qmake}
 %{!?qtc_qmake5:%define qtc_qmake5 %qmake5}
@@ -52,7 +52,7 @@ desktop-file-install --delete-original       \
 %{_datadir}/applications/%{name}.desktop
 %{_datadir}/icons/hicolor/86x86/apps/%{name}.png
 /usr/bin
-/usr/share/tohkbd2-settingsui
+/usr/share/%{name}
 /usr/share/applications
 /usr/share/icons/hicolor/86x86/apps
 

@@ -24,7 +24,7 @@ Page
                                           { "version": settingsui.version,
                                               "year": "2014",
                                               "name": "TOHKBD2 Settings",
-                                              "imagelocation": "/usr/share/icons/hicolor/86x86/apps/tohkbd2-settingsui.png"} )
+                                              "imagelocation": "/usr/share/icons/hicolor/86x86/apps/harbour-tohkbd2-settingsui.png"} )
             }
         }
 
