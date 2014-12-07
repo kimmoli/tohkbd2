@@ -24,7 +24,8 @@ BuildRequires:  pkgconfig(mlite5)
 BuildRequires:  qt5-qttools-linguist
 
 Requires:   ambienced
-Requires:   harbour-tohkbd2user
+Requires:   harbour-tohkbd2-user
+Requires:   harbour-tohkbd2-settingsui
 
 %description
 Daemon for The OtherHalf Keyboard (TOHKBD) version 2
