@@ -1,4 +1,4 @@
-TARGET = harbour-tohkbd2user
+TARGET = harbour-tohkbd2-user
 
 CONFIG += link_pkgconfig
 PKGCONFIG += mlite5

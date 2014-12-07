@@ -19,7 +19,7 @@ int main(int argc, char **argv)
     setlinebuf(stdout);
     setlinebuf(stderr);
 
-    printf("tohkbd2user: starting daemon version %s\n", APPVERSION);
+    printf("tohkbd2-user: starting daemon version %s\n", APPVERSION);
 
     ReaderWriter rw;
     new Tohkbd2userAdaptor(&rw);
