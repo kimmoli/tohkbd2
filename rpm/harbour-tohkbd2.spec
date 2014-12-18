@@ -46,10 +46,10 @@ rm -rf %{buildroot}
 
 %files
 %defattr(644,root,root,755)
-%attr(6711,root,root) %{_bindir}/%{name}
+%{_bindir}/%{name}
 %{_datadir}/%{name}/
 %{_datadir}/%{name}/i18n/
-%{_sysconfdir}/systemd/user/
+%{_sysconfdir}/systemd/system/
 %{_sysconfdir}/udev/rules.d/
 %{_sysconfdir}/dbus-1/system.d/
 %{_datadir}/maliit/plugins/com/jolla/layouts/
@@ -64,7 +64,7 @@ udevadm control --reload
 if [ -e /sys/devices/platform/toh-core.0/vendor ]; then
  if grep -q 6537 /sys/devices/platform/toh-core.0/vendor ; then
   if grep -q 3 /sys/devices/platform/toh-core.0/product ; then
-   systemctl-user start %{name}.service
+   systemctl start %{name}.service
   fi
  fi
 fi
@@ -73,15 +73,15 @@ fi
 %pre
 # In case of update, stop and disable first
 if [ "$1" = "2" ]; then
-  systemctl-user stop %{name}.service
-  systemctl-user disable %{name}.service
+  systemctl stop %{name}.service
+  systemctl disable %{name}.service
   udevadm control --reload
 fi
 
 %preun
 # in case of complete removal, stop and disable
 if [ "$1" = "0" ]; then
-  systemctl-user stop %{name}.service
-  systemctl-user disable %{name}.service
+  systemctl stop %{name}.service
+  systemctl disable %{name}.service
   udevadm control --reload
 fi

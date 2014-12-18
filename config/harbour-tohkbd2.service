@@ -7,6 +7,7 @@ After=tohd.service
 ExecStart=/usr/bin/harbour-tohkbd2
 Restart=always
 RestartSec=5
+Environment=DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/100000/dbus/user_bus_socket XDG_RUNTIME_DIR=/run/user/100000
 
 [Install]
 WantedBy=multi-user.target

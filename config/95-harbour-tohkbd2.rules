@@ -1,5 +1,5 @@
 # TOHKBD2 udev rules. Start daemon on insert, stop on remove
 # TOH_VID = 0x1989, TOH_PID = 0x0003
 #
-KERNEL=="toh-core.0", ATTR{vendor}=="6537", ATTR{product}=="3", ACTION=="add", RUN+="/bin/su -l nemo -c '/bin/systemctl --user start harbour-tohkbd2'"
-KERNEL=="toh-core.0", ACTION=="remove", RUN+="/bin/su -l nemo -c '/bin/systemctl --user stop harbour-tohkbd2'"
+KERNEL=="toh-core.0", ATTR{vendor}=="6537", ATTR{product}=="3", ACTION=="add", RUN+="/bin/systemctl start harbour-tohkbd2"
+KERNEL=="toh-core.0", ACTION=="remove", RUN+="/bin/systemctl stop harbour-tohkbd2"
