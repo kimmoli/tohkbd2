@@ -23,12 +23,6 @@ udevrule.files = config/95-$${TARGET}.rules
 dbusconf.path = /etc/dbus-1/system.d/
 dbusconf.files = config/$${TARGET}.conf
 
-ambience.path = /usr/share/ambience/$${TARGET}
-ambience.files = ambience/$${TARGET}.ambience
-
-images.path = $${ambience.path}/images
-images.files = ambience/images/*
-
 vkblayout.path = /usr/share/maliit/plugins/com/jolla/layouts/
 vkblayout.files = config/layouts/$${TARGET}.conf config/layouts/$${TARGET}.qml
 
@@ -38,7 +32,7 @@ translations.files = i18n/translations_*.qm
 icons.path = /usr/share/$${TARGET}
 icons.files = config/icon-system-keyboard.png
 
-INSTALLS += target systemd udevrule dbusconf ambience images vkblayout translations icons
+INSTALLS += target systemd udevrule dbusconf vkblayout translations icons
 
 message($${DEFINES})
 

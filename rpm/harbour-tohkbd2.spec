@@ -23,7 +23,6 @@ BuildRequires:  pkgconfig(Qt5DBus)
 BuildRequires:  pkgconfig(mlite5)
 BuildRequires:  qt5-qttools-linguist
 
-Requires:   ambienced
 Requires:   harbour-tohkbd2-user
 Requires:   harbour-tohkbd2-settingsui
 
@@ -68,7 +67,6 @@ if [ -e /sys/devices/platform/toh-core.0/vendor ]; then
   fi
  fi
 fi
-%_ambience_post
 
 %pre
 # In case of update, stop and disable first
