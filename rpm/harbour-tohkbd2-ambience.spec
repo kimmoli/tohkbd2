@@ -16,7 +16,7 @@ BuildRequires:  qt5-qttools
 BuildRequires:  qt5-qmake
 
 Requires:   ambienced
-Requires:   
+Requires:   harbour-tohkbd2
 
 %description
 Ambience for TOHKBD2 OtherHalf Keyboard
