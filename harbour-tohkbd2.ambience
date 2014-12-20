@@ -1,0 +1,11 @@
+{
+    "displayName"               : "TOHKBD",
+    "wallpaper"                 : "tohkbd2-ambience.jpg",
+    "highlightColor"            : "#FFFF00",
+    "secondaryHighlightColor"   : "#FFFF00BB",
+    "primaryColor"              : "#FFFFFF",
+    "secondaryColor"            : "#FFFFFF99",
+    "ringerVolume"              : 100,
+    "favorite"			: true
+}
+
