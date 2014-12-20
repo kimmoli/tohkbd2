@@ -45,7 +45,7 @@ rm -rf %{buildroot}
 
 %files
 %defattr(644,root,root,755)
-%{_bindir}/%{name}
+%attr(755,root,root) %{_bindir}/%{name}
 %{_datadir}/%{name}/
 %{_datadir}/%{name}/i18n/
 %{_sysconfdir}/systemd/system/
