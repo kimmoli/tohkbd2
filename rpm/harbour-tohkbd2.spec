@@ -52,7 +52,6 @@ rm -rf %{buildroot}
 %{_sysconfdir}/udev/rules.d/
 %{_sysconfdir}/dbus-1/system.d/
 %{_datadir}/maliit/plugins/com/jolla/layouts/
-%{_datadir}/ambience/%{name}/
 
 %post
 #reload udev rules
