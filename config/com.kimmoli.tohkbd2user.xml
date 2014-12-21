@@ -7,6 +7,12 @@
         <method name="setActiveLayout">
             <arg name="value" type="s" direction="in" />
         </method>
+        <method name="launchApplication">
+            <arg name="desktopFilename" type="s" direction="in" />
+        </method>
+        <method name="showKeyboardConnectionNotification">
+            <arg name="connected" type="b" direction="in" />
+        </method>
         <method name="quit" />
     </interface>
 </node>

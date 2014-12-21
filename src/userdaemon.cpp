@@ -1,16 +1,16 @@
 #include <stdio.h>
-#include "readerwriter.h"
+#include "userdaemon.h"
 
 static const char *SERVICE = SERVICE_NAME;
 static const char *PATH = "/";
 
-ReaderWriter::ReaderWriter(QObject *parent) :
+UserDaemon::UserDaemon(QObject *parent) :
     QObject(parent)
 {
     m_dbusRegistered = false;
 }
 
-ReaderWriter::~ReaderWriter()
+UserDaemon::~UserDaemon()
 {
     if (m_dbusRegistered)
     {
@@ -22,7 +22,7 @@ ReaderWriter::~ReaderWriter()
     }
 }
 
-void ReaderWriter::registerDBus()
+void UserDaemon::registerDBus()
 {
     if (!m_dbusRegistered)
     {
@@ -45,13 +45,13 @@ void ReaderWriter::registerDBus()
     }
 }
 
-void ReaderWriter::quit()
+void UserDaemon::quit()
 {
     printf("tohkbd2-user: quit requested from dbus\n");
     QCoreApplication::quit();
 }
 
-void ReaderWriter::setActiveLayout(const QString &value)
+void UserDaemon::setActiveLayout(const QString &value)
 {
     if (value.contains("qml"))
     {
@@ -66,7 +66,7 @@ void ReaderWriter::setActiveLayout(const QString &value)
     }
 }
 
-QString ReaderWriter::getActiveLayout()
+QString UserDaemon::getActiveLayout()
 {
     MGConfItem ci("/sailfish/text_input/active_layout");
 
@@ -74,4 +74,39 @@ QString ReaderWriter::getActiveLayout()
 
     return ci.value().toString();
 }
+
+void UserDaemon::launchApplication(const QString &desktopFilename)
+{
+    MDesktopEntry app(desktopFilename);
+
+    printf("Starting \"%s\"\n" ,qPrintable(app.name()));
+
+    showNotification(tr("Starting %1...").arg(app.name()).toLower());
+
+    QProcess proc;
+    proc.startDetached("/usr/bin/xdg-open" , QStringList() << desktopFilename);
+
+    QThread::msleep(100);
+}
+
+void UserDaemon::showKeyboardConnectionNotification(const bool &connected)
+{
+    if (connected)
+        showNotification(tr("Keyboard connected"));
+    else
+        showNotification(tr("Keyboard removed"));
+}
+
+
+/******** PRIV *********/
+
+/* show notification
+ */
+void UserDaemon::showNotification(QString text)
+{
+    MNotification notification(MNotification::DeviceEvent, "", text);
+    notification.setImage("/usr/share/harbour-tohkbd2/icon-system-keyboard.png");
+    notification.publish();
+}
+
 
