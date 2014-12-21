@@ -79,9 +79,9 @@ void UserDaemon::launchApplication(const QString &desktopFilename)
 {
     MDesktopEntry app(desktopFilename);
 
-    printf("Starting \"%s\"\n" ,qPrintable(app.name()));
+    printf("tohkbd2-user: starting \"%s\"\n" ,qPrintable(app.name()));
 
-    showNotification(tr("Starting %1...").arg(app.name()).toLower());
+    showNotification(tr("Starting %1...").arg(app.name()));
 
     QProcess proc;
     proc.startDetached("/usr/bin/xdg-open" , QStringList() << desktopFilename);
@@ -108,5 +108,3 @@ void UserDaemon::showNotification(QString text)
     notification.setImage("/usr/share/harbour-tohkbd2/icon-system-keyboard.png");
     notification.publish();
 }
-
-

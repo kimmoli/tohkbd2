@@ -5,7 +5,7 @@
     <name>UserDaemon</name>
     <message>
         <source>Starting %1...</source>
-        <translation>Starting %1...</translation>
+        <translation>Launching %1...</translation>
     </message>
     <message>
         <source>Keyboard connected</source>
