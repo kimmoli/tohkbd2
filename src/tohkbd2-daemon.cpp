@@ -32,10 +32,6 @@ int main(int argc, char **argv)
 
     printf("Starting tohkbd daemon version %s\n", APPVERSION);
 
-    QTranslator translator;
-    translator.load("translations_" + QLocale::system().name(), "/usr/share/harbour-tohkbd2/i18n");
-    app.installTranslator(&translator);
-
     /* Check that we can connect to dbus systemBus and sessionBus */
 
     QDBusConnection dbusSystemBus = QDBusConnection::systemBus();

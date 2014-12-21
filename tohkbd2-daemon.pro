@@ -1,14 +1,9 @@
 TARGET = harbour-tohkbd2
 
-CONFIG += link_pkgconfig
-PKGCONFIG += mlite5
-
 QT += dbus
 QT -= gui
 
 system(qdbusxml2cpp config/com.kimmoli.tohkbd2.xml -i src/tohkeyboard.h -a src/adaptor)
-#system(lupdate src -ts $$PWD/i18n/*.ts)
-system(lrelease $$PWD/i18n/*.ts)
 
 DEFINES += "APPVERSION=\\\"$${SPECVERSION}\\\""
 
@@ -26,13 +21,7 @@ dbusconf.files = config/$${TARGET}.conf
 vkblayout.path = /usr/share/maliit/plugins/com/jolla/layouts/
 vkblayout.files = config/layouts/$${TARGET}.conf config/layouts/$${TARGET}.qml
 
-translations.path = /usr/share/$${TARGET}/i18n
-translations.files = i18n/translations_*.qm
-
-icons.path = /usr/share/$${TARGET}
-icons.files = config/icon-system-keyboard.png
-
-INSTALLS += target systemd udevrule dbusconf vkblayout translations icons
+INSTALLS += target systemd udevrule dbusconf vkblayout
 
 message($${DEFINES})
 
@@ -67,5 +56,3 @@ OTHER_FILES += \
     config/com.kimmoli.tohkbd2.xml \
     config/icon-system-keyboard.png
 
-TRANSLATIONS += i18n/translations_fi.ts \
-                i18n/translations_en.ts

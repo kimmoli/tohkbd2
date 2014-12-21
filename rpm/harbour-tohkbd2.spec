@@ -20,8 +20,6 @@ Source0:    %{name}-%{version}.tar.bz2
 
 BuildRequires:  pkgconfig(Qt5Core)
 BuildRequires:  pkgconfig(Qt5DBus)
-BuildRequires:  pkgconfig(mlite5)
-BuildRequires:  qt5-qttools-linguist
 
 Requires:   harbour-tohkbd2-user
 Requires:   harbour-tohkbd2-settingsui
@@ -46,8 +44,6 @@ rm -rf %{buildroot}
 %files
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/%{name}
-%{_datadir}/%{name}/
-%{_datadir}/%{name}/i18n/
 %{_sysconfdir}/systemd/system/
 %{_sysconfdir}/udev/rules.d/
 %{_sysconfdir}/dbus-1/system.d/

@@ -20,9 +20,6 @@
 #include "uinputif.h"
 #include "defaultSettings.h"
 
-#include <mlite5/MNotification>
-#include <mlite5/MDesktopEntry>
-
 static const char *SERVICE = SERVICE_NAME;
 static const char *PATH = "/";
 
@@ -267,7 +264,7 @@ bool Tohkbd::checkKeypadPresence()
 
         if (keypadIsPresent)
         {
-            showNotification(tr("Keyboard removed"));
+            keyboardConnectedNotification(false);
             presenceTimer->stop();
             handleKeyReleased();
         }
@@ -278,7 +275,7 @@ bool Tohkbd::checkKeypadPresence()
     {
         if (!keypadIsPresent)
         {
-            showNotification(tr("Keyboard connected"));
+            keyboardConnectedNotification(true);
             tca8424->setLeds((keymap->ctrlPressed ? LED_SYMLOCK_ON : LED_SYMLOCK_OFF) | ((capsLockSeq == 3) ? LED_CAPSLOCK_ON : LED_CAPSLOCK_OFF));
             presenceTimer->start();
         }
@@ -337,16 +334,14 @@ void Tohkbd::handleKeyPressed(QList< QPair<int, int> > keyCode)
 
         if (!cmd.isEmpty())
         {
-            MDesktopEntry app(cmd);
+            printf("Requesting user daemon to start %s\n", qPrintable(cmd));
 
-            printf("Starting \"%s\"\n" ,qPrintable(app.name()));
+            QDBusInterface tohkbd2user("com.kimmoli.tohkbd2user", "/", "com.kimmoli.tohkbd2user");
+            tohkbd2user.setTimeout(2000);
 
-            showNotification(tr("Starting %1...").arg(app.name()).toLower());
-
-            QProcess proc;
-            proc.startDetached("/usr/bin/xdg-open" , QStringList() << cmd);
-
-            QThread::msleep(100);
+            QList<QVariant> args;
+            args.append(cmd);
+            tohkbd2user.callWithArgumentList(QDBus::AutoDetect, "launchApplication", args);
 
             /* Don't process further */
             return;
@@ -777,15 +772,16 @@ void Tohkbd::setSettingInt(const QString &key, const int &value)
     }
 }
 
-/* show notification
- */
-void Tohkbd::showNotification(QString text)
+/* Tell user daemon to show notification */
+void Tohkbd::keyboardConnectedNotification(bool connected)
 {
-    MNotification notification(MNotification::DeviceEvent, "", text);
-    notification.setImage("/usr/share/harbour-tohkbd2/icon-system-keyboard.png");
-    notification.publish();
-}
+    QDBusInterface tohkbd2user("com.kimmoli.tohkbd2user", "/", "com.kimmoli.tohkbd2user");
+    tohkbd2user.setTimeout(2000);
 
+    QList<QVariant> args;
+    args.append(connected);
+    tohkbd2user.callWithArgumentList(QDBus::AutoDetect, "showKeyboardConnectionNotification", args);
+}
 
 /** DBUS Test methods */
 

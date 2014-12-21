@@ -59,9 +59,6 @@ public slots:
     /* Interrupt */
     void handleGpioInterrupt();
 
-    /* Notification */
-    void showNotification(QString text);
-
     /* DBUS methods */
     Q_NOREPLY void fakeInputReport(const QByteArray &data);
     QString getVersion();
@@ -86,6 +83,7 @@ private:
     bool checkKeypadPresence();
     void reloadSettings();
     void saveActiveLayout();
+    void keyboardConnectedNotification(bool connected);
 
     int gpio_fd;
 
