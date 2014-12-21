@@ -10,7 +10,7 @@ Name:       harbour-tohkbd2-user
 %{!?qtc_make:%define qtc_make make}
 %{?qtc_builddir:%define _builddir %qtc_builddir}
 
-Summary:    tohkbd 2 user daemon
+Summary:    The OtherHalf Keyboard v2 user daemon
 Version:    0.0.devel
 Release:    1
 Group:      Qt/Qt
@@ -23,7 +23,7 @@ BuildRequires:  pkgconfig(Qt5DBus)
 BuildRequires:  pkgconfig(mlite5)
 
 %description
-userspace daemon for tohkbd2
+%{summary}
 
 %prep
 %setup -q -n %{name}-%{version}
