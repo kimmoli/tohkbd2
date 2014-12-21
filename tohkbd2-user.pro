@@ -44,7 +44,8 @@ OTHER_FILES += \
     config/com.kimmoli.tohkbd2user.xml \
     config/icon-system-keyboard.png \
     i18n/translations_en.ts \
-    i18n/translations_fi.ts
+    i18n/translations_fi.ts \
+    i18n/translations_nl.ts
 
 HEADERS += \
     src/adaptor.h \
