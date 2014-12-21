@@ -1,6 +1,7 @@
-# 
-# spec file for tohkbd2-settingsui, The Otherhalf Keyboard 2 settings UI
-# 
+#
+# tohkbd2-settingsui spec
+# (C) kimmoli 2014
+#
 
 Name:       harbour-tohkbd2-settingsui
 
@@ -8,14 +9,15 @@ Name:       harbour-tohkbd2-settingsui
 %{!?qtc_qmake5:%define qtc_qmake5 %qmake5}
 %{!?qtc_make:%define qtc_make make}
 %{?qtc_builddir:%define _builddir %qtc_builddir}
-Summary:    The Otherhalf Keyboard 2 settings UI
+
+Summary:    The OtherHalf Keyboard v2 settings user interface
 Version:    0.0.devel
 Release:    1
 Group:      Qt/Qt
 License:    LICENSE
-URL:        http://example.org/
+URL:        https://github.com/kimmoli/tohkbd2-settingsui
 Source0:    %{name}-%{version}.tar.bz2
-Requires:   sailfishsilica-qt5 >= 0.10.9
+
 BuildRequires:  pkgconfig(Qt5Quick)
 BuildRequires:  pkgconfig(Qt5Qml)
 BuildRequires:  pkgconfig(Qt5Core)
@@ -23,9 +25,10 @@ BuildRequires:  pkgconfig(sailfishapp) >= 0.0.10
 BuildRequires:  desktop-file-utils
 BuildRequires:  pkgconfig(mlite5)
 
+Requires:   sailfishsilica-qt5 >= 0.10.9
 
 %description
-Settings application for tohkbd2
+%{summary}
 
 %prep
 %setup -q -n %{name}-%{version}
