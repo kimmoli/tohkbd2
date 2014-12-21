@@ -1,3 +1,8 @@
+#
+# tohkbd2-ambience spec
+# (C) kimmoli 2014
+#
+
 Name:       harbour-tohkbd2-ambience
 
 %{!?qtc_qmake:%define qtc_qmake %qmake}
@@ -5,12 +10,14 @@ Name:       harbour-tohkbd2-ambience
 %{!?qtc_make:%define qtc_make make}
 %{?qtc_builddir:%define _builddir %qtc_builddir}
 
-Summary:    TOHKBD2 Ambience
+Summary:    The OtherHalf Keyboard v2 ambience
 Version:    0.1.0
 Release:    1
 Group:      System/GUI/Other
-License:    TBD
+License:    LICENSE
+URL:        https://github.com/kimmoli/tohkbd2-ambience
 Source0:    %{name}-%{version}.tar.bz2
+
 BuildArch:  noarch
 BuildRequires:  qt5-qttools
 BuildRequires:  qt5-qmake
@@ -19,7 +26,7 @@ Requires:   ambienced
 Requires:   harbour-tohkbd2
 
 %description
-Ambience for TOHKBD2 OtherHalf Keyboard
+%{summary}
 
 %prep
 %setup -q -n %{name}-%{version}
