@@ -22,6 +22,7 @@ ApplicationWindow
     property string coverActionLeftIcon: "image://theme/icon-cover-pause"
     property string coverActionRightIcon: "image://theme/icon-cover-play"
     property string daemonVersion : "---"
+    property string userDaemonVersion : "---"
 
     property bool bugReportPageOpen: false
 
@@ -47,6 +48,7 @@ ApplicationWindow
         Component.onCompleted:
         {
             daemonVersion = readDaemonVersion()
+            userDaemonVersion = readUserDaemonVersion()
             updateApplicationsModel()
             updateShortcutsModel()
             settings = settingsui.getCurrentSettings()

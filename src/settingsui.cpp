@@ -202,3 +202,23 @@ QString SettingsUi::readDaemonVersion()
     return daemonVersion;
 
 }
+
+QString SettingsUi::readUserDaemonVersion()
+{
+    QDBusInterface getUserDaemonVersionCall("com.kimmoli.tohkbd2user", "/", "com.kimmoli.tohkbd2user", QDBusConnection::sessionBus());
+    getUserDaemonVersionCall.setTimeout(2000);
+
+    QDBusMessage getUserDaemonVersionReply = getUserDaemonVersionCall.call(QDBus::AutoDetect, "getVersion");
+
+    if (getUserDaemonVersionReply.type() == QDBusMessage::ErrorMessage)
+    {
+        qDebug() << "Error reading daemon version:" << getUserDaemonVersionReply.errorMessage();
+        return QString("N/A");
+    }
+
+    QString userDaemonVersion = getUserDaemonVersionReply.arguments().at(0).toString();
+
+    qDebug() << "User daemon version is" << userDaemonVersion;
+
+    return userDaemonVersion;
+}

@@ -44,7 +44,7 @@ Page
             {
                 x: Theme.paddingLarge
                 width: parent.width - 2*Theme.paddingLarge
-                text: qsTr("Daemon version: ") + daemonVersion
+                text: qsTr("Daemon version: ") + daemonVersion + " / " + userDaemonVersion
                 truncationMode: TruncationMode.Fade
             }
 
