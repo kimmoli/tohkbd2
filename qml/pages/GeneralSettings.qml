@@ -25,17 +25,17 @@ Page
 
             PageHeader
             {
-                title: "General settings"
+                title: qsTr("General settings")
             }
 
             SectionHeader
             {
-                text: "Backlight"
+                text: qsTr("Backlight")
             }
             TextSwitch
             {
-                text: "Enabled"
-                description: "Automatic backlight enable or always off"
+                text: qsTr("Enabled")
+                description: qsTr("Automatic backlight enable or always off")
                 onCheckedChanged: settingsui.setSettingInt("backlightEnabled", checked ? 1 : 0)
                 width: parent.width - 2*Theme.paddingLarge
                 Component.onCompleted: checked = settings["backlightEnabled"]
@@ -44,7 +44,7 @@ Page
             {
                 width: parent.width - 2*Theme.paddingLarge
                 anchors.horizontalCenter: parent.horizontalCenter
-                label: "Timeout"
+                label: qsTr("Timeout")
                 minimumValue: 100
                 maximumValue: 5000
                 value: settings["backlightTimeout"]
@@ -66,7 +66,7 @@ Page
             {
                 width: parent.width - 2*Theme.paddingLarge
                 anchors.horizontalCenter: parent.horizontalCenter
-                label: "Brightness threshold"
+                label: qsTr("Brightness threshold")
                 minimumValue: 1
                 maximumValue: 50
                 value: settings["backlightLuxThreshold"]
@@ -87,13 +87,13 @@ Page
 
             SectionHeader
             {
-                text: "Repeat"
+                text: qsTr("Repeat")
             }
             Slider
             {
                 width: parent.width - 2*Theme.paddingLarge
                 anchors.horizontalCenter: parent.horizontalCenter
-                label: "Delay"
+                label: qsTr("Delay")
                 minimumValue: 50
                 maximumValue: 500
                 value: settings["keyRepeatDelay"]
@@ -115,7 +115,7 @@ Page
             {
                 width: parent.width - 2*Theme.paddingLarge
                 anchors.horizontalCenter: parent.horizontalCenter
-                label: "Rate"
+                label: qsTr("Rate")
                 minimumValue: 25
                 maximumValue: 100
                 value: settings["keyRepeatRate"]
@@ -137,7 +137,7 @@ Page
             {
                 width: parent.width - Theme.paddingLarge
                 anchors.horizontalCenter: parent.horizontalCenter
-                placeholderText: "Test here"
+                placeholderText: qsTr("Test here")
             }
         }
     }

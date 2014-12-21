@@ -19,11 +19,11 @@ Page
         {
             MenuItem
             {
-                text: "About..."
+                text: qsTr("About...")
                 onClicked: pageStack.push(Qt.resolvedUrl("AboutPage.qml"),
                                           { "version": settingsui.version,
                                               "year": "2014",
-                                              "name": "TOHKBD2 Settings",
+                                              "name": qsTr("TOHKBD2 Settings"),
                                               "imagelocation": "/usr/share/icons/hicolor/86x86/apps/harbour-tohkbd2-settingsui.png"} )
             }
         }
@@ -37,14 +37,14 @@ Page
 
             PageHeader
             {
-                title: "Settings"
+                title: qsTr("Settings")
             }
 
             Label
             {
                 x: Theme.paddingLarge
                 width: parent.width - 2*Theme.paddingLarge
-                text: "Daemon version: " + daemonVersion
+                text: qsTr("Daemon version: ") + daemonVersion
                 truncationMode: TruncationMode.Fade
             }
 
@@ -94,11 +94,11 @@ Page
 
         Component.onCompleted:
         {
-            settingslist.append({"labelId":"Shortcuts",         "iconId":"image://theme/icon-m-shortcut",       "pageId":"Shortcuts.qml",       "isEnabled":(daemonVersion !== "N/A")})
-            settingslist.append({"labelId":"Layout",            "iconId":"image://theme/icon-m-keyboard",       "pageId":"KeyboardLayout.qml",  "isEnabled":(daemonVersion !== "N/A")})
-            settingslist.append({"labelId":"Customize mapping", "iconId":"image://tohkbd2/icon-m-test",         "pageId":"CustomizeKeys.qml",   "isEnabled":(daemonVersion !== "N/A")})
-            settingslist.append({"labelId":"General settings",  "iconId":"image://tohkbd2/icon-m-test",         "pageId":"GeneralSettings.qml", "isEnabled":(daemonVersion !== "N/A")})
-            settingslist.append({"labelId":"Report a bug",      "iconId":"image://theme/icon-m-crash-reporter", "pageId":"BugReporter.qml",     "isEnabled":true})
+            settingslist.append({"labelId": qsTr("Shortcuts"),         "iconId":"image://theme/icon-m-shortcut",       "pageId":"Shortcuts.qml",       "isEnabled":(daemonVersion !== "N/A")})
+            settingslist.append({"labelId": qsTr("Layout"),            "iconId":"image://theme/icon-m-keyboard",       "pageId":"KeyboardLayout.qml",  "isEnabled":(daemonVersion !== "N/A")})
+            settingslist.append({"labelId": qsTr("Customize mapping"), "iconId":"image://tohkbd2/icon-m-test",         "pageId":"CustomizeKeys.qml",   "isEnabled":(daemonVersion !== "N/A")})
+            settingslist.append({"labelId": qsTr("General settings"),  "iconId":"image://tohkbd2/icon-m-test",         "pageId":"GeneralSettings.qml", "isEnabled":(daemonVersion !== "N/A")})
+            settingslist.append({"labelId": qsTr("Report a bug"),      "iconId":"image://theme/icon-m-crash-reporter", "pageId":"BugReporter.qml",     "isEnabled":true})
         }
     }
 

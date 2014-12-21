@@ -12,6 +12,14 @@ PKGCONFIG += mlite5 sailfishapp
 
 DEFINES += "APPVERSION=\\\"$${SPECVERSION}\\\""
 
+#system(lupdate src -ts $$PWD/i18n/*.ts)
+system(lrelease $$PWD/i18n/*.ts)
+
+translations.path = /usr/share/$${TARGET}/i18n
+translations.files = i18n/translations_*.qm
+
+INSTALLS += translations
+
 message($${DEFINES})
 
 SOURCES += src/tohkbd2-settingsui.cpp \
@@ -40,5 +48,6 @@ OTHER_FILES += qml/tohkbd2-settingsui.qml \
     qml/icons/icon-m-keyframe.png \
     harbour-tohkbd2-settingsui.desktop \
     harbour-tohkbd2-settingsui.png \
-    rpm/harbour-tohkbd2-settingsui.spec
+    rpm/harbour-tohkbd2-settingsui.spec \
+    i18n/translations_fi.ts
 

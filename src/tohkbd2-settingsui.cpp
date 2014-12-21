@@ -24,6 +24,11 @@ int main(int argc, char *argv[])
     qmlRegisterType<SettingsUi>("harbour.tohkbd2.settingsui", 1, 0, "SettingsUi");
 
     QScopedPointer<QGuiApplication> app(SailfishApp::application(argc, argv));
+
+    QTranslator translator;
+    translator.load("translations_" + QLocale::system().name(), "/usr/share/harbour-tohkbd2-settingsui/i18n");
+    app->installTranslator(&translator);
+
     QScopedPointer<QQuickView> view(SailfishApp::createView());
 
     QQmlEngine *engine = view->engine();

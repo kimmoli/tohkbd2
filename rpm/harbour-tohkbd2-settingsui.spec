@@ -24,6 +24,7 @@ BuildRequires:  pkgconfig(Qt5Core)
 BuildRequires:  pkgconfig(sailfishapp) >= 0.0.10
 BuildRequires:  desktop-file-utils
 BuildRequires:  pkgconfig(mlite5)
+BuildRequires:  qt5-qttools-linguist
 
 Requires:   sailfishsilica-qt5 >= 0.10.9
 
@@ -52,6 +53,7 @@ desktop-file-install --delete-original       \
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}
 %{_datadir}/%{name}/qml
+%{_datadir}/%{name}/i18n
 %{_datadir}/applications/%{name}.desktop
 %{_datadir}/icons/hicolor/86x86/apps/%{name}.png
 /usr/bin

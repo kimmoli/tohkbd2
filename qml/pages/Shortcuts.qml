@@ -20,7 +20,7 @@ Page
         {
             MenuItem
             {
-                text: "Reset all to defaults"
+                text: qsTr("Reset all to defaults")
                 onClicked: settingsui.setShortcutsToDefault()
             }
         }
@@ -35,7 +35,7 @@ Page
             spacing: Theme.paddingLarge
             PageHeader
             {
-                title: "Shortcuts"
+                title: qsTr("Shortcuts")
             }
 
             Repeater
