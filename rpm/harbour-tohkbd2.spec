@@ -10,7 +10,7 @@ Name:       harbour-tohkbd2
 %{!?qtc_make:%define qtc_make make}
 %{?qtc_builddir:%define _builddir %qtc_builddir}
 
-Summary:    The OtherHalf Keyboard version 2 daemon
+Summary:    The OtherHalf Keyboard v2 daemon
 Version:    0.0.devel
 Release:    1
 Group:      Qt/Qt
@@ -27,7 +27,7 @@ Requires:   harbour-tohkbd2-user
 Requires:   harbour-tohkbd2-settingsui
 
 %description
-Daemon for The OtherHalf Keyboard (TOHKBD) version 2
+%{summary}
 
 %prep
 %setup -q -n %{name}-%{version}
