@@ -97,6 +97,11 @@ void UserDaemon::showKeyboardConnectionNotification(const bool &connected)
         showNotification(tr("Keyboard removed"));
 }
 
+QString UserDaemon::getVersion()
+{
+    return QString(APPVERSION);
+}
+
 
 /******** PRIV *********/
 

@@ -27,6 +27,7 @@ public slots:
     void setActiveLayout(const QString &value);
     void launchApplication(const QString &desktopFilename);
     void showKeyboardConnectionNotification(const bool &connected);
+    QString getVersion();
     void quit();
 
 private:
