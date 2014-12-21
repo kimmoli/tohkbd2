@@ -45,7 +45,8 @@ OTHER_FILES += \
     config/icon-system-keyboard.png \
     i18n/translations_en.ts \
     i18n/translations_fi.ts \
-    i18n/translations_nl.ts
+    i18n/translations_nl.ts \
+    i18n/translations_de.ts
 
 HEADERS += \
     src/adaptor.h \
