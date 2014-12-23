@@ -11,4 +11,4 @@ then start it with language you want
 
 ```LANG=es harbour-tohkbd2-user```
 
-
+Translations are handled in transifex https://www.transifex.com/projects/p/tohkbd2-user/
