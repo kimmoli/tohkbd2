@@ -46,7 +46,12 @@ OTHER_FILES += \
     i18n/translations_en.ts \
     i18n/translations_fi.ts \
     i18n/translations_nl.ts \
-    i18n/translations_de.ts
+    i18n/translations_de.ts \
+    i18n/translations_da.ts \
+    i18n/translations_fr.ts \
+    i18n/translations_it.ts \
+    i18n/translations_no.ts \
+    i18n/translations_sv.ts
 
 HEADERS += \
     src/adaptor.h \
