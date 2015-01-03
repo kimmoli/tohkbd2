@@ -350,17 +350,17 @@ void Tohkbd::handleKeyPressed(QList< QPair<int, int> > keyCode)
 
     if (keymap->symPressed && keyCode.at(0).first == KEY_UP)
     {
-        uinputif->sendUinputKeyPress(KEY_VOLUMEUP, 1);
+        uinputif->sendUinputKeyPress(KEY_PAGEUP, 1);
         QThread::msleep(KEYREPEAT_RATE);
-        uinputif->sendUinputKeyPress(KEY_VOLUMEUP, 0);
+        uinputif->sendUinputKeyPress(KEY_PAGEUP, 0);
         processAllKeys = false;
     }
 
     if (keymap->symPressed && keyCode.at(0).first == KEY_DOWN)
     {
-        uinputif->sendUinputKeyPress(KEY_VOLUMEDOWN, 1);
+        uinputif->sendUinputKeyPress(KEY_PAGEDOWN, 1);
         QThread::msleep(KEYREPEAT_RATE);
-        uinputif->sendUinputKeyPress(KEY_VOLUMEDOWN, 0);
+        uinputif->sendUinputKeyPress(KEY_PAGEDOWN, 0);
         processAllKeys = false;
     }
 
