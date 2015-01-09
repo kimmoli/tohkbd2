@@ -84,6 +84,8 @@ private:
     void reloadSettings();
     void saveActiveLayout();
     void keyboardConnectedNotification(bool connected);
+    void checkEEPROM();
+    bool tohcoreBind(bool bind);
 
     int gpio_fd;
 

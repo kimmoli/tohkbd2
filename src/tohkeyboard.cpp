@@ -19,6 +19,7 @@
 #include "toh.h"
 #include "uinputif.h"
 #include "defaultSettings.h"
+#include "eepromdriver.h"
 
 static const char *SERVICE = SERVICE_NAME;
 static const char *PATH = "/";
@@ -47,10 +48,6 @@ Tohkbd::Tohkbd(QObject *parent) :
     connect(worker, SIGNAL(workRequested()), thread, SLOT(start()));
     connect(thread, SIGNAL(started()), worker, SLOT(doWork()));
     connect(worker, SIGNAL(finished()), thread, SLOT(quit()), Qt::DirectConnection);
-
-    QList<unsigned int> eepromConfig = readEepromConfig();
-    if (eepromConfig.count() > 0)
-        printf("eeprom at 0 = %x\n", eepromConfig.at(0));
 
     backlightTimer = new QTimer(this);
     backlightTimer->setSingleShot(true);
@@ -278,6 +275,7 @@ bool Tohkbd::checkKeypadPresence()
             keyboardConnectedNotification(true);
             tca8424->setLeds((keymap->ctrlPressed ? LED_SYMLOCK_ON : LED_SYMLOCK_OFF) | ((capsLockSeq == 3) ? LED_CAPSLOCK_ON : LED_CAPSLOCK_OFF));
             presenceTimer->start();
+            checkEEPROM();
         }
 
         keypadIsPresent = true;
@@ -499,26 +497,6 @@ QString Tohkbd::readOneLineFromFile(const QString &fileName)
     return line;
 }
 
-/* Read eeprom configuration words to a QList from config_data
- * returns empty QList if failed
- */
-QList<unsigned int> Tohkbd::readEepromConfig()
-{
-    QList<unsigned int> ret;
-
-    QFile inputFile ( "/sys/devices/platform/toh-core.0/config_data" );
-    if (inputFile.open(QIODevice::ReadOnly))
-    {
-        QByteArray data = inputFile.readAll();
-
-        for (int i=0; i < data.count()/2; i++)
-            ret.append((data.at(2*i)<<8) || data.at(2*i+1));
-
-        inputFile.close();
-    }
-
-    return ret;
-}
 
 /* Read ambient light value from phones ALS and decide will the backlight be lit or not
  * Restart timer if timer was already running
@@ -791,4 +769,57 @@ void Tohkbd::fakeInputReport(const QByteArray &data)
 {
     printf("input report from dbus\n");
     keymap->process(data);
+}
+
+/* Checks contents of base and keyboard EEPROM
+ */
+void Tohkbd::checkEEPROM()
+{
+    if (tohcoreBind(false)) /* release eeprom from toh-core.0 */
+    {
+        QByteArray tmp = eepromDriver(0x50).readData(0, 10);
+        printf("data read from base eeprom (0x50): ");
+        for (int i=0; i<tmp.length() ; i++)
+            printf("%02x ", tmp.at(i));
+        printf("\n");
+
+        tmp = eepromDriver(0x51).readData(0, 10);
+        printf("data read from keyboard eeprom (0x51): ");
+        for (int i=0; i<tmp.length() ; i++)
+            printf("%02x ", tmp.at(i));
+        printf("\n");
+
+        tohcoreBind(true);
+        /* todo: Do something with this data */
+    }
+    else
+        printf("failed to read keyboard eeprom\n");
+}
+
+/* Binds or unbinds toh-core.0
+ */
+bool Tohkbd::tohcoreBind(bool bind)
+{
+    int fd;
+
+    if (bind)
+        fd = open("/sys/bus/platform/drivers/toh-core/bind", O_WRONLY);
+    else
+        fd = open("/sys/bus/platform/drivers/toh-core/unbind", O_WRONLY);
+
+    if (!(fd < 0))
+    {
+        if (write (fd, "toh-core.0", 10) != 10)
+        {
+            close(fd);
+            printf("toh-core.0 %s failed\n", bind ? "bind" : "unbind");
+            return false;
+        }
+        close(fd);
+        return true;
+    }
+    else
+        printf("toh-core.0 %s failed\n", bind ? "bind" : "unbind");
+
+    return false;
 }

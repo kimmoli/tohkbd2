@@ -34,7 +34,8 @@ SOURCES += \
     src/driverBase.cpp \
     src/tca8424driver.cpp \
     src/keymapping.cpp \
-    src/adaptor.cpp
+    src/adaptor.cpp \
+    src/eepromdriver.cpp
 
 HEADERS += \
     src/toh.h \
@@ -45,7 +46,8 @@ HEADERS += \
     src/tca8424driver.h \
     src/keymapping.h \
     src/adaptor.h \
-    src/defaultSettings.h
+    src/defaultSettings.h \
+    src/eepromdriver.h
 
 OTHER_FILES += \
     rpm/$${TARGET}.spec \
