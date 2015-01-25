@@ -48,6 +48,5 @@ OTHER_FILES += qml/tohkbd2-settingsui.qml \
     qml/icons/icon-m-keyframe.png \
     harbour-tohkbd2-settingsui.desktop \
     harbour-tohkbd2-settingsui.png \
-    rpm/harbour-tohkbd2-settingsui.spec \
     i18n/translations_fi.ts
 
