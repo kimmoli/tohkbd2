@@ -39,6 +39,7 @@ Tohkbd::Tohkbd(QObject *parent) :
     gpio_fd = -1;
     displayIsOn = false;
     keyIsPressed = false;
+    slideEventEmitted = false;
 
     thread = new QThread();
     worker = new Worker();
@@ -224,6 +225,7 @@ void Tohkbd::handleDisplayStatus(const QDBusMessage& msg)
     {
         checkDoWeNeedBacklight();
         displayIsOn = true;
+        slideEventEmitted = false;
     }
     else if (strcmp(turn, "off") == 0)
     {
@@ -317,8 +319,14 @@ void Tohkbd::handleKeyPressed(QList< QPair<int, int> > keyCode)
 
     presenceTimer->start();
 
-    if (!displayIsOn)
+    if (!displayIsOn && !slideEventEmitted)
+    {
         emitKeypadSlideEvent(true);
+        /* slideEventEmitted is used to limit events to just one
+         * emitted once when key pressed while display is off
+         * it is reset when display turns on. */
+        slideEventEmitted = true;
+    }
 
     if ((capsLockSeq == 1 || capsLockSeq == 2)) /* Abort caps-lock if other key pressed */
         capsLockSeq = 0;

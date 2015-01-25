@@ -120,6 +120,7 @@ private:
     bool interruptsEnabled;
     bool keyIsPressed;
     bool backlightEnabled;
+    bool slideEventEmitted;
 
 };
 
