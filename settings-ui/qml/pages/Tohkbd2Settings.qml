@@ -22,7 +22,7 @@ Page
                 text: qsTr("About...")
                 onClicked: pageStack.push(Qt.resolvedUrl("AboutPage.qml"),
                                           { "version": settingsui.version,
-                                              "year": "2014",
+                                              "year": "2014-2015",
                                               "name": qsTr("TOHKBD2 Settings"),
                                               "imagelocation": "/usr/share/icons/hicolor/86x86/apps/harbour-tohkbd2-settingsui.png"} )
             }
@@ -38,14 +38,6 @@ Page
             PageHeader
             {
                 title: qsTr("Settings")
-            }
-
-            Label
-            {
-                x: Theme.paddingLarge
-                width: parent.width - 2*Theme.paddingLarge
-                text: qsTr("Daemon version: ") + daemonVersion + " / " + userDaemonVersion
-                truncationMode: TruncationMode.Fade
             }
 
             Item

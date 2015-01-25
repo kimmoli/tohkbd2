@@ -17,6 +17,11 @@ ApplicationWindow
             bugReportPageOpen = false
             pageStack.pop()
         }
+        if (!applicationActive && aboutPageOpen)
+        {
+            aboutPageOpen = false
+            pageStack.pop()
+        }
     }
 
     property string coverActionLeftIcon: "image://theme/icon-cover-pause"
@@ -25,6 +30,7 @@ ApplicationWindow
     property string userDaemonVersion : "---"
 
     property bool bugReportPageOpen: false
+    property bool aboutPageOpen: false
 
     property var settings
 
