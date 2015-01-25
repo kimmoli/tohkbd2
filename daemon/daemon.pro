@@ -50,7 +50,6 @@ HEADERS += \
     src/eepromdriver.h
 
 OTHER_FILES += \
-    rpm/$${TARGET}.spec \
     config/$${TARGET}.service \
     config/$${TARGET}.conf \
     config/layouts/$${TARGET}.conf \
