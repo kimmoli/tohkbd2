@@ -9,23 +9,8 @@ CoverBackground
 {
     CoverPlaceholder
     {
-        text: "Tohkbd2-settings-u"
-        icon.source: "/usr/share/icons/hicolor/86x86/apps/tohkbd2-settingsui.png"
-    }
-
-    CoverActionList
-    {
-        CoverAction
-        {
-            iconSource: coverActionLeftIcon
-            onTriggered: coverActionLeft()
-        }
-
-        CoverAction
-        {
-            iconSource: coverActionRightIcon
-            onTriggered: coverActionRight()
-        }
+        text: "Tohkbd2-settings"
+        icon.source: "/usr/share/icons/hicolor/86x86/apps/harbour-tohkbd2-settingsui.png"
     }
 }
 
