@@ -39,7 +39,6 @@ SOURCES += \
     src/userdaemon.cpp
 
 OTHER_FILES += \
-    rpm/$${TARGET}.spec \
     config/com.kimmoli.tohkbd2user.service \
     config/com.kimmoli.tohkbd2user.xml \
     config/icon-system-keyboard.png \
