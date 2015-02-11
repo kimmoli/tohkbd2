@@ -169,7 +169,7 @@ Page
         id: authors
         ListElement
         {
-            name: "Dirk \"dirkvl\" VanLeersum"
+            name: "Dirk \"dirkvl\" van Leersum"
             iconsource: "image://tohkbd2/dirkvl"
             linkurl: "http://www.funkyotherhalf.com"
         }
