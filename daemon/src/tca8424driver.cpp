@@ -45,13 +45,13 @@ bool tca8424driver::reset()
 void tca8424driver::setLeds(int value)
 {
     /* TOHKBD Rev 2 Hardware led assignments
-     * LED0 = Caps-lock
-     * LED1 = Sym-lock?
-     * LED2 = Backlight
-     * LED3 = Not used
+     * LED0 = Extra
+     * LED1 = Caps-lock
+     * LED2 = Sym-lock
+     * LED3 = Backlight
      */
 
-    ledState = ((ledState & ~((value >> 8) & 0x07)) | (value & 0x07));
+    ledState = ((ledState & ~((value >> 8) & 0x0F)) | (value & 0x0F));
 
     /* HID Over I2C protocol v1.0 chapter 7.23 SET_REPORT
      * Command register 0x0600
