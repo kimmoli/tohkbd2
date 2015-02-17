@@ -37,7 +37,6 @@ SOURCES += \
     src/tohkbd2user.cpp \
     src/adaptor.cpp \
     src/userdaemon.cpp \
-    src/taskswitcher.cpp \
     src/viewhelper.cpp
 
 OTHER_FILES += \
@@ -58,5 +57,4 @@ OTHER_FILES += \
 HEADERS += \
     src/adaptor.h \
     src/userdaemon.h \
-    src/taskswitcher.h \
     src/viewhelper.h

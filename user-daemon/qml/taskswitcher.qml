@@ -1,6 +1,5 @@
 import QtQuick 2.1
 import Sailfish.Silica 1.0
-import harbour.tohkbd2.taskswitcher 1.0
 
 Item
 {
@@ -13,17 +12,13 @@ Item
     function updateShortcutsModel()
     {
         var i
-        var tmp = taskswitcher.getCurrentShortcuts()
+        var tmp = viewHelper.getCurrentShortcuts()
 
         shortcutsModel.clear()
 
         for (i=0 ; i<tmp.length; i++)
         {
-            shortcutsModel.append({"key": tmp[i]["key"],
-                                  "name": tmp[i]["name"],
-                                  "iconId": tmp[i]["iconId"], /* this */
-                                  "filePath": tmp[i]["filePath"], /* and this we need... */
-                                  "isAndroid": tmp[i]["isAndroid"]})
+            shortcutsModel.append({"iconId": tmp[i]["iconId"]})
         }
     }
 
@@ -32,12 +27,7 @@ Item
         id: shortcutsModel
     }
 
-    Taskswitcher
-    {
-        id: taskswitcher
-
-        Component.onCompleted: updateShortcutsModel()
-    }
+    Component.onCompleted: updateShortcutsModel()
 
     Rectangle
     {
@@ -60,7 +50,9 @@ Item
                 model: shortcutsModel
                 Rectangle
                 {
-                    color: "transparent"
+                    color: viewHelper.currentApp === index ? Theme.highlightColor : "transparent"
+                    radius: 10
+                    opacity: 0.8
                     width: 120
                     height: 120
 
@@ -80,11 +72,7 @@ Item
                         MouseArea
                         {
                             anchors.fill: parent
-                            onClicked:
-                            {
-                                taskswitcher.launchApplication(filePath)
-                                viewHelper.hideWindow()
-                            }
+                            onClicked: viewHelper.launchApplication(index)
                         }
                     }
                 }

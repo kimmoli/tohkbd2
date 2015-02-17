@@ -14,6 +14,7 @@
             <arg name="connected" type="b" direction="in" />
         </method>
         <method name="showTaskSwitcher" />
+        <method name="nextAppTaskSwitcher" />
         <method name="hideTaskSwitcher" />
         <method name="getVersion">
             <arg name="value" type="s" direction="out" />

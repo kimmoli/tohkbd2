@@ -22,6 +22,7 @@ public:
 
 signals:
     void _showTaskSwitcher();
+    void _nextAppTaskSwitcher();
     void _hideTaskSwitcher();
 
 public slots:
@@ -31,6 +32,7 @@ public slots:
     void showKeyboardConnectionNotification(const bool &connected);
     QString getVersion();
     void showTaskSwitcher() { emit  _showTaskSwitcher(); }
+    void nextAppTaskSwitcher() { emit _nextAppTaskSwitcher(); }
     void hideTaskSwitcher() { emit  _hideTaskSwitcher(); }
     void quit();
 

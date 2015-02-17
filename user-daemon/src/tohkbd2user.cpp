@@ -23,7 +23,7 @@
 #include "userdaemon.h"
 #include "adaptor.h"
 #include "viewhelper.h"
-#include "taskswitcher.h"
+//#include "taskswitcher.h"
 
 
 int main(int argc, char **argv)
@@ -34,7 +34,7 @@ int main(int argc, char **argv)
     QScopedPointer<ViewHelper> helper(new ViewHelper(view.data()));
     view->rootContext()->setContextProperty("viewHelper", helper.data());
 
-    qmlRegisterType<Taskswitcher>("harbour.tohkbd2.taskswitcher", 1, 0, "Taskswitcher");
+    //qmlRegisterType<Taskswitcher>("harbour.tohkbd2.taskswitcher", 1, 0, "Taskswitcher");
 
     QColor color;
     color.setRedF(0.0);
@@ -64,7 +64,8 @@ int main(int argc, char **argv)
     rw.registerDBus();
 
     QObject::connect(&rw, SIGNAL(_showTaskSwitcher()), view.data(), SLOT(showFullScreen()));
-    QObject::connect(&rw, SIGNAL(_hideTaskSwitcher()), view.data(), SLOT(hide()));
+    QObject::connect(&rw, SIGNAL(_hideTaskSwitcher()), helper.data(), SLOT(hideWindow()));
+    QObject::connect(&rw, SIGNAL(_nextAppTaskSwitcher()), helper.data(), SLOT(nextApp()));
 
     QTranslator translator;
     translator.load("translations_" + QLocale::system().name(), "/usr/share/harbour-tohkbd2-user/i18n");
