@@ -21,6 +21,8 @@ public:
     void registerDBus();
 
 signals:
+    void _showTaskSwitcher();
+    void _hideTaskSwitcher();
 
 public slots:
     QString getActiveLayout();
@@ -28,6 +30,8 @@ public slots:
     void launchApplication(const QString &desktopFilename);
     void showKeyboardConnectionNotification(const bool &connected);
     QString getVersion();
+    void showTaskSwitcher() { emit  _showTaskSwitcher(); }
+    void hideTaskSwitcher() { emit  _hideTaskSwitcher(); }
     void quit();
 
 private:
