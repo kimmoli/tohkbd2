@@ -14,8 +14,6 @@ system(lrelease $$PWD/i18n/*.ts)
 
 DEFINES += "APPVERSION=\\\"$${SPECVERSION}\\\""
 
-#target.path = /usr/bin/
-
 dbusService.files = config/com.kimmoli.tohkbd2user.service
 dbusService.path = /usr/share/dbus-1/services/
 
@@ -29,7 +27,6 @@ icons.path = /usr/share/$${TARGET}
 icons.files = config/icon-system-keyboard.png
 
 INSTALLS +=  dbusService dbusInterface translations icons
-#target
 
 message($${DEFINES})
 
