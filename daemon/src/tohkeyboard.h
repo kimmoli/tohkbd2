@@ -122,6 +122,10 @@ private:
     bool backlightEnabled;
     bool slideEventEmitted;
 
+    bool taskSwitcherVisible;
+
+    QDBusInterface *tohkbd2user;
+
 };
 
 
