@@ -40,6 +40,7 @@ Tohkbd::Tohkbd(QObject *parent) :
     displayIsOn = false;
     keyIsPressed = false;
     slideEventEmitted = false;
+    taskSwitcherVisible = false;
 
     thread = new QThread();
     worker = new Worker();
@@ -86,6 +87,10 @@ Tohkbd::Tohkbd(QObject *parent) :
     connect(keymap, SIGNAL(symChanged()), this, SLOT(handleSymChanged()));
     connect(keymap, SIGNAL(keyPressed(QList< QPair<int, int> >)), this, SLOT(handleKeyPressed(QList< QPair<int, int> >)));
     connect(keymap, SIGNAL(keyReleased()), this, SLOT(handleKeyReleased()));
+
+    tohkbd2user = new QDBusInterface("com.kimmoli.tohkbd2user", "/", "com.kimmoli.tohkbd2user", QDBusConnection::sessionBus(), this);
+    tohkbd2user->setTimeout(2000);
+
 }
 
 /* Remove uinput device, stop threads and unregister from dbus
@@ -333,6 +338,25 @@ void Tohkbd::handleKeyPressed(QList< QPair<int, int> > keyCode)
 
     checkDoWeNeedBacklight();
 
+    /* alt+ESC is the task-switcher */
+    if (keymap->altPressed && keyCode.at(0).first == KEY_ESC)
+    {
+        if (!taskSwitcherVisible)
+        {
+            /* show taskswitcher and advance one app */
+            taskSwitcherVisible = true;
+            tohkbd2user->call(QDBus::AutoDetect, "nextAppTaskSwitcher");
+            tohkbd2user->call(QDBus::AutoDetect, "showTaskSwitcher");
+        }
+        else
+        {
+            /* Toggle to next app */
+            tohkbd2user->call(QDBus::AutoDetect, "nextAppTaskSwitcher");
+        }
+        /* Don't process further */
+        return;
+    }
+
     /* if F1...F12 key is pressed then launch detached process */
     if (keymap->symPressed && keyCode.at(0).first >= KEY_1 && keyCode.at(0).first <= KEY_EQUAL)
     {
@@ -342,12 +366,9 @@ void Tohkbd::handleKeyPressed(QList< QPair<int, int> > keyCode)
         {
             printf("Requesting user daemon to start %s\n", qPrintable(cmd));
 
-            QDBusInterface tohkbd2user("com.kimmoli.tohkbd2user", "/", "com.kimmoli.tohkbd2user");
-            tohkbd2user.setTimeout(2000);
-
             QList<QVariant> args;
             args.append(cmd);
-            tohkbd2user.callWithArgumentList(QDBus::AutoDetect, "launchApplication", args);
+            tohkbd2user->callWithArgumentList(QDBus::AutoDetect, "launchApplication", args);
 
             /* Don't process further */
             return;
@@ -477,6 +498,16 @@ void Tohkbd::handleAltChanged()
 {
     if ((capsLockSeq == 1 || capsLockSeq == 2)) /* Abort caps-lock if other key pressed */
         capsLockSeq = 0;
+
+    printf("alt changed %s\n", keymap->altPressed ? "down" : "up");
+
+    if (!keymap->altPressed && taskSwitcherVisible)
+    {
+        /* hide taskswitcher when alt is released
+         * this will also activate selected application */
+        tohkbd2user->call(QDBus::AutoDetect, "hideTaskSwitcher");
+        taskSwitcherVisible = false;
+    }
 }
 
 void Tohkbd::handleSymChanged()
@@ -544,10 +575,7 @@ void Tohkbd::backlightTimerTimeout()
  */
 void Tohkbd::changeActiveLayout(bool justGetIt)
 {
-    QDBusInterface tohkbd2user("com.kimmoli.tohkbd2user", "/", "com.kimmoli.tohkbd2user");
-    tohkbd2user.setTimeout(2000);
-
-    QString __currentActiveLayout = tohkbd2user.call(QDBus::AutoDetect, "getActiveLayout").arguments().at(0).toString();
+    QString __currentActiveLayout = tohkbd2user->call(QDBus::AutoDetect, "getActiveLayout").arguments().at(0).toString();
 
     printf("Current layout is %s\n", qPrintable(__currentActiveLayout));
 
@@ -575,14 +603,14 @@ void Tohkbd::changeActiveLayout(bool justGetIt)
         printf("Changing to tohkbd\n");
         QList<QVariant> args;
         args.append("harbour-tohkbd2.qml");
-        tohkbd2user.callWithArgumentList(QDBus::AutoDetect, "setActiveLayout", args);
+        tohkbd2user->callWithArgumentList(QDBus::AutoDetect, "setActiveLayout", args);
     }
     else if (currentActiveLayout.contains("qml"))
     {
         printf("Changing to %s\n", qPrintable(currentActiveLayout));
         QList<QVariant> args;
         args.append(currentActiveLayout);
-        tohkbd2user.callWithArgumentList(QDBus::AutoDetect, "setActiveLayout", args);
+        tohkbd2user->callWithArgumentList(QDBus::AutoDetect, "setActiveLayout", args);
     }
 }
 /* SW_KEYPAD_SLIDE controls display on/off
@@ -761,12 +789,9 @@ void Tohkbd::setSettingInt(const QString &key, const int &value)
 /* Tell user daemon to show notification */
 void Tohkbd::keyboardConnectedNotification(bool connected)
 {
-    QDBusInterface tohkbd2user("com.kimmoli.tohkbd2user", "/", "com.kimmoli.tohkbd2user");
-    tohkbd2user.setTimeout(2000);
-
     QList<QVariant> args;
     args.append(connected);
-    tohkbd2user.callWithArgumentList(QDBus::AutoDetect, "showKeyboardConnectionNotification", args);
+    tohkbd2user->callWithArgumentList(QDBus::AutoDetect, "showKeyboardConnectionNotification", args);
 }
 
 /** DBUS Test methods */
