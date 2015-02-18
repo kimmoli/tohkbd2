@@ -33,15 +33,15 @@ Item
     {
         id: rect
         anchors.centerIn: root
-        color: "green"
+        color: Theme.secondaryHighlightColor
         radius: 10
-        width: 480
-        height: 240
-        opacity: 0.8
+        width: 240
+        height: 480
 
         Grid
         {
             anchors.centerIn: parent
+            rotation: 90
             columns: 4
             rows: 2
 
@@ -52,7 +52,6 @@ Item
                 {
                     color: viewHelper.currentApp === index ? Theme.highlightColor : "transparent"
                     radius: 10
-                    opacity: 0.8
                     width: 120
                     height: 120
 

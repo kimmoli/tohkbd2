@@ -38,7 +38,7 @@ void ViewHelper::setMouseRegion(const QRegion &region)
 
 void ViewHelper::setDefaultRegion()
 {
-    setMouseRegion(QRegion( (540-480)/2, (960-240)/2 ,480, 240));
+    setMouseRegion(QRegion( (540-240)/2, (960-480)/2 ,480, 240));
 }
 
 void ViewHelper::hideWindow()
