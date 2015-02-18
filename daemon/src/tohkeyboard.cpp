@@ -343,8 +343,9 @@ void Tohkbd::handleKeyPressed(QList< QPair<int, int> > keyCode)
     {
         if (!taskSwitcherVisible)
         {
-            /* show taskswitcher */
+            /* show taskswitcher and advance one app */
             taskSwitcherVisible = true;
+            tohkbd2user->call(QDBus::AutoDetect, "nextAppTaskSwitcher");
             tohkbd2user->call(QDBus::AutoDetect, "showTaskSwitcher");
         }
         else
