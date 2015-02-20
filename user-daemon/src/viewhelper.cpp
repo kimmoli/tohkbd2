@@ -38,7 +38,7 @@ void ViewHelper::setMouseRegion(const QRegion &region)
 
 void ViewHelper::setDefaultRegion()
 {
-    setMouseRegion(QRegion( (540-240)/2, (960-480)/2 ,480, 240));
+    setMouseRegion(QRegion( (540-240)/2, (960-480)/2, 240, 480));
 }
 
 void ViewHelper::hideWindow()
@@ -59,18 +59,23 @@ int ViewHelper::getCurrentApp()
     return m_currentApp;
 }
 
+void ViewHelper::setCurrentApp(int n)
+{
+    m_currentApp = n;
+    emit currentAppChanged();
+}
+
 void ViewHelper::launchApplication(int n)
 {
-    view->hide();
-
     printf("tohkbd2-user: Starting %s\n", qPrintable(apps.at(n)));
+
+    view->hide();
 
     QProcess proc;
     proc.startDetached("/usr/bin/xdg-open" , QStringList() << apps.at(n));
     QThread::msleep(100);
 }
 
-/* Getting shortcuts defined in TOHKBD2, F1 through F8 */
 QVariantList ViewHelper::getCurrentShortcuts()
 {
     QVariantList tmp;

@@ -14,7 +14,6 @@
 #include <QQuickView>
 #include <QQmlEngine>
 #include <QQmlContext>
-#include <qpa/qplatformnativeinterface.h>
 #include <QScopedPointer>
 #include <QTimer>
 
@@ -23,7 +22,6 @@
 #include "userdaemon.h"
 #include "adaptor.h"
 #include "viewhelper.h"
-//#include "taskswitcher.h"
 
 
 int main(int argc, char **argv)
@@ -33,8 +31,6 @@ int main(int argc, char **argv)
     QObject::connect(view->engine(), SIGNAL(quit()), app.data(), SLOT(quit()));
     QScopedPointer<ViewHelper> helper(new ViewHelper(view.data()));
     view->rootContext()->setContextProperty("viewHelper", helper.data());
-
-    //qmlRegisterType<Taskswitcher>("harbour.tohkbd2.taskswitcher", 1, 0, "Taskswitcher");
 
     QColor color;
     color.setRedF(0.0);
@@ -46,8 +42,6 @@ int main(int argc, char **argv)
     view->setClearBeforeRendering(true);
 
     view->setSource(SailfishApp::pathTo("qml/taskswitcher.qml"));
-
-    //view->showFullScreen();
 
     QTimer::singleShot(1, helper.data(), SLOT(detachWindow()));
 

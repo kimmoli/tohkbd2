@@ -29,6 +29,7 @@ public slots:
     void hideWindow();
     void nextApp();
     void launchApplication(int n);
+    void setCurrentApp(int n);
 
 private:
     void setMouseRegion(const QRegion &region);
