@@ -8,59 +8,98 @@ Item
     width: Screen.width
     height: Screen.height
 
+    property int currentApp: viewHelper.currentApp
+    property int numberOfApps: viewHelper.numberOfApps
 
-    function updateShortcutsModel()
+    onCurrentAppChanged:
+    {
+        appName.text = appsModel.get(viewHelper.currentApp).name
+    }
+
+    onNumberOfAppsChanged:
+    {
+        updateAppsModel()
+        appName.text = appsModel.get(viewHelper.currentApp).name
+    }
+
+    function updateAppsModel()
     {
         var i
-        var tmp = viewHelper.getCurrentShortcuts()
+        var tmp = viewHelper.getCurrentApps()
 
-        shortcutsModel.clear()
+        appsModel.clear()
 
         for (i=0 ; i<tmp.length; i++)
         {
-            shortcutsModel.append({"iconId": tmp[i]["iconId"]})
+            appsModel.append( { "iconId": tmp[i]["iconId"],
+                                "name":   tmp[i]["name"] } )
         }
+    }
+
+    Rectangle
+    {
+        anchors.fill: parent
+        color: "black"
+        opacity: 0.5
     }
 
     ListModel
     {
-        id: shortcutsModel
+        id: appsModel
     }
-
-    Component.onCompleted: updateShortcutsModel()
 
     Rectangle
     {
-        id: rect
+        id: taskSwitchBackground
         anchors.centerIn: root
-        color: Theme.secondaryHighlightColor
-        radius: 10
-        width: 240
-        height: 480
+        anchors.horizontalCenterOffset: Theme.paddingLarge
+        color: Theme.rgba(Theme.highlightBackgroundColor, Theme.highlightBackgroundOpacity)
+        radius: Theme.paddingSmall
+        width: Theme.itemSizeLarge * taskSwitchGrid.rows + 2 * Theme.paddingLarge
+        height: Theme.itemSizeLarge * taskSwitchGrid.columns + Theme.paddingLarge
+        clip: true
+
+        Label
+        {
+            id: appName
+            rotation: 90
+            anchors.centerIn: parent
+            anchors.horizontalCenterOffset: Theme.paddingSmall + (Theme.itemSizeLarge * (taskSwitchGrid.rows/2))
+            text: "???"
+            font.pixelSize: Theme.fontSizeSmall
+            color: Theme.primaryColor
+        }
 
         Grid
         {
+            id: taskSwitchGrid
             anchors.centerIn: parent
+            anchors.horizontalCenterOffset: -Theme.paddingLarge/2
             rotation: 90
-            columns: 4
-            rows: 2
+            property int i : appsModel.count
+            columns: (i<6) ? i : ((i<12) ? ((i%2 == 0) ? i/2 : i/2 +1) : ((i%3 == 0) ? i/3 : i/3 +1))
+            rows: (i<6) ? 1 : ((i<12) ? 2 : 3)
 
             Repeater
             {
-                model: shortcutsModel
+                id: appIconRepeater
+                model: appsModel
+
                 Rectangle
                 {
+                    id: appIconBackground
                     color: viewHelper.currentApp === index ? Theme.highlightColor : "transparent"
-                    radius: 10
-                    width: 120
-                    height: 120
+                    opacity: 0.8
+                    radius: Theme.paddingSmall
+                    width: Theme.itemSizeLarge
+                    height: Theme.itemSizeLarge
 
                     Image
                     {
-                        anchors.centerIn: parent
                         id: appIcon
+                        anchors.centerIn: parent
                         source: iconId
-                        y: Math.round((parent.height - height) / 2)
+
                         property real size: Theme.iconSizeLauncher
 
                         sourceSize.width: size
@@ -71,6 +110,7 @@ Item
                         MouseArea
                         {
                             anchors.fill: parent
+                            onPressed: viewHelper.setCurrentApp(index)
                             onClicked: viewHelper.launchApplication(index)
                         }
                     }

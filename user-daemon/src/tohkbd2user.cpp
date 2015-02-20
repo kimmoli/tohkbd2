@@ -57,7 +57,7 @@ int main(int argc, char **argv)
 
     rw.registerDBus();
 
-    QObject::connect(&rw, SIGNAL(_showTaskSwitcher()), view.data(), SLOT(showFullScreen()));
+    QObject::connect(&rw, SIGNAL(_showTaskSwitcher()), helper.data(), SLOT(showWindow()));
     QObject::connect(&rw, SIGNAL(_hideTaskSwitcher()), helper.data(), SLOT(hideWindow()));
     QObject::connect(&rw, SIGNAL(_nextAppTaskSwitcher()), helper.data(), SLOT(nextApp()));
 

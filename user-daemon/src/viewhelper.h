@@ -13,32 +13,37 @@ class ViewHelper : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(int currentApp READ getCurrentApp NOTIFY currentAppChanged())
+    Q_PROPERTY(int numberOfApps READ getNumberOfApps NOTIFY numberOfAppsChanged())
 
 public:
-    Q_INVOKABLE QVariantList getCurrentShortcuts();
     explicit ViewHelper(QQuickView *parent = 0);
     void setDefaultRegion();
-
+    Q_INVOKABLE QVariantList getCurrentApps();
+    Q_INVOKABLE void launchApplication(int n);
+    Q_INVOKABLE void setCurrentApp(int n);
+    Q_INVOKABLE void setNumberOfApps(int n);
 
 signals:
     void currentAppChanged();
+    void numberOfAppsChanged();
 
 public slots:
 //    void setTouchRegion(const QRect &rect);
     void detachWindow();
     void hideWindow();
+    void showWindow();
     void nextApp();
-    void launchApplication(int n);
-    void setCurrentApp(int n);
 
 private:
     void setMouseRegion(const QRegion &region);
     QQuickView *view;
 
     int getCurrentApp();
+    int getNumberOfApps();
     int m_numberOfApps;
     int m_currentApp;
-    QStringList apps;
+    QVariantList apps;
+    QStringList appsDesktopFiles;
 
 };
 
