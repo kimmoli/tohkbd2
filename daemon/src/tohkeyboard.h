@@ -42,6 +42,7 @@ public:
 public slots:
     /* dbus signal handler slots */
     void handleDisplayStatus(const QDBusMessage& msg);
+    void handleNotificationActionInvoked(const QDBusMessage& msg);
 
     /* keymap handler slots */
     void handleShiftChanged();
@@ -86,6 +87,8 @@ private:
     void keyboardConnectedNotification(bool connected);
     void checkEEPROM();
     bool tohcoreBind(bool bind);
+    void notificationSend(QString summary, QString body);
+    void screenShot();
 
     int gpio_fd;
 
@@ -125,6 +128,9 @@ private:
     bool taskSwitcherVisible;
 
     QDBusInterface *tohkbd2user;
+
+    unsigned int ssNotifyReplacesId;
+    QString ssFilename;
 
 };
 
