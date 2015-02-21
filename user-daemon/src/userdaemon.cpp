@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <sailfishapp.h>
 #include "userdaemon.h"
 
 static const char *SERVICE = SERVICE_NAME;
@@ -110,6 +111,6 @@ QString UserDaemon::getVersion()
 void UserDaemon::showNotification(QString text)
 {
     MNotification notification(MNotification::DeviceEvent, "", text);
-    notification.setImage("/usr/share/harbour-tohkbd2/icon-system-keyboard.png");
+    notification.setImage(SailfishApp::pathTo("/icon-system-keyboard.png").toLocalFile());
     notification.publish();
 }

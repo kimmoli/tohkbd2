@@ -8,72 +8,121 @@ Item
     width: Screen.width
     height: Screen.height
 
+    property int currentApp: viewHelper.currentApp
+    property int numberOfApps: viewHelper.numberOfApps
 
-    function updateShortcutsModel()
+    onCurrentAppChanged:
+    {
+        appName.text = appsModel.get(viewHelper.currentApp).name
+    }
+
+    onNumberOfAppsChanged:
+    {
+        updateAppsModel()
+        appName.text = appsModel.get(viewHelper.currentApp).name
+
+        viewHelper.setTouchRegion(Qt.rect(taskSwitchBackground.x,
+                                          taskSwitchBackground.y,
+                                          taskSwitchBackground.width,
+                                          taskSwitchBackground.height))
+    }
+
+    function updateAppsModel()
     {
         var i
-        var tmp = viewHelper.getCurrentShortcuts()
+        var tmp = viewHelper.getCurrentApps()
 
-        shortcutsModel.clear()
+        appsModel.clear()
 
         for (i=0 ; i<tmp.length; i++)
         {
-            shortcutsModel.append({"iconId": tmp[i]["iconId"]})
+            appsModel.append( { "iconId": tmp[i]["iconId"],
+                                "name":   tmp[i]["name"] } )
         }
     }
 
     ListModel
     {
-        id: shortcutsModel
+        id: appsModel
     }
-
-    Component.onCompleted: updateShortcutsModel()
 
     Rectangle
     {
-        id: rect
+        anchors.fill: parent
+        color: "black"
+        opacity: 0.5
+    }
+
+    Rectangle
+    {
+        id: taskSwitchBackground
         anchors.centerIn: root
-        color: Theme.secondaryHighlightColor
-        radius: 10
-        width: 240
-        height: 480
+        anchors.horizontalCenterOffset: Theme.paddingLarge
+        color: Theme.rgba(Theme.highlightBackgroundColor, Theme.highlightBackgroundOpacity)
+        radius: Theme.paddingSmall
+        width: Theme.itemSizeLarge * taskSwitchGrid.rows + 2 * Theme.paddingLarge
+        height: Theme.itemSizeLarge * taskSwitchGrid.columns + Theme.paddingLarge
+        clip: true
+    }
 
-        Grid
+    Label
+    {
+        id: appName
+        rotation: 90
+        anchors.centerIn: taskSwitchBackground
+        anchors.horizontalCenterOffset: Theme.paddingSmall + (Theme.itemSizeLarge * (taskSwitchGrid.rows/2))
+        text: "???"
+        font.pixelSize: Theme.fontSizeSmall
+        color: Theme.primaryColor
+    }
+
+    Grid
+    {
+        id: taskSwitchGrid
+        anchors.centerIn: taskSwitchBackground
+        anchors.horizontalCenterOffset: -Theme.paddingLarge/2
+        rotation: 90
+        property int i : appsModel.count
+        columns: (i<6) ? i : ((i<12) ? ((i%2 == 0) ? i/2 : i/2 +1) : ((i%3 == 0) ? i/3 : i/3 +1))
+        rows: (i<6) ? 1 : ((i<12) ? 2 : 3)
+
+        Repeater
         {
-            anchors.centerIn: parent
-            rotation: 90
-            columns: 4
-            rows: 2
+            id: appIconRepeater
+            model: appsModel
 
-            Repeater
+            Item
             {
-                model: shortcutsModel
+                width: Theme.itemSizeLarge
+                height: Theme.itemSizeLarge
+
                 Rectangle
                 {
+                    id: appIconBackground
+                    anchors.fill: parent
                     color: viewHelper.currentApp === index ? Theme.highlightColor : "transparent"
-                    radius: 10
-                    width: 120
-                    height: 120
+                    opacity: 0.7
+                    radius: Theme.paddingSmall
+                }
 
-                    Image
-                    {
-                        anchors.centerIn: parent
-                        id: appIcon
-                        source: iconId
-                        y: Math.round((parent.height - height) / 2)
-                        property real size: Theme.iconSizeLauncher
+                Image
+                {
+                    id: appIcon
+                    anchors.centerIn: appIconBackground
+                    source: iconId
+                    property real size: Theme.iconSizeLauncher
 
-                        sourceSize.width: size
-                        sourceSize.height: size
-                        width: size
-                        height: size
+                    sourceSize.width: size
+                    sourceSize.height: size
+                    width: size
+                    height: size
+                }
 
-                        MouseArea
-                        {
-                            anchors.fill: parent
-                            onClicked: viewHelper.launchApplication(index)
-                        }
-                    }
+                MouseArea
+                {
+                    anchors.fill: parent
+                    onPressed: viewHelper.setCurrentApp(index)
+                    onClicked: viewHelper.launchApplication(index)
                 }
             }
         }
