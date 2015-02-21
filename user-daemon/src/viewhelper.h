@@ -22,13 +22,13 @@ public:
     Q_INVOKABLE void launchApplication(int n);
     Q_INVOKABLE void setCurrentApp(int n);
     Q_INVOKABLE void setNumberOfApps(int n);
+    Q_INVOKABLE void setTouchRegion(const QRect &rect);
 
 signals:
     void currentAppChanged();
     void numberOfAppsChanged();
 
 public slots:
-//    void setTouchRegion(const QRect &rect);
     void detachWindow();
     void hideWindow();
     void showWindow();

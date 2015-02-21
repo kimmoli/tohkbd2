@@ -5,6 +5,7 @@
 #include <QGuiApplication>
 #include <QDir>
 #include <qpa/qplatformnativeinterface.h>
+#include <QFileInfo>
 
 ViewHelper::ViewHelper(QQuickView *parent) :
     QObject(parent),
@@ -36,10 +37,10 @@ void ViewHelper::setMouseRegion(const QRegion &region)
     native->setWindowProperty(view->handle(), QLatin1String("MOUSE_REGION"), region);
 }
 
-//void ViewHelper::setTouchRegion(const QRect &rect)
-//{
-//    setMouseRegion(QRegion(rect));
-//}
+void ViewHelper::setTouchRegion(const QRect &rect)
+{
+    setMouseRegion(QRegion(rect));
+}
 
 void ViewHelper::setDefaultRegion()
 {
@@ -53,8 +54,7 @@ void ViewHelper::hideWindow()
 
 void ViewHelper::showWindow()
 {
-    printf("tohkbd2-user: show window\n");
-    // grep -l "`ps ax -o cmd= | grep invoker | grep silica`" /usr/share/applications/*.desktop
+    printf("tohkbd2-user: showing taskswitcher\n");
 
     QProcess ps;
     ps.start("ps", QStringList() << "ax" << "-o" << "cmd=");
@@ -62,12 +62,16 @@ void ViewHelper::showWindow()
     QStringList pr = QString(ps.readAllStandardOutput()).split("\n");
 
     QStringList cmd;
-    /* Filter ? */
+    /* TODO: Add support for android apps */
     for (int i=0 ; i<pr.count() ; i++)
-        if (pr.at(i).contains("invoker") && pr.at(i).contains("silica"))
+    {
+        if ((pr.at(i).contains("invoker") && pr.at(i).contains("silica")) ||
+                pr.at(i).contains("jolla-") ||
+                pr.at(i).contains("sailfish-"))
         {
             cmd << pr.at(i);
         }
+    }
 
     QStringList exec;
     for (int i=0 ; i<cmd.count() ; i++)
@@ -75,12 +79,18 @@ void ViewHelper::showWindow()
         QStringList tmp = cmd.at(i).split(" ");
         for (int a=0 ; a<tmp.count() ; a++)
         {
-            if (!tmp.at(a).startsWith("-") && !tmp.at(a).contains("invoker"))
+            if (!tmp.at(a).startsWith("-") && !tmp.at(a).contains("invoker") && !tmp.at(a).isEmpty())
             {
-                exec << tmp.at(a);
+                QFileInfo fi(QDir("/usr/bin"), tmp.at(a));
+                if (fi.exists() && fi.isExecutable())
+                {
+                    exec << tmp.at(a);
+                }
             }
         }
     }
+
+    exec.removeDuplicates();
 
     QVariantMap map;
 
@@ -122,9 +132,15 @@ void ViewHelper::showWindow()
 
                 apps.append(map);
                 appsDesktopFiles.append(desktops.at(i));
-                printf("tohkbd2user: Running %s\n", qPrintable(desktops.at(i)));
+
+                printf("tohkbd2-user: %s\n", qPrintable(desktops.at(i)));
+
+                if (apps.count() > 15)
+                    break;
             }
         }
+        if (apps.count() > 15)
+            break;
     }
 
     m_numberOfApps = apps.count();

@@ -20,6 +20,11 @@ Item
     {
         updateAppsModel()
         appName.text = appsModel.get(viewHelper.currentApp).name
+
+        viewHelper.setTouchRegion(Qt.rect(taskSwitchBackground.x,
+                                          taskSwitchBackground.y,
+                                          taskSwitchBackground.width,
+                                          taskSwitchBackground.height))
     }
 
     function updateAppsModel()
@@ -36,16 +41,16 @@ Item
         }
     }
 
+    ListModel
+    {
+        id: appsModel
+    }
+
     Rectangle
     {
         anchors.fill: parent
         color: "black"
         opacity: 0.5
-    }
-
-    ListModel
-    {
-        id: appsModel
     }
 
     Rectangle
@@ -58,62 +63,66 @@ Item
         width: Theme.itemSizeLarge * taskSwitchGrid.rows + 2 * Theme.paddingLarge
         height: Theme.itemSizeLarge * taskSwitchGrid.columns + Theme.paddingLarge
         clip: true
+    }
 
-        Label
+    Label
+    {
+        id: appName
+        rotation: 90
+        anchors.centerIn: taskSwitchBackground
+        anchors.horizontalCenterOffset: Theme.paddingSmall + (Theme.itemSizeLarge * (taskSwitchGrid.rows/2))
+        text: "???"
+        font.pixelSize: Theme.fontSizeSmall
+        color: Theme.primaryColor
+    }
+
+    Grid
+    {
+        id: taskSwitchGrid
+        anchors.centerIn: taskSwitchBackground
+        anchors.horizontalCenterOffset: -Theme.paddingLarge/2
+        rotation: 90
+        property int i : appsModel.count
+        columns: (i<6) ? i : ((i<12) ? ((i%2 == 0) ? i/2 : i/2 +1) : ((i%3 == 0) ? i/3 : i/3 +1))
+        rows: (i<6) ? 1 : ((i<12) ? 2 : 3)
+
+        Repeater
         {
-            id: appName
-            rotation: 90
-            anchors.centerIn: parent
-            anchors.horizontalCenterOffset: Theme.paddingSmall + (Theme.itemSizeLarge * (taskSwitchGrid.rows/2))
-            text: "???"
-            font.pixelSize: Theme.fontSizeSmall
-            color: Theme.primaryColor
-        }
+            id: appIconRepeater
+            model: appsModel
 
-        Grid
-        {
-            id: taskSwitchGrid
-            anchors.centerIn: parent
-            anchors.horizontalCenterOffset: -Theme.paddingLarge/2
-            rotation: 90
-            property int i : appsModel.count
-            columns: (i<6) ? i : ((i<12) ? ((i%2 == 0) ? i/2 : i/2 +1) : ((i%3 == 0) ? i/3 : i/3 +1))
-            rows: (i<6) ? 1 : ((i<12) ? 2 : 3)
-
-            Repeater
+            Item
             {
-                id: appIconRepeater
-                model: appsModel
+                width: Theme.itemSizeLarge
+                height: Theme.itemSizeLarge
 
                 Rectangle
                 {
                     id: appIconBackground
+                    anchors.fill: parent
                     color: viewHelper.currentApp === index ? Theme.highlightColor : "transparent"
-                    opacity: 0.8
+                    opacity: 0.7
                     radius: Theme.paddingSmall
-                    width: Theme.itemSizeLarge
-                    height: Theme.itemSizeLarge
+                }
 
-                    Image
-                    {
-                        id: appIcon
-                        anchors.centerIn: parent
-                        source: iconId
+                Image
+                {
+                    id: appIcon
+                    anchors.centerIn: appIconBackground
+                    source: iconId
+                    property real size: Theme.iconSizeLauncher
 
-                        property real size: Theme.iconSizeLauncher
+                    sourceSize.width: size
+                    sourceSize.height: size
+                    width: size
+                    height: size
+                }
 
-                        sourceSize.width: size
-                        sourceSize.height: size
-                        width: size
-                        height: size
-
-                        MouseArea
-                        {
-                            anchors.fill: parent
-                            onPressed: viewHelper.setCurrentApp(index)
-                            onClicked: viewHelper.launchApplication(index)
-                        }
-                    }
+                MouseArea
+                {
+                    anchors.fill: parent
+                    onPressed: viewHelper.setCurrentApp(index)
+                    onClicked: viewHelper.launchApplication(index)
                 }
             }
         }
