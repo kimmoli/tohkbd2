@@ -95,11 +95,6 @@ fi
 %_ambience_post
 
 %pre
-# In case of update, stop first
-if [ "$1" = "2" ]; then
-  DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/100000/dbus/user_bus_socket" \
-    dbus-send --type=method_call --dest=com.kimmoli.tohkbd2user / com.kimmoli.tohkbd2user.quit
-fi
 # In case of update, stop and disable first
 if [ "$1" = "2" ]; then
   systemctl stop harbour-tohkbd2.service
@@ -108,9 +103,6 @@ if [ "$1" = "2" ]; then
 fi
 
 %preun
-DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/100000/dbus/user_bus_socket" \
-  dbus-send --type=method_call --dest=com.kimmoli.tohkbd2user / com.kimmoli.tohkbd2user.quit
-
 # in case of complete removal, stop and disable
 if [ "$1" = "0" ]; then
   systemctl stop harbour-tohkbd2.service

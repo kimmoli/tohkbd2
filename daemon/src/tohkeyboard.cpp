@@ -113,6 +113,7 @@ Tohkbd::~Tohkbd()
         connection.unregisterService(SERVICE);
 
         printf("tohkbd2: unregistered from dbus systemBus\n");
+        tohkbd2user->call(QDBus::AutoDetect, "quit");
     }
 }
 
