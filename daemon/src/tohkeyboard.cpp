@@ -44,6 +44,9 @@ Tohkbd::Tohkbd(QObject *parent) :
     ssNotifyReplacesId = 0;
     ssFilename = QString();
 
+    tohkbd2user = new QDBusInterface("com.kimmoli.tohkbd2user", "/", "com.kimmoli.tohkbd2user", QDBusConnection::sessionBus(), this);
+    tohkbd2user->setTimeout(2000);
+
     thread = new QThread();
     worker = new Worker();
 
@@ -89,9 +92,6 @@ Tohkbd::Tohkbd(QObject *parent) :
     connect(keymap, SIGNAL(symChanged()), this, SLOT(handleSymChanged()));
     connect(keymap, SIGNAL(keyPressed(QList< QPair<int, int> >)), this, SLOT(handleKeyPressed(QList< QPair<int, int> >)));
     connect(keymap, SIGNAL(keyReleased()), this, SLOT(handleKeyReleased()));
-
-    tohkbd2user = new QDBusInterface("com.kimmoli.tohkbd2user", "/", "com.kimmoli.tohkbd2user", QDBusConnection::sessionBus(), this);
-    tohkbd2user->setTimeout(2000);
 
 }
 
