@@ -30,6 +30,7 @@ public:
 signals:
     void versionChanged();
     void shortcutsChanged();
+    void settingsChanged();
 
     //private:
 

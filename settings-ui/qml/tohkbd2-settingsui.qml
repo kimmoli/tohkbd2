@@ -64,6 +64,11 @@ ApplicationWindow
         {
             updateShortcutsModel()
         }
+
+        onSettingsChanged:
+        {
+            settings = settingsui.getCurrentSettings()
+        }
     }
 
     ListModel

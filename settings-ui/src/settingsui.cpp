@@ -169,6 +169,8 @@ void SettingsUi::setSettingInt(QString key, int value)
     args.append(key);
     args.append(value);
     tohkbd2daemon.callWithArgumentList(QDBus::AutoDetect, "setSettingInt", args);
+
+    emit settingsChanged();
 }
 
 void SettingsUi::setShortcutsToDefault()
