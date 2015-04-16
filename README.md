@@ -1,4 +1,4 @@
-tohkbd2-daemon
+harbour-ambience-tohkbd2
 ======
 
 ### Shortly 
@@ -13,6 +13,7 @@ tohkbd2-daemon
   * send SW_KEYPAD_SLIDE event (keypad opened), which is registered by mce to turn display on
   * Show a notification that keyboard is connected
   * Change virtual keyboard layout to minimal (done through tohkbd2-user daemon which writes/reads dconf)
+  * Force screen orientation to landscape
 * Keyboard presense is checked every 2 secs. If comms test fails:
   * shutdown keyboard
   * send SW_KEYPAD_SLIDE event (keypad closed)
@@ -34,16 +35,8 @@ mer-obs https://build.merproject.org/project/show/home:kimmoli:tohs
  ssu ar tohs http://repo.merproject.org/obs/home:/kimmoli:/tohs/sailfish_latest_armv7hl
  ssu ur
  pkcon set-repo-data tohs refresh-now true
- pkcon install harbour-tohkbd2
+ pkcon install harbour-ambience-tohkbd2
 ```
-
-The installation will require two other tohkbd2 packages, which are located in same repository:
-* **harbour-tohkbd2-settingsui** 
-  * This is application for changing keyboard settings, repeat rate, backlight etc
-  * source: https://github.com/kimmoli/tohkbd2-settingsui
-* **harbour-tohkbd2-user** 
-  * This is user daemon for accessing *nemo* specific dconf values like virtual keyboard layout
-  * source: https://github.com/kimmoli/tohkbd2-user
 
 ### References:
 
