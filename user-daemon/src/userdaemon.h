@@ -28,6 +28,8 @@ signals:
 public slots:
     QString getActiveLayout();
     void setActiveLayout(const QString &value);
+    QString getOrientationLock();
+    void setOrientationLock(const QString &value);
     void launchApplication(const QString &desktopFilename);
     void showKeyboardConnectionNotification(const bool &connected);
     QString getVersion();

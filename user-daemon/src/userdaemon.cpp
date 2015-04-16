@@ -76,6 +76,30 @@ QString UserDaemon::getActiveLayout()
     return ci.value().toString();
 }
 
+void UserDaemon::setOrientationLock(const QString &value)
+{
+    if (value == "dynamic" || value == "landscape" || value == "portrait")
+    {
+        printf("tohkbd2-user: setting orientation lock to \"%s\"\n", qPrintable(value));
+
+        MGConfItem ci("/lipstick/orientationLock");
+        ci.set(value);
+    }
+    else
+    {
+        printf("tohkbd2-user: error: orientation lock can be set only to dynamic, landscape or portrait.\n");
+    }
+}
+
+QString UserDaemon::getOrientationLock()
+{
+    MGConfItem ci("/lipstick/orientationLock");
+
+    printf("tohkbd2-user: orientation lock is \"%s\"\n", qPrintable(ci.value().toString()));
+
+    return ci.value().toString();
+}
+
 void UserDaemon::launchApplication(const QString &desktopFilename)
 {
     MDesktopEntry app(desktopFilename);
