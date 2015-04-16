@@ -78,6 +78,7 @@ private:
     void checkDoWeNeedBacklight();
     QList<unsigned int> readEepromConfig();
     void changeActiveLayout(bool justGetIt = false);
+    void changeOrientationLock(bool justGetIt = false);
     bool setVddState(bool state);
     bool setInterruptEnable(bool);
     void emitKeypadSlideEvent(bool openKeypad);
@@ -110,6 +111,7 @@ private:
     QTimer *repeatTimer;
 
     QString currentActiveLayout;
+    QString currentOrientationLock;
 
     QList< QPair<int, int> > lastKeyCode;
     QHash<int, QString> applicationShortcuts;
@@ -124,6 +126,7 @@ private:
     bool keyIsPressed;
     bool backlightEnabled;
     bool slideEventEmitted;
+    bool forceLandscapeOrientation;
 
     bool taskSwitcherVisible;
 

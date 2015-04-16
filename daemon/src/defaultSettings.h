@@ -23,5 +23,6 @@
 #define STICKY_CTRL_ENABLED true
 #define STICKY_ALT_ENABLED false
 #define STICKY_SYM_ENABLED false
+#define FORCE_LANDSCAPE_ORIENTATION true
 
 #endif // DEFAULTSSETTINGS_H

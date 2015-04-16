@@ -35,6 +35,7 @@ Tohkbd::Tohkbd(QObject *parent) :
     capsLockSeq = 0;
     vkbLayoutIsTohkbd = false;
     currentActiveLayout = QString();
+    currentOrientationLock = QString();
     keypadIsPresent = false;
     gpio_fd = -1;
     displayIsOn = false;
@@ -83,6 +84,9 @@ Tohkbd::Tohkbd(QObject *parent) :
 
     if (currentActiveLayout.isEmpty())
         changeActiveLayout(true);
+
+    if (currentOrientationLock.isEmpty())
+        changeOrientationLock(true);
 
     checkKeypadPresence();
 
@@ -298,6 +302,8 @@ bool Tohkbd::checkKeypadPresence()
 
         vkbLayoutIsTohkbd = keypadIsPresent;
         changeActiveLayout();
+        if (forceLandscapeOrientation)
+            changeOrientationLock();
     }
 
     return keypadIsPresent;
@@ -624,6 +630,39 @@ void Tohkbd::changeActiveLayout(bool justGetIt)
         tohkbd2user->callWithArgumentList(QDBus::AutoDetect, "setActiveLayout", args);
     }
 }
+
+/* Orientation lock control
+ * If enabled in settings, landscape mode is forced when tohkbd is slided out
+ */
+void Tohkbd::changeOrientationLock(bool justGetIt)
+{
+    QString __currentOrientationLock = tohkbd2user->call(QDBus::AutoDetect, "getOrientationLock").arguments().at(0).toString();
+
+    printf("Current orientation lock is %s\n", qPrintable(__currentOrientationLock));
+
+    /* Keyboard is now attached, store original orientation */
+    if (keypadIsPresent || justGetIt)
+        currentOrientationLock = __currentOrientationLock;
+
+    if (justGetIt)
+        return;
+
+    if (keypadIsPresent)
+    {
+        /* Force to landscape if keypad is present */
+        QList<QVariant> args;
+        args.append("landscape");
+        tohkbd2user->callWithArgumentList(QDBus::AutoDetect, "setOrientationLock", args);
+    }
+    else if (!currentOrientationLock.isEmpty())
+    {
+        /* Or return the previous value, if we have one */
+        QList<QVariant> args;
+        args.append(currentOrientationLock);
+        tohkbd2user->callWithArgumentList(QDBus::AutoDetect, "setOrientationLock", args);
+    }
+}
+
 /* SW_KEYPAD_SLIDE controls display on/off
  * Note, this requires mce 1.37.1 + wip_configurable_evdev
  */
@@ -692,6 +731,7 @@ void Tohkbd::reloadSettings()
     keymap->stickyCtrlEnabled = settings.value("stickyCtrlEnabled", STICKY_CTRL_ENABLED).toBool();
     keymap->stickyAltEnabled = settings.value("stickyAltEnabled", STICKY_ALT_ENABLED).toBool();
     keymap->stickySymEnabled = settings.value("stickySymEnabled", STICKY_SYM_ENABLED).toBool();
+    forceLandscapeOrientation = settings.value("forceLandscapeOrientation", FORCE_LANDSCAPE_ORIENTATION).toBool();
     settings.endGroup();
 }
 
@@ -794,6 +834,14 @@ void Tohkbd::setSettingInt(const QString &key, const int &value)
         settings.beginGroup("generalsettings");
         settings.setValue("backlightEnabled", (value == 1));
         settings.endGroup();
+    }
+    else if (key == "forceLandscapeOrientation" && (value == 0 || value == 1))
+    {
+        forceLandscapeOrientation = (value == 1);
+        settings.beginGroup("generalsettings");
+        settings.setValue("forceLandscapeOrientation", (value == 1));
+        settings.endGroup();
+
     }
 }
 
