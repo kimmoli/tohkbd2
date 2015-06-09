@@ -31,11 +31,6 @@ BuildRequires:  qt5-qttools-linguist
 Requires:   sailfishsilica-qt5 >= 0.10.9
 Requires:   ambienced
 
-Obsoletes:   harbour-tohkbd2-user
-Obsoletes:   harbour-tohkbd2-settingsui
-Obsoletes:   harbour-tohkbd2
-Obsoletes:   harbour-tohkbd2-ambience
-
 %description
 %{summary}
 
