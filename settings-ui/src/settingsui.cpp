@@ -92,6 +92,7 @@ QVariantMap SettingsUi::getCurrentSettings()
     map.insert("keyRepeatDelay", settings.value("keyRepeatDelay", 250).toInt());
     map.insert("keyRepeatRate", settings.value("keyRepeatRate", 25).toInt());
     map.insert("backlightEnabled", settings.value("backlightEnabled", true).toBool());
+    map.insert("forceLandscapeOrientation", settings.value("forceLandscapeOrientation", true).toBool());
 
     settings.endGroup();
 

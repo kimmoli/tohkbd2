@@ -87,6 +87,19 @@ Page
 
             SectionHeader
             {
+                text: qsTr("Orientation")
+            }
+            TextSwitch
+            {
+                text: qsTr("Force Landscape")
+                description: qsTr("Force landscape orientation when keyboard attached")
+                onCheckedChanged: settingsui.setSettingInt("forceLandscapeOrientation", checked ? 1 : 0)
+                width: parent.width - 2*Theme.paddingLarge
+                Component.onCompleted: checked = settings["forceLandscapeOrientation"]
+            }
+
+            SectionHeader
+            {
                 text: qsTr("Repeat")
             }
             Slider
