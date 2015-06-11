@@ -86,7 +86,10 @@ Tohkbd::Tohkbd(QObject *parent) :
         changeActiveLayout(true);
 
     if (currentOrientationLock.isEmpty())
+    {
         changeOrientationLock(true);
+        saveOrientation();
+    }
 
     checkKeypadPresence();
 
@@ -103,6 +106,8 @@ Tohkbd::Tohkbd(QObject *parent) :
  */
 Tohkbd::~Tohkbd()
 {
+    saveOrientation();
+
     uinputif->closeUinputDevice();
 
     worker->abort();
@@ -733,6 +738,10 @@ void Tohkbd::reloadSettings()
     keymap->stickySymEnabled = settings.value("stickySymEnabled", STICKY_SYM_ENABLED).toBool();
     forceLandscapeOrientation = settings.value("forceLandscapeOrientation", FORCE_LANDSCAPE_ORIENTATION).toBool();
     settings.endGroup();
+
+    settings.beginGroup("orientation");
+    currentOrientationLock = settings.value("originalOrientation", QString()).toString();
+    settings.endGroup();
 }
 
 /* Save activeLayout to settings
@@ -742,6 +751,16 @@ void Tohkbd::saveActiveLayout()
     QSettings settings(QSettings::SystemScope, "harbour-tohkbd2", "tohkbd2");
     settings.beginGroup("vkb");
     settings.setValue("activeLayout", currentActiveLayout);
+    settings.endGroup();
+}
+
+/* Save current orientation to settings
+ */
+void Tohkbd::saveOrientation()
+{
+    QSettings settings(QSettings::SystemScope, "harbour-tohkbd2", "tohkbd2");
+    settings.beginGroup("orientation");
+    settings.setValue("originalOrientation", currentOrientationLock);
     settings.endGroup();
 }
 
@@ -841,7 +860,18 @@ void Tohkbd::setSettingInt(const QString &key, const int &value)
         settings.beginGroup("generalsettings");
         settings.setValue("forceLandscapeOrientation", (value == 1));
         settings.endGroup();
-
+        if (value == 0 && !currentOrientationLock.isEmpty())
+        {
+            QList<QVariant> args;
+            args.append(currentOrientationLock);
+            tohkbd2user->callWithArgumentList(QDBus::AutoDetect, "setOrientationLock", args);
+        }
+        else if (value == 1 && keypadIsPresent)
+        {
+            QList<QVariant> args;
+            args.append("landscape");
+            tohkbd2user->callWithArgumentList(QDBus::AutoDetect, "setOrientationLock", args);
+        }
     }
 }
 

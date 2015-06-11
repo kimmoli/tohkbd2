@@ -85,6 +85,7 @@ private:
     bool checkKeypadPresence();
     void reloadSettings();
     void saveActiveLayout();
+    void saveOrientation();
     void keyboardConnectedNotification(bool connected);
     void checkEEPROM();
     bool tohcoreBind(bool bind);
