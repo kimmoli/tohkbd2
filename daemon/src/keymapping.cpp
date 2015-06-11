@@ -166,8 +166,11 @@ void keymapping::process(QByteArray inputReport)
 
     if (!retKey.empty())
         emit keyPressed(retKey);
-    else
+
+    if (retKey.empty() || (retKey != _prevRetKey && !_prevRetKey.empty()))
         emit keyReleased();
+
+    _prevRetKey = retKey;
 }
 
 void keymapping::releaseStickyModifiers()

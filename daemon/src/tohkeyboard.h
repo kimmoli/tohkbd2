@@ -125,6 +125,7 @@ private:
     bool vddEnabled;
     bool interruptsEnabled;
     bool keyIsPressed;
+    bool keyRepeat;
     bool backlightEnabled;
     bool slideEventEmitted;
     bool forceLandscapeOrientation;

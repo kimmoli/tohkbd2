@@ -40,6 +40,7 @@ Tohkbd::Tohkbd(QObject *parent) :
     gpio_fd = -1;
     displayIsOn = false;
     keyIsPressed = false;
+    keyRepeat = false;
     slideEventEmitted = false;
     taskSwitcherVisible = false;
     ssNotifyReplacesId = 0;
@@ -453,7 +454,7 @@ void Tohkbd::handleKeyPressed(QList< QPair<int, int> > keyCode)
     lastKeyCode = keyCode;
 
     /* Repeat delay first, then repeat rate */
-    repeatTimer->start(keyIsPressed ? (keyRepeatRate-(KEYREPEAT_RATE-1)) : keyRepeatDelay);
+    repeatTimer->start(keyRepeat ? (keyRepeatRate-(KEYREPEAT_RATE-1)) : keyRepeatDelay);
     keyIsPressed = true;
 }
 
@@ -461,8 +462,8 @@ void Tohkbd::handleKeyPressed(QList< QPair<int, int> > keyCode)
  */
 void Tohkbd::repeatTimerTimeout()
 {
-    if (keyIsPressed)
-        handleKeyPressed(lastKeyCode);
+    keyRepeat = true;
+    handleKeyPressed(lastKeyCode);
 }
 
 /* Stop repeat timer when key released
@@ -470,6 +471,7 @@ void Tohkbd::repeatTimerTimeout()
 void Tohkbd::handleKeyReleased()
 {
     repeatTimer->stop();
+    keyRepeat = false;
 
     if (keyIsPressed)
         keymap->releaseStickyModifiers();

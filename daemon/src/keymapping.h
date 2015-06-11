@@ -42,6 +42,7 @@ signals:
 public slots:
 
 private:
+    QList< QPair<int,int> > _prevRetKey;
 
 };
 
