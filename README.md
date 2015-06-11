@@ -34,7 +34,7 @@ mer-obs https://build.merproject.org/project/show/home:kimmoli:tohs
  devel-su
  ssu ar tohs http://repo.merproject.org/obs/home:/kimmoli:/tohs/sailfish_latest_armv7hl
  ssu ur
- pkcon set-repo-data tohs refresh-now true
+ pkcon repo-set-data tohs refresh-now true
  pkcon install harbour-ambience-tohkbd2
 ```
 
