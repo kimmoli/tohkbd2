@@ -95,9 +95,16 @@ QString UserDaemon::getOrientationLock()
 {
     MGConfItem ci("/lipstick/orientationLock");
 
-    printf("tohkbd2-user: orientation lock is \"%s\"\n", qPrintable(ci.value().toString()));
+    QString orientation = ci.value().toString();
 
-    return ci.value().toString();
+    /* Assume orientation to be "dynamic" if returns empty */
+
+    if (orientation.isEmpty())
+        orientation = "dynamic";
+
+    printf("tohkbd2-user: orientation lock is \"%s\"\n", qPrintable(orientation));
+
+    return orientation;
 }
 
 void UserDaemon::launchApplication(const QString &desktopFilename)
