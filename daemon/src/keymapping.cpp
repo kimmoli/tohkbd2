@@ -109,7 +109,7 @@ void keymapping::process(QByteArray inputReport)
         else if (key == 0xD8) { retKey.append(qMakePair(KEY_B, 0)); }
         else if (key == 0xD9) { retKey.append(qMakePair(KEY_N, 0)); }
         else if (key == 0xDA) { retKey.append(qMakePair(KEY_M, 0)); }
-        else if (key == 0xDB) { retKey.append(qMakePair(KEY_0, FORCE_SHIFT)); /* ? */ }
+        else if (key == 0xDB) { retKey.append(qMakePair(KEY_SLASH, FORCE_SHIFT)); /* ? */ }
         else if (key == 0xDC) { retKey.append(qMakePair(KEY_1, FORCE_SHIFT)); /* ! */ }
         else if (key == 0xDD) { retKey.append(qMakePair(KEY_COMMA, 0)); }
         else if (key == 0xDE) { retKey.append(qMakePair(KEY_DOT, 0)); }
