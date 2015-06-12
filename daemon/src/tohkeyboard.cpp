@@ -711,27 +711,24 @@ void Tohkbd::reloadSettings()
 
     settings.beginGroup("applicationshortcuts");
 
-    /* These are the default values */
-    if (applicationShortcuts.isEmpty())
-    {
-        applicationShortcuts[KEY_1] = SHORTCUT_KEY_F1;
-        applicationShortcuts[KEY_2] = SHORTCUT_KEY_F2;
-        applicationShortcuts[KEY_3] = SHORTCUT_KEY_F3;
-        applicationShortcuts[KEY_4] = SHORTCUT_KEY_F4;
-        applicationShortcuts[KEY_5] = SHORTCUT_KEY_F5;
-        applicationShortcuts[KEY_6] = SHORTCUT_KEY_F6;
-        applicationShortcuts[KEY_7] = SHORTCUT_KEY_F7;
-        applicationShortcuts[KEY_8] = SHORTCUT_KEY_F8;
-        applicationShortcuts[KEY_9] = SHORTCUT_KEY_F9;
-        applicationShortcuts[KEY_0] = SHORTCUT_KEY_F10;
-        applicationShortcuts[KEY_MINUS] = SHORTCUT_KEY_F11;
-        applicationShortcuts[KEY_EQUAL] = SHORTCUT_KEY_F12;
-    }
+    applicationShortcuts[KEY_1] = settings.value(QString("KEY_F1"), SHORTCUT_KEY_F1).toString();
+    applicationShortcuts[KEY_2] = settings.value(QString("KEY_F2"), SHORTCUT_KEY_F2).toString();
+    applicationShortcuts[KEY_3] = settings.value(QString("KEY_F3"), SHORTCUT_KEY_F3).toString();
+    applicationShortcuts[KEY_4] = settings.value(QString("KEY_F4"), SHORTCUT_KEY_F4).toString();
+    applicationShortcuts[KEY_5] = settings.value(QString("KEY_F5"), SHORTCUT_KEY_F5).toString();
+    applicationShortcuts[KEY_6] = settings.value(QString("KEY_F6"), SHORTCUT_KEY_F6).toString();
+    applicationShortcuts[KEY_7] = settings.value(QString("KEY_F7"), SHORTCUT_KEY_F7).toString();
+    applicationShortcuts[KEY_8] = settings.value(QString("KEY_F8"), SHORTCUT_KEY_F8).toString();
+    applicationShortcuts[KEY_9] = settings.value(QString("KEY_F9"), SHORTCUT_KEY_F9).toString();
+    applicationShortcuts[KEY_0] = settings.value(QString("KEY_F10"), SHORTCUT_KEY_F10).toString();
+    applicationShortcuts[KEY_MINUS] = settings.value(QString("KEY_F11"), SHORTCUT_KEY_F11).toString();
+    applicationShortcuts[KEY_EQUAL] = settings.value(QString("KEY_F12"), SHORTCUT_KEY_F12).toString();
 
     for (int i = KEY_1 ; i<=KEY_EQUAL ; i++)
     {
-        applicationShortcuts[i] = settings.value(QString("KEY_F%1").arg((i-KEY_1)+1), applicationShortcuts[i]).toString();
         printf("app shortcut F%d : %s\n", ((i-KEY_1)+1), qPrintable(applicationShortcuts[i]));
+        /* Write them back, as we need default values there in settings app */
+        settings.setValue(QString("KEY_F%1").arg(((i-KEY_1)+1)), applicationShortcuts[i]);
     }
     settings.endGroup();
 

@@ -25,8 +25,7 @@ Page
             width: page.width
             PageHeader
             {
-                //% "Applications"
-                title: qsTrId("settings-he-applications")
+                title: qsTr("Applications")
             }
         }
 
