@@ -107,7 +107,13 @@ Tohkbd::Tohkbd(QObject *parent) :
  */
 Tohkbd::~Tohkbd()
 {
-    saveOrientation();
+    /* Restore orientation when shutting down */
+    if (forceLandscapeOrientation)
+    {
+        QList<QVariant> args;
+        args.append(currentOrientationLock);
+        tohkbd2user->callWithArgumentList(QDBus::AutoDetect, "setOrientationLock", args);
+    }
 
     uinputif->closeUinputDevice();
 
