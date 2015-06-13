@@ -34,11 +34,22 @@ Page
             }
             TextSwitch
             {
-                text: qsTr("Enabled")
+                id: alwaysOn
+                text: qsTr("Always on")
+                description: qsTr("Backlight is always on when keyboard attached and phone's display is on")
+                onCheckedChanged: settingsui.setSettingInt("forceBacklightOn", checked ? 1 : 0)
+                width: parent.width - 2*Theme.paddingLarge
+                Component.onCompleted: checked = settings["forceBacklightOn"]
+            }
+            TextSwitch
+            {
+                id: automatic
+                text: qsTr("Automatic")
                 description: qsTr("Automatic backlight enable or always off")
                 onCheckedChanged: settingsui.setSettingInt("backlightEnabled", checked ? 1 : 0)
                 width: parent.width - 2*Theme.paddingLarge
                 Component.onCompleted: checked = settings["backlightEnabled"]
+                enabled: !alwaysOn.checked
             }
             Slider
             {
@@ -50,6 +61,8 @@ Page
                 value: settings["backlightTimeout"]
                 valueText: value + " ms"
                 stepSize: 100
+                enabled: !alwaysOn.checked && automatic.checked
+                opacity: enabled ? 1.0 : 0.4
 
                 property bool wasChanged: false
                 onValueChanged: wasChanged = true
@@ -72,6 +85,8 @@ Page
                 value: settings["backlightLuxThreshold"]
                 valueText: value + " lux"
                 stepSize: 1
+                enabled: !alwaysOn.checked && automatic.checked
+                opacity: enabled ? 1.0 : 0.4
 
                 property bool wasChanged: false
                 onValueChanged: wasChanged = true
