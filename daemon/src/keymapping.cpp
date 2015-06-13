@@ -55,7 +55,7 @@ void keymapping::process(QByteArray inputReport)
         else if (key == 0xCF)                { __altPressed = true; }
         else if (key == 0x08 || key == 0xBF) { __ctrlPressed = true; }
         else if (key == 0x02 || key == 0xED) { __symPressed = true; }
-        else if (key == 0xA1) { retKey.append(qMakePair(KEY_ESC, 0)); }
+        else if (key == 0xA1) { retKey.append(qMakePair(KEY_TAB, 0)); }
         else if (key == 0xA3) { retKey.append(qMakePair(KEY_1, 0)); }
         else if (key == 0xA4) { retKey.append(qMakePair(KEY_2, 0)); }
         else if (key == 0xA5) { retKey.append(qMakePair(KEY_3, 0)); }
@@ -122,6 +122,33 @@ void keymapping::process(QByteArray inputReport)
 
         if (!retKey.empty())
             break;
+    }
+
+    if (__symPressed && !retKey.empty())
+    {
+        int symKey = -1;
+        /* SYM Modifications */
+        switch (retKey.at(0).first)
+        {
+        case KEY_UP:
+            symKey = KEY_PAGEUP; break;
+        case KEY_DOWN:
+            symKey = KEY_PAGEDOWN; break;
+        case KEY_TAB:
+            symKey = KEY_ESC; break;
+        case KEY_V:
+            symKey = KEY_SLASH; break;
+        case KEY_N:
+            symKey = KEY_BACKSLASH; break;
+        default:
+            break;
+        }
+
+        if (symKey > 0)
+        {
+            retKey.clear();
+            retKey.append(qMakePair(symKey, 0));
+        }
     }
 
     if (__shiftPressed != shiftPressed)
