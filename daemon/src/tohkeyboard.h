@@ -104,6 +104,7 @@ private:
     int backlightLuxThreshold;
     int keyRepeatDelay;
     int keyRepeatRate;
+    bool forceBacklightOn;
 
     QMutex mutex;
 

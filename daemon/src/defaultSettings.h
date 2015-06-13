@@ -24,5 +24,6 @@
 #define STICKY_ALT_ENABLED false
 #define STICKY_SYM_ENABLED false
 #define FORCE_LANDSCAPE_ORIENTATION true
+#define FORCE_BACKLIGHT_ON false
 
 #endif // DEFAULTSSETTINGS_H

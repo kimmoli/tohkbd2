@@ -255,7 +255,7 @@ void Tohkbd::handleDisplayStatus(const QDBusMessage& msg)
     {
         displayIsOn = false;
 
-        if (backlightTimer->isActive())
+        if (backlightTimer->isActive() || forceBacklightOn)
         {
             backlightTimer->stop();
             tca8424->setLeds(LED_BACKLIGHT_OFF);
@@ -556,7 +556,13 @@ QString Tohkbd::readOneLineFromFile(const QString &fileName)
  */
 void Tohkbd::checkDoWeNeedBacklight()
 {
-    if (backlightEnabled)
+    if (forceBacklightOn)
+    {
+        printf("backlight forced on\n");
+
+        tca8424->setLeds(LED_BACKLIGHT_ON);
+    }
+    else if (backlightEnabled)
     {
         if (!backlightTimer->isActive())
         {
@@ -573,13 +579,19 @@ void Tohkbd::checkDoWeNeedBacklight()
             backlightTimer->start();
         }
     }
+    else
+    {
+        backlightTimer->stop();
+        tca8424->setLeds(LED_BACKLIGHT_OFF);
+    }
 }
 
-/* Backlight timer timeout, will turn backlight off
+/* Backlight timer timeout, will turn backlight off if not forced on
  */
 void Tohkbd::backlightTimerTimeout()
 {
-    tca8424->setLeds(LED_BACKLIGHT_OFF);
+    if (!forceBacklightOn)
+        tca8424->setLeds(LED_BACKLIGHT_OFF);
 }
 
 /* Change virtual keyboard active layout,
@@ -726,6 +738,7 @@ void Tohkbd::reloadSettings()
     keymap->stickyAltEnabled = settings.value("stickyAltEnabled", STICKY_ALT_ENABLED).toBool();
     keymap->stickySymEnabled = settings.value("stickySymEnabled", STICKY_SYM_ENABLED).toBool();
     forceLandscapeOrientation = settings.value("forceLandscapeOrientation", FORCE_LANDSCAPE_ORIENTATION).toBool();
+    forceBacklightOn = settings.value("forceBacklightOn", FORCE_BACKLIGHT_ON).toBool();
     settings.endGroup();
 
     settings.beginGroup("orientation");
@@ -842,6 +855,15 @@ void Tohkbd::setSettingInt(const QString &key, const int &value)
         settings.beginGroup("generalsettings");
         settings.setValue("backlightEnabled", (value == 1));
         settings.endGroup();
+        checkDoWeNeedBacklight();
+    }
+    else if (key == "forceBacklightOn" && (value == 0 || value == 1))
+    {
+        forceBacklightOn = (value == 1);
+        settings.beginGroup("generalsettings");
+        settings.setValue("forceBacklightOn", (value == 1));
+        settings.endGroup();
+        checkDoWeNeedBacklight();
     }
     else if (key == "forceLandscapeOrientation" && (value == 0 || value == 1))
     {
