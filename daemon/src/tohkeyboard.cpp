@@ -572,6 +572,8 @@ void Tohkbd::checkDoWeNeedBacklight()
 
                 tca8424->setLeds(LED_BACKLIGHT_ON);
                 backlightTimer->start();
+            } else {
+                tca8424->setLeds(LED_BACKLIGHT_OFF);
             }
         }
         else
