@@ -120,8 +120,7 @@ void keymapping::process(QByteArray inputReport)
         else if (key == 0xEC) { retKey.append(qMakePair(KEY_2, FORCE_SHIFT)); /* @ */ }
         else if (key == 0xEF) { retKey.append(qMakePair(KEY_ENTER, 0)); }
 
-        if (!retKey.empty())
-            break;
+        if (retKey.size() > 1) { retKey.removeFirst(); }
     }
 
     if (__symPressed && !retKey.empty())
