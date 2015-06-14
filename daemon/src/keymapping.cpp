@@ -108,7 +108,7 @@ void keymapping::process(QByteArray inputReport)
         altPressed = !altPressed;
         emit altChanged();
     }
-    else if (altDown != altPressed)
+    else if (!stickyAltEnabled && (altDown != altPressed))
     {
         altPressed = altDown;
         emit altChanged();
@@ -125,7 +125,7 @@ void keymapping::process(QByteArray inputReport)
         symPressed = !symPressed;
         emit symChanged();
     }
-    else if (symDown != symPressed)
+    else if (!stickySymEnabled && (symDown != symPressed))
     {
         symPressed = symDown;
         emit symChanged();

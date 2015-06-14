@@ -390,6 +390,7 @@ void Tohkbd::handleKeyPressed(QList< QPair<int, int> > keyCode)
             tohkbd2user->call(QDBus::AutoDetect, "nextAppTaskSwitcher");
         }
         /* Don't process further */
+        keyIsPressed = true;
         return;
     }
 
@@ -398,6 +399,7 @@ void Tohkbd::handleKeyPressed(QList< QPair<int, int> > keyCode)
     {
         screenShot();
         /* Don't process further */
+        keyIsPressed = true;
         return;
     }
 
@@ -416,6 +418,7 @@ void Tohkbd::handleKeyPressed(QList< QPair<int, int> > keyCode)
             tohkbd2user->callWithArgumentList(QDBus::AutoDetect, "launchApplication", args);
 
             /* Don't process further */
+            keyIsPressed = true;
             return;
         }
     }
@@ -489,6 +492,8 @@ void Tohkbd::handleKeyReleased()
  */
 void Tohkbd::handleShiftChanged()
 {
+    checkDoWeNeedBacklight();
+
     if (keymap->shiftPressed && capsLockSeq == 0) /* Shift pressed first time */
         capsLockSeq = 1;
     else if (!keymap->shiftPressed && capsLockSeq == 1) /* Shift released */
@@ -515,6 +520,8 @@ void Tohkbd::handleShiftChanged()
 
 void Tohkbd::handleCtrlChanged()
 {
+    checkDoWeNeedBacklight();
+
     if ((capsLockSeq == 1 || capsLockSeq == 2)) /* Abort caps-lock if other key pressed */
         capsLockSeq = 0;
 
@@ -528,10 +535,17 @@ void Tohkbd::handleCtrlChanged()
 
 void Tohkbd::handleAltChanged()
 {
+    checkDoWeNeedBacklight();
+
     if ((capsLockSeq == 1 || capsLockSeq == 2)) /* Abort caps-lock if other key pressed */
         capsLockSeq = 0;
 
     printf("alt changed %s\n", keymap->altPressed ? "down" : "up");
+
+    if (keymap->stickyAltEnabled)
+    {
+        tca8424->setLeds(keymap->altPressed ? LED_SYMLOCK_ON : LED_SYMLOCK_OFF); /* TODO: Fix correct led when such is in HW */
+    }
 
     if (!keymap->altPressed && taskSwitcherVisible)
     {
@@ -544,9 +558,15 @@ void Tohkbd::handleAltChanged()
 
 void Tohkbd::handleSymChanged()
 {
+    checkDoWeNeedBacklight();
+
     if ((capsLockSeq == 1 || capsLockSeq == 2)) /* Abort caps-lock if other key pressed */
         capsLockSeq = 0;
 
+    if (keymap->stickySymEnabled)
+    {
+        tca8424->setLeds(keymap->symPressed ? LED_SYMLOCK_ON : LED_SYMLOCK_OFF); /* TODO: Fix correct led when such is in HW */
+    }
 }
 
 /* Read first line from a text file
@@ -903,6 +923,27 @@ void Tohkbd::setSettingInt(const QString &key, const int &value)
             args.append("landscape");
             tohkbd2user->callWithArgumentList(QDBus::AutoDetect, "setOrientationLock", args);
         }
+    }
+    else if (key == "stickyCtrlEnabled" && (value == 0 || value == 1))
+    {
+        keymap->stickyCtrlEnabled = (value == 1);
+        settings.beginGroup("generalsettings");
+        settings.setValue("stickyCtrlEnabled", (value == 1));
+        settings.endGroup();
+    }
+    else if (key == "stickyAltEnabled" && (value == 0 || value == 1))
+    {
+        keymap->stickyAltEnabled = (value == 1);
+        settings.beginGroup("generalsettings");
+        settings.setValue("stickyAltEnabled", (value == 1));
+        settings.endGroup();
+    }
+    else if (key == "stickySymEnabled" && (value == 0 || value == 1))
+    {
+        keymap->stickySymEnabled = (value == 1);
+        settings.beginGroup("generalsettings");
+        settings.setValue("stickySymEnabled", (value == 1));
+        settings.endGroup();
     }
 }
 
