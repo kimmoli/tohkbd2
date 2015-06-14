@@ -90,7 +90,7 @@ static const int lut_sym[] =
     //0xB1, KEY_DELETE, 0,
     0xB2, KEY_PAGEUP, 0,
     //0xB3, KEY_INSERT, 0,
-    //0xB4, KEY_Q, 0,
+    0xB4, KEY_GRAVE, FORCE_SHIFT, /* Q ~ */
     0xB5, KEY_3, FORCE_SHIFT, /* W # */
     0xB6, KEY_4, FORCE_SHIFT, /* E $ */
     0xB7, KEY_5, FORCE_SHIFT, /* R % */
@@ -99,14 +99,14 @@ static const int lut_sym[] =
     0xBA, KEY_8, FORCE_SHIFT, /* U * */
     //0xBB, KEY_I, 0,
     //0xBC, KEY_O, 0,
-    //0xBD, KEY_P, 0,
+    0xBD, KEY_MINUS, FORCE_SHIFT, /* P _ */
     //0xBE, KEY_KPPLUS, 0,
     //0xC1, KEY_LEFT, 0,
     //0xC3, KEY_RIGHT, 0,
     //0xC4, KEY_A, 0,
     //0xC5, KEY_S, 0,
     //0xC6, KEY_D, 0,
-    //0xC7, KEY_F, 0,
+    0xC7, KEY_GRAVE, 0, /* F ` */
     //0xC8, KEY_G, 0,
     //0xC9, KEY_H, 0,
     //0xCA, KEY_J, 0,
@@ -120,9 +120,9 @@ static const int lut_sym[] =
     //0xD4, KEY_Z, 0,
     //0xD5, KEY_X, 0,
     //0xD6, KEY_C, 0,
-    0xD7, KEY_SLASH, 0,
-    0xD8, KEY_BACKSLASH, FORCE_SHIFT,
-    0xD9, KEY_BACKSLASH, 0,
+    0xD7, KEY_SLASH, 0, /* V / */
+    0xD8, KEY_BACKSLASH, FORCE_SHIFT, /* B | */
+    0xD9, KEY_BACKSLASH, 0, /* N \ */
     //0xDA, KEY_M, 0,
     //0xDB, KEY_0, FORCE_SHIFT,
     //0xDC, KEY_1, FORCE_SHIFT,
