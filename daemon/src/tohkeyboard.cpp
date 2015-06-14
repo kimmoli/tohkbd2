@@ -502,6 +502,7 @@ void Tohkbd::handleShiftChanged()
     {
         capsLockSeq = 3;
         uinputif->sendUinputKeyPress(KEY_CAPSLOCK, 1);
+        QThread::msleep(KEYREPEAT_RATE);
         uinputif->sendUinputKeyPress(KEY_CAPSLOCK, 0);
         uinputif->synUinputDevice();
         tca8424->setLeds(LED_CAPSLOCK_ON);
@@ -511,6 +512,7 @@ void Tohkbd::handleShiftChanged()
     {
         capsLockSeq = 0;
         uinputif->sendUinputKeyPress(KEY_CAPSLOCK, 1);
+        QThread::msleep(KEYREPEAT_RATE);
         uinputif->sendUinputKeyPress(KEY_CAPSLOCK, 0);
         uinputif->synUinputDevice();
         tca8424->setLeds(LED_CAPSLOCK_OFF);
