@@ -88,6 +88,7 @@ void keymapping::process(QByteArray inputReport)
 
     if (stickyCtrlEnabled && ctrlDown && ir.isEmpty() && !keyIsPressed)
     {
+        releaseStickyModifiers();
         ctrlPressed = !ctrlPressed;
         emit ctrlChanged();
     }
@@ -105,6 +106,7 @@ void keymapping::process(QByteArray inputReport)
 
     if (stickyAltEnabled && altDown && ir.isEmpty() && !keyIsPressed)
     {
+        releaseStickyModifiers();
         altPressed = !altPressed;
         emit altChanged();
     }
@@ -122,6 +124,7 @@ void keymapping::process(QByteArray inputReport)
 
     if (stickySymEnabled && symDown && ir.isEmpty() && !keyIsPressed)
     {
+        releaseStickyModifiers();
         symPressed = !symPressed;
         emit symChanged();
     }
