@@ -94,6 +94,9 @@ QVariantMap SettingsUi::getCurrentSettings()
     map.insert("backlightEnabled", settings.value("backlightEnabled", true).toBool());
     map.insert("forceLandscapeOrientation", settings.value("forceLandscapeOrientation", true).toBool());
     map.insert("forceBacklightOn", settings.value("forceBacklightOn", false).toBool());
+    map.insert("stickyCtrlEnabled", settings.value("stickyCtrlEnabled", true).toBool());
+    map.insert("stickyAltEnabled", settings.value("stickyAltEnabled", false).toBool());
+    map.insert("stickySymEnabled", settings.value("stickySymEnabled", false).toBool());
     settings.endGroup();
 
     return map;

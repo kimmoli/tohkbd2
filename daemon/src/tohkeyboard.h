@@ -138,6 +138,7 @@ private:
     unsigned int ssNotifyReplacesId;
     QString ssFilename;
 
+    QByteArray FKEYS;
 };
 
 

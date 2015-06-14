@@ -163,10 +163,47 @@ Page
             }
             TextField
             {
-                width: parent.width - Theme.paddingLarge
+                width: parent.width - 2*Theme.paddingLarge
                 anchors.horizontalCenter: parent.horizontalCenter
                 placeholderText: qsTr("Test here")
             }
+
+            SectionHeader
+            {
+                text: qsTr("Sticky modifiers")
+            }
+            Label
+            {
+                text: qsTr("Sticky modifiers will toggle when pressed, they also work as normal modifier keys")
+                wrapMode: Text.Wrap
+                font.pixelSize: Theme.fontSizeExtraSmall
+                color: Theme.secondaryColor
+                width: parent.width - 4*Theme.paddingLarge
+                anchors.horizontalCenter: parent.horizontalCenter
+            }
+
+            TextSwitch
+            {
+                text: qsTr("Sticky Ctrl")
+                onCheckedChanged: settingsui.setSettingInt("stickyCtrlEnabled", checked ? 1 : 0)
+                width: parent.width - 2*Theme.paddingLarge
+                Component.onCompleted: checked = settings["stickyCtrlEnabled"]
+            }
+            TextSwitch
+            {
+                text: qsTr("Sticky Alt")
+                onCheckedChanged: settingsui.setSettingInt("stickyAltEnabled", checked ? 1 : 0)
+                width: parent.width - 2*Theme.paddingLarge
+                Component.onCompleted: checked = settings["stickyAltEnabled"]
+            }
+            TextSwitch
+            {
+                text: qsTr("Sticky Sym")
+                onCheckedChanged: settingsui.setSettingInt("stickySymEnabled", checked ? 1 : 0)
+                width: parent.width - 2*Theme.paddingLarge
+                Component.onCompleted: checked = settings["stickySymEnabled"]
+            }
+
         }
     }
 }

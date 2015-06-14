@@ -42,6 +42,15 @@ signals:
 public slots:
 
 private:
+    bool keyIsPressed;
+
+    bool ctrlDown;
+    bool ctrlWasHeldDown;
+    bool altDown;
+    bool altWasHeldDown;
+    bool symDown;
+    bool symWasHeldDown;
+
     QList< QPair<int,int> > _prevRetKey;
 
 };

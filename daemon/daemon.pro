@@ -47,7 +47,8 @@ HEADERS += \
     src/keymapping.h \
     src/adaptor.h \
     src/defaultSettings.h \
-    src/eepromdriver.h
+    src/eepromdriver.h \
+    src/keymapping_lut.h
 
 OTHER_FILES += \
     config/$${TARGET}.service \
