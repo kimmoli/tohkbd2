@@ -24,6 +24,7 @@
 static const char *SERVICE = SERVICE_NAME;
 static const char *PATH = "/";
 
+
 /* Main
  */
 Tohkbd::Tohkbd(QObject *parent) :
@@ -80,6 +81,20 @@ Tohkbd::Tohkbd(QObject *parent) :
 
     tca8424 = new tca8424driver(0x3b);
     keymap = new keymapping();
+
+    FKEYS.clear();
+    FKEYS.append(KEY_F1);
+    FKEYS.append(KEY_F2);
+    FKEYS.append(KEY_F3);
+    FKEYS.append(KEY_F4);
+    FKEYS.append(KEY_F5);
+    FKEYS.append(KEY_F6);
+    FKEYS.append(KEY_F7);
+    FKEYS.append(KEY_F8);
+    FKEYS.append(KEY_F9);
+    FKEYS.append(KEY_F10);
+    FKEYS.append(KEY_F11);
+    FKEYS.append(KEY_F12);
 
     reloadSettings();
 
@@ -387,7 +402,8 @@ void Tohkbd::handleKeyPressed(QList< QPair<int, int> > keyCode)
     }
 
     /* if F1...F12 key is pressed then launch detached process */
-    if (keymap->symPressed && keyCode.at(0).first >= KEY_1 && keyCode.at(0).first <= KEY_EQUAL)
+
+    if (FKEYS.contains(keyCode.at(0).first))
     {
         QString cmd = applicationShortcuts[keyCode.at(0).first];
 
@@ -501,6 +517,8 @@ void Tohkbd::handleCtrlChanged()
 {
     if ((capsLockSeq == 1 || capsLockSeq == 2)) /* Abort caps-lock if other key pressed */
         capsLockSeq = 0;
+
+    printf("ctrl changed %s\n", keymap->ctrlPressed ? "down" : "up");
 
     if (keymap->stickyCtrlEnabled)
     {
@@ -709,24 +727,24 @@ void Tohkbd::reloadSettings()
 
     settings.beginGroup("applicationshortcuts");
 
-    applicationShortcuts[KEY_1] = settings.value(QString("KEY_F1"), SHORTCUT_KEY_F1).toString();
-    applicationShortcuts[KEY_2] = settings.value(QString("KEY_F2"), SHORTCUT_KEY_F2).toString();
-    applicationShortcuts[KEY_3] = settings.value(QString("KEY_F3"), SHORTCUT_KEY_F3).toString();
-    applicationShortcuts[KEY_4] = settings.value(QString("KEY_F4"), SHORTCUT_KEY_F4).toString();
-    applicationShortcuts[KEY_5] = settings.value(QString("KEY_F5"), SHORTCUT_KEY_F5).toString();
-    applicationShortcuts[KEY_6] = settings.value(QString("KEY_F6"), SHORTCUT_KEY_F6).toString();
-    applicationShortcuts[KEY_7] = settings.value(QString("KEY_F7"), SHORTCUT_KEY_F7).toString();
-    applicationShortcuts[KEY_8] = settings.value(QString("KEY_F8"), SHORTCUT_KEY_F8).toString();
-    applicationShortcuts[KEY_9] = settings.value(QString("KEY_F9"), SHORTCUT_KEY_F9).toString();
-    applicationShortcuts[KEY_0] = settings.value(QString("KEY_F10"), SHORTCUT_KEY_F10).toString();
-    applicationShortcuts[KEY_MINUS] = settings.value(QString("KEY_F11"), SHORTCUT_KEY_F11).toString();
-    applicationShortcuts[KEY_EQUAL] = settings.value(QString("KEY_F12"), SHORTCUT_KEY_F12).toString();
+    applicationShortcuts[KEY_F1] = settings.value(QString("KEY_F1"), SHORTCUT_KEY_F1).toString();
+    applicationShortcuts[KEY_F2] = settings.value(QString("KEY_F2"), SHORTCUT_KEY_F2).toString();
+    applicationShortcuts[KEY_F3] = settings.value(QString("KEY_F3"), SHORTCUT_KEY_F3).toString();
+    applicationShortcuts[KEY_F4] = settings.value(QString("KEY_F4"), SHORTCUT_KEY_F4).toString();
+    applicationShortcuts[KEY_F5] = settings.value(QString("KEY_F5"), SHORTCUT_KEY_F5).toString();
+    applicationShortcuts[KEY_F6] = settings.value(QString("KEY_F6"), SHORTCUT_KEY_F6).toString();
+    applicationShortcuts[KEY_F7] = settings.value(QString("KEY_F7"), SHORTCUT_KEY_F7).toString();
+    applicationShortcuts[KEY_F8] = settings.value(QString("KEY_F8"), SHORTCUT_KEY_F8).toString();
+    applicationShortcuts[KEY_F9] = settings.value(QString("KEY_F9"), SHORTCUT_KEY_F9).toString();
+    applicationShortcuts[KEY_F10] = settings.value(QString("KEY_F10"), SHORTCUT_KEY_F10).toString();
+    applicationShortcuts[KEY_F11] = settings.value(QString("KEY_F11"), SHORTCUT_KEY_F11).toString();
+    applicationShortcuts[KEY_F12] = settings.value(QString("KEY_F12"), SHORTCUT_KEY_F12).toString();
 
-    for (int i = KEY_1 ; i<=KEY_EQUAL ; i++)
+    for (int i = 0 ; i<FKEYS.length() ; i++)
     {
-        printf("app shortcut F%d : %s\n", ((i-KEY_1)+1), qPrintable(applicationShortcuts[i]));
+        printf("app shortcut %d F%d : %s\n", FKEYS.at(i), i+1, qPrintable(applicationShortcuts[FKEYS.at(i)]));
         /* Write them back, as we need default values there in settings app */
-        settings.setValue(QString("KEY_F%1").arg(((i-KEY_1)+1)), applicationShortcuts[i]);
+        settings.setValue(QString("KEY_F%1").arg(i+1), applicationShortcuts[FKEYS.at(i)]);
     }
     settings.endGroup();
 
@@ -781,9 +799,9 @@ void Tohkbd::setShortcut(const QString &key, const QString &appPath)
         settings.beginGroup("applicationshortcuts");
         settings.setValue(QString("KEY_%1").arg(key), appPath);
 
-        for (int i = KEY_1 ; i<=KEY_EQUAL ; i++)
+        for (int i = 0 ; i<FKEYS.length() ; i++)
         {
-            applicationShortcuts[i] = settings.value(QString("KEY_F%1").arg((i-KEY_1)+1), applicationShortcuts[i]).toString();
+            applicationShortcuts[FKEYS.at(i)] = settings.value(QString("KEY_F%1").arg(i+1), applicationShortcuts[FKEYS.at(i)]).toString();
         }
 
         settings.endGroup();
@@ -797,22 +815,22 @@ void Tohkbd::setShortcutsToDefault()
     QSettings settings(QSettings::SystemScope, "harbour-tohkbd2", "tohkbd2");
     settings.beginGroup("applicationshortcuts");
 
-    applicationShortcuts[KEY_1] = SHORTCUT_KEY_F1;
-    applicationShortcuts[KEY_2] = SHORTCUT_KEY_F2;
-    applicationShortcuts[KEY_3] = SHORTCUT_KEY_F3;
-    applicationShortcuts[KEY_4] = SHORTCUT_KEY_F4;
-    applicationShortcuts[KEY_5] = SHORTCUT_KEY_F5;
-    applicationShortcuts[KEY_6] = SHORTCUT_KEY_F6;
-    applicationShortcuts[KEY_7] = SHORTCUT_KEY_F7;
-    applicationShortcuts[KEY_8] = SHORTCUT_KEY_F8;
-    applicationShortcuts[KEY_9] = SHORTCUT_KEY_F9;
-    applicationShortcuts[KEY_0] = SHORTCUT_KEY_F10;
-    applicationShortcuts[KEY_MINUS] = SHORTCUT_KEY_F11;
-    applicationShortcuts[KEY_EQUAL] = SHORTCUT_KEY_F12;
+    applicationShortcuts[KEY_F1] = SHORTCUT_KEY_F1;
+    applicationShortcuts[KEY_F2] = SHORTCUT_KEY_F2;
+    applicationShortcuts[KEY_F3] = SHORTCUT_KEY_F3;
+    applicationShortcuts[KEY_F4] = SHORTCUT_KEY_F4;
+    applicationShortcuts[KEY_F5] = SHORTCUT_KEY_F5;
+    applicationShortcuts[KEY_F6] = SHORTCUT_KEY_F6;
+    applicationShortcuts[KEY_F7] = SHORTCUT_KEY_F7;
+    applicationShortcuts[KEY_F8] = SHORTCUT_KEY_F8;
+    applicationShortcuts[KEY_F9] = SHORTCUT_KEY_F9;
+    applicationShortcuts[KEY_F10] = SHORTCUT_KEY_F10;
+    applicationShortcuts[KEY_F11] = SHORTCUT_KEY_F11;
+    applicationShortcuts[KEY_F12] = SHORTCUT_KEY_F12;
 
-    for (int i = KEY_1 ; i<=KEY_EQUAL ; i++)
+    for (int i = 0 ; i<FKEYS.length() ; i++)
     {
-        settings.setValue(QString("KEY_F%1").arg((i-KEY_1)+1), applicationShortcuts[i]);
+        settings.setValue(QString("KEY_F%1").arg(i+1), applicationShortcuts[FKEYS.at(i)]);
     }
     settings.endGroup();
 }
