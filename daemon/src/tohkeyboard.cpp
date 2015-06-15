@@ -317,7 +317,8 @@ bool Tohkbd::checkKeypadPresence()
         if (!keypadIsPresent)
         {
             keyboardConnectedNotification(true);
-            tca8424->setLeds(((keymap->ctrlPressed || keymap->symPressed || keymap->altPressed) ? LED_SYMLOCK_ON : LED_SYMLOCK_OFF)
+            tca8424->setLeds((keymap->symPressed ? LED_SYMLOCK_ON : LED_SYMLOCK_OFF)
+                             | ((keymap->ctrlPressed || keymap->altPressed) ? LED_EXTRA_ON : LED_EXTRA_OFF)
                              | ((capsLockSeq == 3) ? LED_CAPSLOCK_ON : LED_CAPSLOCK_OFF));
             checkDoWeNeedBacklight();
             checkEEPROM();
@@ -325,7 +326,8 @@ bool Tohkbd::checkKeypadPresence()
         else if (res == tca8424driver::NoKeyPressedSinceReset)
         {
             /* Keyboard power interrupt shortly? refresh leds just in case */
-            tca8424->setLeds(((keymap->ctrlPressed || keymap->symPressed || keymap->altPressed) ? LED_SYMLOCK_ON : LED_SYMLOCK_OFF)
+            tca8424->setLeds((keymap->symPressed ? LED_SYMLOCK_ON : LED_SYMLOCK_OFF)
+                             | ((keymap->ctrlPressed || keymap->altPressed) ? LED_EXTRA_ON : LED_EXTRA_OFF)
                              | ((capsLockSeq == 3) ? LED_CAPSLOCK_ON : LED_CAPSLOCK_OFF));
             if (forceBacklightOn)
                 tca8424->setLeds(LED_BACKLIGHT_ON);
@@ -561,7 +563,7 @@ void Tohkbd::handleCtrlChanged()
 
     if (keymap->stickyCtrlEnabled)
     {
-        tca8424->setLeds(keymap->ctrlPressed ? LED_SYMLOCK_ON : LED_SYMLOCK_OFF); /* TODO: Fix correct led when such is in HW */
+        tca8424->setLeds(keymap->ctrlPressed ? LED_EXTRA_ON : LED_EXTRA_OFF);
     }
 }
 
@@ -576,7 +578,7 @@ void Tohkbd::handleAltChanged()
 
     if (keymap->stickyAltEnabled)
     {
-        tca8424->setLeds(keymap->altPressed ? LED_SYMLOCK_ON : LED_SYMLOCK_OFF); /* TODO: Fix correct led when such is in HW */
+        tca8424->setLeds(keymap->altPressed ? LED_EXTRA_ON : LED_EXTRA_OFF);
     }
 
     if (!keymap->altPressed && taskSwitcherVisible)
@@ -597,7 +599,7 @@ void Tohkbd::handleSymChanged()
 
     if (keymap->stickySymEnabled)
     {
-        tca8424->setLeds(keymap->symPressed ? LED_SYMLOCK_ON : LED_SYMLOCK_OFF); /* TODO: Fix correct led when such is in HW */
+        tca8424->setLeds(keymap->symPressed ? LED_SYMLOCK_ON : LED_SYMLOCK_OFF);
     }
 }
 
