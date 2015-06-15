@@ -12,11 +12,11 @@ PKGCONFIG += mlite5 sailfishapp
 
 DEFINES += "APPVERSION=\\\"$${SPECVERSION}\\\""
 
-#system(lupdate src -ts $$PWD/i18n/*.ts)
+#system(lupdate qml -ts $$PWD/i18n/en.ts)
 system(lrelease $$PWD/i18n/*.ts)
 
 translations.path = /usr/share/$${TARGET}/i18n
-translations.files = i18n/translations_*.qm
+translations.files = i18n/*.qm
 
 INSTALLS += translations
 
@@ -48,7 +48,7 @@ OTHER_FILES += qml/tohkbd2-settingsui.qml \
     qml/icons/icon-m-keyframe.png \
     harbour-tohkbd2-settingsui.desktop \
     harbour-tohkbd2-settingsui.png \
-    i18n/translations_fi.ts \
+    i18n/*.ts \
     qml/icons/kimmoli.png \
     qml/icons/wazd.png \
     qml/icons/dirkvl.png
