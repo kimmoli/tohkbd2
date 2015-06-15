@@ -71,7 +71,6 @@ void ViewHelper::showWindow()
                 (pr.at(i).contains("invoker") && pr.at(i).contains("fingerterm")))
         {
             cmd << pr.at(i);
-            printf("tohkbd2-user: pr: %s\n", qPrintable(pr.at(i)));
         }
     }
 
@@ -93,9 +92,6 @@ void ViewHelper::showWindow()
     }
 
     exec.removeDuplicates();
-
-    for (int i=0 ; i<exec.count() ; i++)
-        printf("tohkbd2-user: exec: %s\n", qPrintable(exec.at(i)));
 
     QVariantMap map;
 
