@@ -25,11 +25,11 @@ Page
             spacing: Theme.paddingLarge
             PageHeader
             {
-                title: "Report a bug"
+                title: qsTr("Report a bug")
             }
             Label
             {
-                text: "Launching email application..."
+                text: qsTr("Launching email application...")
                 anchors.horizontalCenter: column.horizontalCenter
             }
 
@@ -47,8 +47,8 @@ Page
     {
         bugReportPageOpen = true
         Qt.openUrlExternally("mailto: toho@saunalahti.fi" +
-                                     "?subject=Tohkbd2 bug report" +
-                                     "&body=Write here what is wrong...")
+                                     "?subject=Tohkbd2 bug report, ui " + settingsui.version + ", daemon " + daemonVersion +
+                                     "&body=Write here what is wrong... (in Finnish or English)   ")
     }
 
 
