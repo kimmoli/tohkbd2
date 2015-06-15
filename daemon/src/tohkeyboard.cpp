@@ -348,7 +348,26 @@ void Tohkbd::handleGpioInterrupt()
     }
     else
     {
-        keymap->process(tca8424->readInputReport());
+        int retries = 3;
+        do
+        {
+            QByteArray r = tca8424->readInputReport();
+            if (!r.isEmpty())
+            {
+                presenceTimer->start();
+                keymap->process(r);
+                retries = -1;
+            }
+            else
+            {
+                printf("Something wrong here now, retrying... %d\n", retries);
+                retries--;
+                QThread::msleep(100);
+            }
+        } while (retries > 0);
+
+        if (retries == 0) /* Did we loose keyboard */
+            checkKeypadPresence();
     }
 }
 
@@ -357,8 +376,6 @@ void Tohkbd::handleGpioInterrupt()
 void Tohkbd::handleKeyPressed(QList< QPair<int, int> > keyCode)
 {
     bool processAllKeys = true;
-
-    presenceTimer->start();
 
     if (!displayIsOn && !slideEventEmitted)
     {
