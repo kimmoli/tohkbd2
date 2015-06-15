@@ -295,7 +295,10 @@ bool Tohkbd::checkKeypadPresence()
         tca8424->reset();
         QThread::msleep(150);
     }
-    if (!tca8424->testComms())
+
+    tca8424driver::PresenceResult res = tca8424->testComms();
+
+    if (res == tca8424driver::DetectFail)
     {
         printf("keypad not present, turning power off\n");
         setVddState(false);
@@ -314,11 +317,21 @@ bool Tohkbd::checkKeypadPresence()
         if (!keypadIsPresent)
         {
             keyboardConnectedNotification(true);
-            tca8424->setLeds((keymap->ctrlPressed ? LED_SYMLOCK_ON : LED_SYMLOCK_OFF) | ((capsLockSeq == 3) ? LED_CAPSLOCK_ON : LED_CAPSLOCK_OFF));
-            presenceTimer->start();
+            tca8424->setLeds(((keymap->ctrlPressed || keymap->symPressed || keymap->altPressed) ? LED_SYMLOCK_ON : LED_SYMLOCK_OFF)
+                             | ((capsLockSeq == 3) ? LED_CAPSLOCK_ON : LED_CAPSLOCK_OFF));
+            checkDoWeNeedBacklight();
             checkEEPROM();
         }
+        else if (res == tca8424driver::NoKeyPressedSinceReset)
+        {
+            /* Keyboard power interrupt shortly? refresh leds just in case */
+            tca8424->setLeds(((keymap->ctrlPressed || keymap->symPressed || keymap->altPressed) ? LED_SYMLOCK_ON : LED_SYMLOCK_OFF)
+                             | ((capsLockSeq == 3) ? LED_CAPSLOCK_ON : LED_CAPSLOCK_OFF));
+            if (forceBacklightOn)
+                tca8424->setLeds(LED_BACKLIGHT_ON);
+        }
 
+        presenceTimer->start();
         keypadIsPresent = true;
     }
 

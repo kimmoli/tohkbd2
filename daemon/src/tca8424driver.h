@@ -22,7 +22,15 @@ public:
     bool reset();
     void setLeds(int value);
     QByteArray readInputReport();
-    bool testComms();
+
+    typedef enum PresenceResult
+    {
+        DetectFail = 0,
+        NoKeyPressedSinceReset,
+        DetectSuccess
+    } PresenceResult;
+
+    PresenceResult testComms();
 
 signals:
 
