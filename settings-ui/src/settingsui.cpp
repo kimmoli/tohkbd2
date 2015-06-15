@@ -228,3 +228,29 @@ QString SettingsUi::readUserDaemonVersion()
 
     return userDaemonVersion;
 }
+
+QString SettingsUi::readSailfishVersion()
+{
+    QString version = "N/A";
+
+    QFile inputFile( "/etc/sailfish-release" );
+
+    if ( inputFile.open( QIODevice::ReadOnly | QIODevice::Text ) )
+    {
+       QTextStream in( &inputFile );
+
+       while (not in.atEnd())
+       {
+           QString line = in.readLine();
+           if (line.startsWith("VERSION_ID="))
+           {
+               version = line.split('=').at(1);
+               break;
+           }
+       }
+       inputFile.close();
+    }
+    qDebug() << "Sailfish version is" << version;
+
+    return version;
+}

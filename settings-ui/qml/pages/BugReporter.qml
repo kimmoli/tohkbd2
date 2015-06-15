@@ -47,7 +47,7 @@ Page
     {
         bugReportPageOpen = true
         Qt.openUrlExternally("mailto: toho@saunalahti.fi" +
-                                     "?subject=Tohkbd2 bug report, ui " + settingsui.version + ", daemon " + daemonVersion +
+                                     "?subject=Tohkbd2 bug report, ui " + settingsui.version + ", daemon " + daemonVersion + ", SFOS " + sailfishVersion +
                                      "&body=Write here what is wrong... (in Finnish or English)   ")
     }
 

@@ -28,6 +28,7 @@ ApplicationWindow
     property string coverActionRightIcon: "image://theme/icon-cover-play"
     property string daemonVersion : "---"
     property string userDaemonVersion : "---"
+    property string sailfishVersion : "---"
 
     property bool bugReportPageOpen: false
     property bool aboutPageOpen: false
@@ -55,6 +56,7 @@ ApplicationWindow
         {
             daemonVersion = readDaemonVersion()
             userDaemonVersion = readUserDaemonVersion()
+            sailfishVersion = readSailfishVersion()
             updateApplicationsModel()
             updateShortcutsModel()
             settings = settingsui.getCurrentSettings()

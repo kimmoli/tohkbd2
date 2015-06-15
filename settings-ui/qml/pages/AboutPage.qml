@@ -162,6 +162,13 @@ Page
                 font.pixelSize: Theme.fontSizeMedium
                 anchors.horizontalCenter: parent.horizontalCenter
             }
+            Label
+            {
+                text: qsTr("Sailfish version: ") + sailfishVersion
+                color: Theme.primaryColor
+                font.pixelSize: Theme.fontSizeMedium
+                anchors.horizontalCenter: parent.horizontalCenter
+            }
         }
     }
     ListModel

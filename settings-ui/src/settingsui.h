@@ -24,6 +24,7 @@ public:
     Q_INVOKABLE void setShortcut(QString key, QString appPath);
     Q_INVOKABLE QString readDaemonVersion();
     Q_INVOKABLE QString readUserDaemonVersion();
+    Q_INVOKABLE QString readSailfishVersion();
     Q_INVOKABLE void setShortcutsToDefault();
     Q_INVOKABLE void setSettingInt(QString key, int value);
 
