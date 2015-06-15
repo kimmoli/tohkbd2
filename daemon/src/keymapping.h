@@ -51,7 +51,7 @@ private:
     bool symDown;
     bool symWasHeldDown;
 
-    QList< QPair<int,int> > _prevRetKey;
+    QByteArray _prevInputReport;
 
 };
 

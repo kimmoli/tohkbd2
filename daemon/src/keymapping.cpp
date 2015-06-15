@@ -161,7 +161,7 @@ void keymapping::process(QByteArray inputReport)
         if (keyIsPressed)
         {
             keyIsPressed = false;
-            _prevRetKey.clear();
+            _prevInputReport.clear();
             emit keyReleased();
         }
         return;
@@ -197,11 +197,11 @@ void keymapping::process(QByteArray inputReport)
     }
 
     /* If key is changed on the fly without break... emit released */
-    if (keyIsPressed && !_prevRetKey.empty() && !retKey.empty())
+    if (keyIsPressed && !_prevInputReport.isEmpty() && !retKey.empty())
     {
-        if (_prevRetKey != retKey)
+        if (_prevInputReport != ir)
             emit keyReleased();
-        if (_prevRetKey == retKey)
+        if (_prevInputReport == ir)
             return;
     }
 
@@ -211,7 +211,7 @@ void keymapping::process(QByteArray inputReport)
     if (keyIsPressed)
         emit keyPressed(retKey);
 
-    _prevRetKey = retKey;
+    _prevInputReport = ir;
 }
 
 void keymapping::releaseStickyModifiers()
