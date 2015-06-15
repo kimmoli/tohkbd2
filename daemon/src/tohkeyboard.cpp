@@ -348,7 +348,11 @@ void Tohkbd::handleGpioInterrupt()
     }
     else
     {
-        keymap->process(tca8424->readInputReport());
+	QByteArray r = tca8424->readInputReport();
+        if (!r.isEmpty()) {
+            presenceTimer->start();
+            keymap->process(r);
+        }
     }
 }
 
@@ -357,8 +361,6 @@ void Tohkbd::handleGpioInterrupt()
 void Tohkbd::handleKeyPressed(QList< QPair<int, int> > keyCode)
 {
     bool processAllKeys = true;
-
-    presenceTimer->start();
 
     if (!displayIsOn && !slideEventEmitted)
     {

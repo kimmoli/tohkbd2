@@ -49,7 +49,6 @@ void keymapping::process(QByteArray inputReport)
         printf("%02x ", inputReport.at(n));
     printf("\n");
 
-
     QByteArray ir = inputReport.mid(5, 6);
 
     /* Remove empty usage code bytes */
