@@ -10,7 +10,7 @@ keymapping::keymapping(QObject *parent) :
     ctrlPressed = false;
     altPressed = false;
     symPressed = false;
-    keyIsPressed = false;
+    pressedCode = 0;
 
     stickyCtrlEnabled = false;
     stickyAltEnabled = false;
@@ -19,9 +19,6 @@ keymapping::keymapping(QObject *parent) :
     ctrlDown = false;
     altDown = false;
     symDown = false;
-
-    _prevScanCode = 0;
-    _prevInputReport = QByteArray();
 }
 
 /* REV 2 Keyboard mapping
@@ -52,7 +49,6 @@ void keymapping::process(QByteArray inputReport)
     for (n=0 ; n<inputReport.count() ; n++)
         printf("%02x ", inputReport.at(n));
     printf("\n");
-
 
     QByteArray ir = inputReport.mid(5, 6);
 
@@ -90,7 +86,7 @@ void keymapping::process(QByteArray inputReport)
         ctrlWasHeldDown = true;
     }
 
-    if (stickyCtrlEnabled && ctrlDown && ir.isEmpty() && !keyIsPressed)
+    if (stickyCtrlEnabled && ctrlDown && ir.isEmpty() && !pressedCode)
     {
         releaseStickyModifiers();
         ctrlPressed = !ctrlPressed;
@@ -108,7 +104,7 @@ void keymapping::process(QByteArray inputReport)
         altWasHeldDown = true;
     }
 
-    if (stickyAltEnabled && altDown && ir.isEmpty() && !keyIsPressed)
+    if (stickyAltEnabled && altDown && ir.isEmpty() && !pressedCode)
     {
         releaseStickyModifiers();
         altPressed = !altPressed;
@@ -126,7 +122,7 @@ void keymapping::process(QByteArray inputReport)
         symWasHeldDown = true;
     }
 
-    if (stickySymEnabled && symDown && ir.isEmpty() && !keyIsPressed)
+    if (stickySymEnabled && symDown && ir.isEmpty() && !pressedCode)
     {
         releaseStickyModifiers();
         symPressed = !symPressed;
@@ -162,70 +158,70 @@ void keymapping::process(QByteArray inputReport)
             emit symChanged();
         }
 
-        if (keyIsPressed)
+        if (pressedCode)
         {
-            keyIsPressed = false;
-            _prevScanCode = 0;
+            pressedCode = 0;
             emit keyReleased();
         }
         _prevInputReport = ir;
         return;
     }
 
-    /* Check for new code in report */
-
-    for(int i = ir.length()-1 ; i>=0 ; --i)
+    /* Check for new code in report. */
+    for(int i=ir.length()-1 ; i>=0 ; --i)
     {
         if (!_prevInputReport.contains(ir.at(i)))
         {
             irCode = ir.at(i);
-            break;
+                break;
         }
     }
 
-    if (!symPressed && irCode>0) /* Without SYM modifier */
+    if (!symPressed && irCode) /* Without SYM modifier */
     {
         int i = 0;
         while (lut_plain[i])
         {
             if (irCode == lut_plain[i])
             {
-                 retKey.append(qMakePair(lut_plain[i+1], lut_plain[i+2]));
-                 break;
+                retKey.append(qMakePair(lut_plain[i+1], lut_plain[i+2]));
+                break;
             }
             i += 3;
         }
     }
-    else if (symPressed && irCode>0) /* With SYM modifier */
+    else if (symPressed && irCode) /* With SYM modifier */
     {
         int i = 0;
         while (lut_sym[i])
         {
             if (irCode == lut_sym[i])
             {
-                 retKey.append(qMakePair(lut_sym[i+1], lut_sym[i+2]));
-                 break;
+                retKey.append(qMakePair(lut_sym[i+1], lut_sym[i+2]));
+                break;
             }
             i += 3;
         }
     }
 
     /* If key is changed on the fly without break... emit released */
-    if (keyIsPressed && _prevScanCode > 0 && !retKey.empty())
+    if (pressedCode)
     {
-        if (_prevScanCode != irCode)
+        if ( (!ir.contains(pressedCode)) || ((irCode) && (pressedCode != irCode)) )
+        {
+            pressedCode = 0;
             emit keyReleased();
-        if (_prevScanCode == irCode)
+        }
+        if (_prevInputReport == ir)
             return;
     }
 
-    /* Key, not a modifier, is pressed */
-    keyIsPressed = !retKey.empty();
-
-    if (keyIsPressed)
+    if (!retKey.empty())
+    {
+        pressedCode = irCode;
         emit keyPressed(retKey);
+    }
 
-    _prevScanCode = irCode;
     _prevInputReport = ir;
 }
 
