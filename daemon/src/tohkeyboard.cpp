@@ -426,8 +426,8 @@ void Tohkbd::handleKeyPressed(QList< QPair<int, int> > keyCode)
         return;
     }
 
-    /* Alt-p takes a screenshot */
-    if (keymap->altPressed && keyCode.at(0).first == KEY_P)
+    /* Sym-Int takes a screenshot (mapped to KEY_PRINT) */
+    if (keyCode.at(0).first == KEY_PRINT)
     {
         screenShot();
         /* Don't process further */

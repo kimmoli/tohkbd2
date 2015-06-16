@@ -89,7 +89,7 @@ static const int lut_sym[] =
     //0xAF, KEY_BACKSPACE, 0,
     //0xB1, KEY_DELETE, 0,
     0xB2, KEY_PAGEUP, 0,
-    //0xB3, KEY_INSERT, 0,
+    0xB3, KEY_PRINT, 0, /* Ins */
     0xB4, KEY_GRAVE, FORCE_SHIFT, /* Q ~ */
     0xB5, KEY_3, FORCE_SHIFT, /* W # */
     0xB6, KEY_4, FORCE_SHIFT, /* E $ */
