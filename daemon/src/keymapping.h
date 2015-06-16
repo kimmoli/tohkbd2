@@ -51,7 +51,7 @@ private:
     bool symDown;
     bool symWasHeldDown;
 
-    QByteArray _prevInputReport;
+    char _prevScanCode;
 
 };
 

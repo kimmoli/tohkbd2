@@ -19,6 +19,8 @@ keymapping::keymapping(QObject *parent) :
     ctrlDown = false;
     altDown = false;
     symDown = false;
+
+    _prevScanCode = 0;
 }
 
 /* REV 2 Keyboard mapping
@@ -161,7 +163,7 @@ void keymapping::process(QByteArray inputReport)
         if (keyIsPressed)
         {
             keyIsPressed = false;
-            _prevInputReport.clear();
+            _prevScanCode = 0;
             emit keyReleased();
         }
         return;
@@ -169,12 +171,14 @@ void keymapping::process(QByteArray inputReport)
 
     /* Check the last usage code in report */
 
+    char irLast = ir.at(ir.length()-1);
+
     if (!symPressed) /* Without SYM modifier */
     {
         int i = 0;
         while (lut_plain[i])
         {
-            if (ir.at(ir.length()-1) == lut_plain[i])
+            if (irLast == lut_plain[i])
             {
                  retKey.append(qMakePair(lut_plain[i+1], lut_plain[i+2]));
                  break;
@@ -187,7 +191,7 @@ void keymapping::process(QByteArray inputReport)
         int i = 0;
         while (lut_sym[i])
         {
-            if (ir.at(ir.length()-1) == lut_sym[i])
+            if (irLast == lut_sym[i])
             {
                  retKey.append(qMakePair(lut_sym[i+1], lut_sym[i+2]));
                  break;
@@ -197,11 +201,11 @@ void keymapping::process(QByteArray inputReport)
     }
 
     /* If key is changed on the fly without break... emit released */
-    if (keyIsPressed && !_prevInputReport.isEmpty() && !retKey.empty())
+    if (keyIsPressed && _prevScanCode > 0 && !retKey.empty())
     {
-        if (_prevInputReport != ir)
+        if (_prevScanCode != irLast)
             emit keyReleased();
-        if (_prevInputReport == ir)
+        if (_prevScanCode == irLast)
             return;
     }
 
@@ -211,7 +215,7 @@ void keymapping::process(QByteArray inputReport)
     if (keyIsPressed)
         emit keyPressed(retKey);
 
-    _prevInputReport = ir;
+    _prevScanCode = irLast;
 }
 
 void keymapping::releaseStickyModifiers()
