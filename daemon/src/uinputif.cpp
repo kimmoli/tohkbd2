@@ -38,6 +38,7 @@ static const int keysToRegister[] = {  KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT,KEY
                                        KEY_COMPOSE, KEY_APOSTROPHE, KEY_SEMICOLON, KEY_ENTER, KEY_ESC,
                                        KEY_POWER, KEY_PLAYCD, KEY_PAUSECD, KEY_VOLUMEDOWN, KEY_VOLUMEUP,
                                        KEY_CAPSLOCK, KEY_SLASH, KEY_BACKSLASH, KEY_GRAVE, KEY_102ND,
+                                       KEY_LEFTBRACE, KEY_RIGHTBRACE,
                                            -1 };
 
 static const int switchesToRegister[] = { SW_LID, SW_KEYPAD_SLIDE,
