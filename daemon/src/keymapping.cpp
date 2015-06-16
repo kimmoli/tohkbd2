@@ -21,6 +21,7 @@ keymapping::keymapping(QObject *parent) :
     symDown = false;
 
     _prevScanCode = 0;
+    _prevInputReport = QByteArray();
 }
 
 /* REV 2 Keyboard mapping
@@ -40,6 +41,7 @@ void keymapping::process(QByteArray inputReport)
 {
     int n;
     QList< QPair<int,int> > retKey;
+    char irCode = 0;
 
     bool __shiftPressed = false;
     ctrlDown = false;
@@ -166,19 +168,27 @@ void keymapping::process(QByteArray inputReport)
             _prevScanCode = 0;
             emit keyReleased();
         }
+        _prevInputReport = ir;
         return;
     }
 
-    /* Check the last usage code in report */
+    /* Check for new code in report */
 
-    char irLast = ir.at(ir.length()-1);
+    for(int i = ir.length()-1 ; i>=0 ; --i)
+    {
+        if (!_prevInputReport.contains(ir.at(i)))
+        {
+            irCode = ir.at(i);
+            break;
+        }
+    }
 
-    if (!symPressed) /* Without SYM modifier */
+    if (!symPressed && irCode>0) /* Without SYM modifier */
     {
         int i = 0;
         while (lut_plain[i])
         {
-            if (irLast == lut_plain[i])
+            if (irCode == lut_plain[i])
             {
                  retKey.append(qMakePair(lut_plain[i+1], lut_plain[i+2]));
                  break;
@@ -186,12 +196,12 @@ void keymapping::process(QByteArray inputReport)
             i += 3;
         }
     }
-    else if (symPressed) /* With SYM modifier */
+    else if (symPressed && irCode>0) /* With SYM modifier */
     {
         int i = 0;
         while (lut_sym[i])
         {
-            if (irLast == lut_sym[i])
+            if (irCode == lut_sym[i])
             {
                  retKey.append(qMakePair(lut_sym[i+1], lut_sym[i+2]));
                  break;
@@ -203,9 +213,9 @@ void keymapping::process(QByteArray inputReport)
     /* If key is changed on the fly without break... emit released */
     if (keyIsPressed && _prevScanCode > 0 && !retKey.empty())
     {
-        if (_prevScanCode != irLast)
+        if (_prevScanCode != irCode)
             emit keyReleased();
-        if (_prevScanCode == irLast)
+        if (_prevScanCode == irCode)
             return;
     }
 
@@ -215,7 +225,8 @@ void keymapping::process(QByteArray inputReport)
     if (keyIsPressed)
         emit keyPressed(retKey);
 
-    _prevScanCode = irLast;
+    _prevScanCode = irCode;
+    _prevInputReport = ir;
 }
 
 void keymapping::releaseStickyModifiers()
