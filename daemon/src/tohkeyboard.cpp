@@ -323,7 +323,7 @@ bool Tohkbd::checkKeypadPresence()
             checkDoWeNeedBacklight();
             checkEEPROM();
         }
-        else if (res == tca8424driver::NoKeyPressedSinceReset)
+        else if (res == tca8424driver::NoKeyPressedSinceReset && displayIsOn)
         {
             /* Keyboard power interrupt shortly? refresh leds just in case */
             tca8424->setLeds((keymap->symPressed ? LED_SYMLOCK_ON : LED_SYMLOCK_OFF)
