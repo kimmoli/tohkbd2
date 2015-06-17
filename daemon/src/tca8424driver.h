@@ -11,7 +11,7 @@
 #define LED_SYMLOCK_OFF   0x0400
 #define LED_BACKLIGHT_ON  0x0808
 #define LED_BACKLIGHT_OFF 0x0800
-
+#define LED_ALL_OFF       0x0F00
 
 class tca8424driver : public DriverBase
 {

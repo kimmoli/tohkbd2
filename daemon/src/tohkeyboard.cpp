@@ -262,6 +262,7 @@ void Tohkbd::handleDisplayStatus(const QDBusMessage& msg)
     printf("Display status changed to \"%s\"\n", turn);
     if (strcmp(turn, "on") == 0)
     {
+        controlLeds(true);
         checkDoWeNeedBacklight();
         displayIsOn = true;
         slideEventEmitted = false;
@@ -270,11 +271,8 @@ void Tohkbd::handleDisplayStatus(const QDBusMessage& msg)
     {
         displayIsOn = false;
 
-        if (backlightTimer->isActive() || forceBacklightOn)
-        {
-            backlightTimer->stop();
-            tca8424->setLeds(LED_BACKLIGHT_OFF);
-        }
+        backlightTimer->stop();
+        controlLeds(false);
     }
 }
 
@@ -317,20 +315,14 @@ bool Tohkbd::checkKeypadPresence()
         if (!keypadIsPresent)
         {
             keyboardConnectedNotification(true);
-            tca8424->setLeds((keymap->symPressed ? LED_SYMLOCK_ON : LED_SYMLOCK_OFF)
-                             | ((keymap->ctrlPressed || keymap->altPressed) ? LED_EXTRA_ON : LED_EXTRA_OFF)
-                             | ((capsLockSeq == 3) ? LED_CAPSLOCK_ON : LED_CAPSLOCK_OFF));
+            controlLeds(true);
             checkDoWeNeedBacklight();
             checkEEPROM();
         }
         else if (res == tca8424driver::NoKeyPressedSinceReset && displayIsOn)
         {
             /* Keyboard power interrupt shortly? refresh leds just in case */
-            tca8424->setLeds((keymap->symPressed ? LED_SYMLOCK_ON : LED_SYMLOCK_OFF)
-                             | ((keymap->ctrlPressed || keymap->altPressed) ? LED_EXTRA_ON : LED_EXTRA_OFF)
-                             | ((capsLockSeq == 3) ? LED_CAPSLOCK_ON : LED_CAPSLOCK_OFF));
-            if (forceBacklightOn)
-                tca8424->setLeds(LED_BACKLIGHT_ON);
+            controlLeds(true);
         }
 
         presenceTimer->start();
@@ -349,6 +341,27 @@ bool Tohkbd::checkKeypadPresence()
     }
 
     return keypadIsPresent;
+}
+
+/* Controls backlight and status leds
+ * restore = true - restores previous state according to internal states
+ * restore = false - turns leds off
+ */
+void Tohkbd::controlLeds(bool restore)
+{
+    if (restore)
+    {
+        tca8424->setLeds((keymap->symPressed ? LED_SYMLOCK_ON : LED_SYMLOCK_OFF)
+                         | ((keymap->ctrlPressed || keymap->altPressed) ? LED_EXTRA_ON : LED_EXTRA_OFF)
+                         | ((capsLockSeq == 3) ? LED_CAPSLOCK_ON : LED_CAPSLOCK_OFF));
+
+        if (forceBacklightOn)
+            tca8424->setLeds(LED_BACKLIGHT_ON);
+    }
+    else
+    {
+        tca8424->setLeds(LED_ALL_OFF);
+    }
 }
 
 /* GPIO interrupt handler.

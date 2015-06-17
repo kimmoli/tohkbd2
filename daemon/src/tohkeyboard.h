@@ -91,6 +91,7 @@ private:
     bool tohcoreBind(bool bind);
     void notificationSend(QString summary, QString body);
     void screenShot();
+    void controlLeds(bool restore);
 
     int gpio_fd;
 
