@@ -62,7 +62,7 @@ int main(int argc, char **argv)
     QObject::connect(&rw, SIGNAL(_nextAppTaskSwitcher()), helper.data(), SLOT(nextApp()));
 
     QTranslator translator;
-    translator.load("translations_" + QLocale::system().name(), "/usr/share/harbour-tohkbd2-user/i18n");
+    translator.load(QLocale::system().name(), "/usr/share/harbour-tohkbd2-user/i18n");
     app->installTranslator(&translator);
 
     return app->exec();

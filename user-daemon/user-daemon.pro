@@ -21,7 +21,7 @@ dbusInterface.files = config/com.kimmoli.tohkbd2user.xml
 dbusInterface.path = /usr/share/dbus-1/interfaces/
 
 translations.path = /usr/share/$${TARGET}/i18n
-translations.files = i18n/translations_*.qm
+translations.files = i18n/*.qm
 
 icons.path = /usr/share/$${TARGET}
 icons.files = config/icon-system-keyboard.png
@@ -40,15 +40,7 @@ OTHER_FILES += \
     config/com.kimmoli.tohkbd2user.service \
     config/com.kimmoli.tohkbd2user.xml \
     config/icon-system-keyboard.png \
-    i18n/translations_en.ts \
-    i18n/translations_fi.ts \
-    i18n/translations_nl.ts \
-    i18n/translations_de.ts \
-    i18n/translations_da.ts \
-    i18n/translations_fr.ts \
-    i18n/translations_it.ts \
-    i18n/translations_no.ts \
-    i18n/translations_sv.ts \
+    i18n/*.ts \
     qml/taskswitcher.qml
 
 HEADERS += \

@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.0" language="fi_FI">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="fi" version="2.0">
 <context>
     <name>UserDaemon</name>
     <message>
@@ -13,7 +11,7 @@
     </message>
     <message>
         <source>Keyboard removed</source>
-        <translation>Näppäimistö irroitettu</translation>
+        <translation>Näppäimistö irrotettu</translation>
     </message>
 </context>
 </TS>

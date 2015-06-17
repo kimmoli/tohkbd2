@@ -1,19 +1,17 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.0" language="nl_NL">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="de" version="2.0">
 <context>
     <name>UserDaemon</name>
     <message>
         <source>Starting %1...</source>
-        <translation>%1 starten</translation>
+        <translation>Starte %1 ...</translation>
     </message>
     <message>
         <source>Keyboard connected</source>
-        <translation>Toetsenbord verbonden</translation>
+        <translation>Tastatur verbunden</translation>
     </message>
     <message>
         <source>Keyboard removed</source>
-        <translation>Toetsenbord verwijderd</translation>
+        <translation>Tastatur entfernt</translation>
     </message>
 </context>
 </TS>
