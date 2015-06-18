@@ -349,6 +349,9 @@ bool Tohkbd::checkKeypadPresence()
  */
 void Tohkbd::controlLeds(bool restore)
 {
+    if (!vddEnabled) /* No power applied, get out from here */
+        return;
+
     if (restore)
     {
         tca8424->setLeds((keymap->symPressed ? LED_SYMLOCK_ON : LED_SYMLOCK_OFF)
@@ -383,7 +386,11 @@ void Tohkbd::handleGpioInterrupt()
             if (!r.isEmpty())
             {
                 presenceTimer->start();
-                keymap->process(r);
+
+                /* Process report only if it has correct length of 11 */
+                if (r.at(0) == 0x0b && r.at(1) == 0x00)
+                    keymap->process(r);
+
                 retries = -1;
             }
             else
@@ -641,6 +648,9 @@ QString Tohkbd::readOneLineFromFile(const QString &fileName)
  */
 void Tohkbd::checkDoWeNeedBacklight()
 {
+    if (!vddEnabled) /* No power applied, get out from here */
+        return;
+
     if (forceBacklightOn)
     {
         printf("backlight forced on\n");
@@ -657,7 +667,9 @@ void Tohkbd::checkDoWeNeedBacklight()
 
                 tca8424->setLeds(LED_BACKLIGHT_ON);
                 backlightTimer->start();
-            } else {
+            }
+            else
+            {
                 tca8424->setLeds(LED_BACKLIGHT_OFF);
             }
         }
@@ -677,6 +689,9 @@ void Tohkbd::checkDoWeNeedBacklight()
  */
 void Tohkbd::backlightTimerTimeout()
 {
+    if (!vddEnabled) /* No power applied, get out from here */
+        return;
+
     if (!forceBacklightOn)
         tca8424->setLeds(LED_BACKLIGHT_OFF);
 }

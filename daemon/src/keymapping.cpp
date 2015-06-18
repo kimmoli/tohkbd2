@@ -134,8 +134,6 @@ void keymapping::process(QByteArray inputReport)
         emit symChanged();
     }
 
-    printf("There are %d usage codes to process\n", ir.length());
-
     /* Shortcut out if no actual key pressed */
     if (ir.length() == 0)
     {
