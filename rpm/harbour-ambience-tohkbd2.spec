@@ -75,6 +75,8 @@ desktop-file-install --delete-original       \
 %post
 DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/100000/dbus/user_bus_socket" \
   dbus-send --type=method_call --dest=org.freedesktop.DBus / org.freedesktop.DBus.ReloadConfig
+#restart maliit
+systemctl-user restart maliit-server
 #reload udev rules
 udevadm control --reload
 # if tohkbd2 is connected, start daemon now
@@ -108,3 +110,5 @@ fi
 %postun
 DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/100000/dbus/user_bus_socket" \
   dbus-send --type=method_call --dest=org.freedesktop.DBus / org.freedesktop.DBus.ReloadConfig
+#restart maliit
+    systemctl-user restart maliit-server
