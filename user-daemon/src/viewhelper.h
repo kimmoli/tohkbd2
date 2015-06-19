@@ -14,6 +14,7 @@ class ViewHelper : public QObject
     Q_OBJECT
     Q_PROPERTY(int currentApp READ getCurrentApp NOTIFY currentAppChanged())
     Q_PROPERTY(int numberOfApps READ getNumberOfApps NOTIFY numberOfAppsChanged())
+    Q_PROPERTY(bool visible READ getVisible NOTIFY visibleChanged)
 
 public:
     explicit ViewHelper(QQuickView *parent = 0);
@@ -27,6 +28,7 @@ public:
 signals:
     void currentAppChanged();
     void numberOfAppsChanged();
+    void visibleChanged();
 
 public slots:
     void detachWindow();
@@ -40,8 +42,12 @@ private:
 
     int getCurrentApp();
     int getNumberOfApps();
+    bool getVisible();
+
     int m_numberOfApps;
     int m_currentApp;
+    bool m_visible;
+
     QVariantList apps;
     QStringList appsDesktopFiles;
 

@@ -13,12 +13,14 @@ ViewHelper::ViewHelper(QQuickView *parent) :
 {
     m_currentApp = 0;
     m_numberOfApps = 0;
+    m_visible = false;
 
     apps.clear();
     appsDesktopFiles.clear();
 
     emit currentAppChanged();
     emit numberOfAppsChanged();
+    emit visibleChanged();
 }
 
 void ViewHelper::detachWindow()
@@ -49,6 +51,8 @@ void ViewHelper::setDefaultRegion()
 
 void ViewHelper::hideWindow()
 {
+    m_visible = false;
+    emit visibleChanged();
     launchApplication(m_currentApp);
 }
 
@@ -151,7 +155,11 @@ void ViewHelper::showWindow()
     emit numberOfAppsChanged();
 
     if (m_numberOfApps > 1)
+    {
         view->showFullScreen();
+        m_visible = true;
+        emit visibleChanged();
+    }
 }
 
 void ViewHelper::nextApp()
@@ -170,6 +178,11 @@ int ViewHelper::getCurrentApp()
 int ViewHelper::getNumberOfApps()
 {
     return m_numberOfApps;
+}
+
+bool ViewHelper::getVisible()
+{
+    return m_visible;
 }
 
 /* Testing */

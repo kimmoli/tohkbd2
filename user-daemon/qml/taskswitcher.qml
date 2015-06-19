@@ -1,5 +1,6 @@
 import QtQuick 2.1
 import Sailfish.Silica 1.0
+import QtSensors 5.0 as Sensors
 
 Item
 {
@@ -7,6 +8,7 @@ Item
 
     width: Screen.width
     height: Screen.height
+    rotation: 0
 
     property int currentApp: viewHelper.currentApp
     property int numberOfApps: viewHelper.numberOfApps
@@ -25,6 +27,20 @@ Item
                                           taskSwitchBackground.y,
                                           taskSwitchBackground.width,
                                           taskSwitchBackground.height))
+    }
+
+    Sensors.OrientationSensor
+    {
+        id: rotationSensor
+        active: viewHelper.visible
+        property int angle: reading.orientation
+        onAngleChanged:
+        {
+            if (reading.orientation === 3) /* Landscape inverted */
+                root.rotation = 180
+            else if (reading.orientation === 4) /* Landscape */
+                root.rotation = 0
+        }
     }
 
     function updateAppsModel()
