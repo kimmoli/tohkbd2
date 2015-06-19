@@ -140,6 +140,9 @@ private:
     QString ssFilename;
 
     QByteArray FKEYS;
+
+    int gpioInterruptCounter;
+    QTime gpioInterruptFloodDetect;
 };
 
 

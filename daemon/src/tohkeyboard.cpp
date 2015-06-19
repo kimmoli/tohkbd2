@@ -47,6 +47,7 @@ Tohkbd::Tohkbd(QObject *parent) :
     selfieLedOn = false;
     ssNotifyReplacesId = 0;
     ssFilename = QString();
+    gpioInterruptCounter = 0;
 
     tohkbd2user = new QDBusInterface("com.kimmoli.tohkbd2user", "/", "com.kimmoli.tohkbd2user", QDBusConnection::sessionBus(), this);
     tohkbd2user->setTimeout(2000);
@@ -374,6 +375,27 @@ void Tohkbd::controlLeds(bool restore)
  */
 void Tohkbd::handleGpioInterrupt()
 {
+    if (gpioInterruptCounter == 0)
+    {
+        gpioInterruptFloodDetect.start();
+    }
+
+    /* If there are > 100 interrupts within one sec, there must be something wrong */
+    if (++gpioInterruptCounter >= 100)
+    {
+        int tmsec = gpioInterruptFloodDetect.elapsed();
+
+        printf("100 interrputs in %d ms\n", tmsec);
+
+        if (tmsec < 1000)
+        {
+            /* Turn keyboard off */
+            setVddState(false);
+        }
+
+        gpioInterruptCounter = 0;
+    }
+
     if (!keypadIsPresent)
     {
         checkKeypadPresence();
