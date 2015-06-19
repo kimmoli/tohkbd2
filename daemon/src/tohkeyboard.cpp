@@ -44,6 +44,7 @@ Tohkbd::Tohkbd(QObject *parent) :
     keyRepeat = false;
     slideEventEmitted = false;
     taskSwitcherVisible = false;
+    selfieLedOn = false;
     ssNotifyReplacesId = 0;
     ssFilename = QString();
 
@@ -354,12 +355,12 @@ void Tohkbd::controlLeds(bool restore)
 
     if (restore)
     {
-        tca8424->setLeds((keymap->symPressed ? LED_SYMLOCK_ON : LED_SYMLOCK_OFF)
-                         | ((keymap->ctrlPressed || keymap->altPressed) ? LED_EXTRA_ON : LED_EXTRA_OFF)
-                         | ((capsLockSeq == 3) ? LED_CAPSLOCK_ON : LED_CAPSLOCK_OFF));
-
-        if (forceBacklightOn)
-            tca8424->setLeds(LED_BACKLIGHT_ON);
+        tca8424->setLeds(  (keymap->symPressed  ? LED_SYMLOCK_ON   : LED_SYMLOCK_OFF)
+                         | (keymap->ctrlPressed ? LED_SYMLOCK_ON   : LED_SYMLOCK_OFF)
+                         | (keymap->altPressed  ? LED_SYMLOCK_ON   : LED_SYMLOCK_OFF)
+                         | ((capsLockSeq == 3)  ? LED_CAPSLOCK_ON  : LED_CAPSLOCK_OFF)
+                         | (selfieLedOn         ? LED_SELFIE_ON    : LED_SELFIE_OFF)
+                         | (forceBacklightOn    ? LED_BACKLIGHT_ON : LED_BACKLIGHT_OFF) );
     }
     else
     {
@@ -446,10 +447,27 @@ void Tohkbd::handleKeyPressed(QList< QPair<int, int> > keyCode)
         return;
     }
 
-    /* Sym-Int takes a screenshot (mapped to KEY_PRINT) */
-    if (keyCode.at(0).first == KEY_PRINT)
+    /* Check custom key mappings */
+
+    if (keyCode.at(0).first > KEY_MAX)
     {
-        screenShot();
+        switch (keyCode.at(0).first)
+        {
+            /* Sym-Int takes a screenshot */
+            case KEY_TOH_SCREENSHOT:
+                screenShot();
+                break;
+
+            /* Sym-Del toggles "selfie" led */
+            case KEY_TOH_SELFIE:
+                selfieLedOn = !selfieLedOn;
+                tca8424->setLeds(selfieLedOn ? LED_SELFIE_ON : LED_SELFIE_OFF);
+                break;
+
+            default:
+                break;
+        }
+
         /* Don't process further */
         keyIsPressed = true;
         return;
@@ -583,7 +601,7 @@ void Tohkbd::handleCtrlChanged()
 
     if (keymap->stickyCtrlEnabled)
     {
-        tca8424->setLeds(keymap->ctrlPressed ? LED_EXTRA_ON : LED_EXTRA_OFF);
+        tca8424->setLeds(keymap->ctrlPressed ? LED_SYMLOCK_ON : LED_SYMLOCK_OFF);
     }
 }
 
@@ -598,7 +616,7 @@ void Tohkbd::handleAltChanged()
 
     if (keymap->stickyAltEnabled)
     {
-        tca8424->setLeds(keymap->altPressed ? LED_EXTRA_ON : LED_EXTRA_OFF);
+        tca8424->setLeds(keymap->altPressed ? LED_SYMLOCK_ON : LED_SYMLOCK_OFF);
     }
 
     if (!keymap->altPressed && taskSwitcherVisible)

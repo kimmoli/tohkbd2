@@ -131,8 +131,8 @@ private:
     bool backlightEnabled;
     bool slideEventEmitted;
     bool forceLandscapeOrientation;
-
     bool taskSwitcherVisible;
+    bool selfieLedOn;
 
     QDBusInterface *tohkbd2user;
 

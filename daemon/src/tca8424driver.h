@@ -3,8 +3,8 @@
 #include "driverBase.h"
 
 
-#define LED_EXTRA_ON      0x0101
-#define LED_EXTRA_OFF     0x0100
+#define LED_SELFIE_ON     0x0101
+#define LED_SELFIE_OFF    0x0100
 #define LED_CAPSLOCK_ON   0x0202
 #define LED_CAPSLOCK_OFF  0x0200
 #define LED_SYMLOCK_ON    0x0404

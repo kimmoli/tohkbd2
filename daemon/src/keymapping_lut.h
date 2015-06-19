@@ -87,47 +87,47 @@ static const int lut_sym[] =
     0xAD, KEY_F11, 0,
     0xAE, KEY_F12, 0,
     //0xAF, KEY_BACKSPACE, 0,
-    //0xB1, KEY_DELETE, 0,
-    0xB2, KEY_PAGEUP, 0,
-    0xB3, KEY_PRINT, 0, /* Ins */
-    0xB4, KEY_GRAVE, FORCE_SHIFT, /* Q ~ */
-    0xB5, KEY_3, FORCE_SHIFT, /* W # */
-    0xB6, KEY_4, FORCE_SHIFT, /* E $ */
-    0xB7, KEY_5, FORCE_SHIFT, /* R % */
-    0xB8, KEY_6, FORCE_SHIFT, /* T ^ */
-    0xB9, KEY_7, FORCE_SHIFT, /* Y & */
-    0xBA, KEY_8, FORCE_SHIFT, /* U * */
-    0xBB, KEY_LEFTBRACE, FORCE_SHIFT, /* I { */
-    0xBC, KEY_RIGHTBRACE, FORCE_SHIFT, /* O } */
-    0xBD, KEY_MINUS, FORCE_SHIFT, /* P _ */
-    0xBE, KEY_EQUAL, FORCE_SHIFT, /* Å + */
-    //0xC1, KEY_LEFT, 0,
-    //0xC3, KEY_RIGHT, 0,
-    0xC4, KEY_SEMICOLON, 0, /* A ; */
-    0xC5, KEY_APOSTROPHE, 0, /* S ' */
-    //0xC6, KEY_D, 0, /* D £ */
-    0xC7, KEY_GRAVE, 0, /* F ` */
-    //0xC8, KEY_G, 0, /* G ´ */
+    0xB1, KEY_TOH_SELFIE, 0,            /* Del */
+    0xB2, KEY_PAGEUP, 0,                /* Up */
+    0xB3, KEY_TOH_SCREENSHOT, 0,        /* Ins */
+    0xB4, KEY_GRAVE, FORCE_SHIFT,       /* Q ~ */
+    0xB5, KEY_3, FORCE_SHIFT,           /* W # */
+    0xB6, KEY_4, FORCE_SHIFT,           /* E $ */
+    0xB7, KEY_5, FORCE_SHIFT,           /* R % */
+    0xB8, KEY_6, FORCE_SHIFT,           /* T ^ */
+    0xB9, KEY_7, FORCE_SHIFT,           /* Y & */
+    0xBA, KEY_8, FORCE_SHIFT,           /* U * */
+    0xBB, KEY_LEFTBRACE, FORCE_SHIFT,   /* I { */
+    0xBC, KEY_RIGHTBRACE, FORCE_SHIFT,  /* O } */
+    0xBD, KEY_MINUS, FORCE_SHIFT,       /* P _ */
+    0xBE, KEY_EQUAL, FORCE_SHIFT,       /* Å + */
+    0xC1, KEY_VOLUMEDOWN, 0,            /* Left */
+    0xC3, KEY_VOLUMEUP, 0,              /* Right*/
+    0xC4, KEY_SEMICOLON, 0,             /* A ; */
+    0xC5, KEY_APOSTROPHE, 0,            /* S ' */
+    //0xC6, KEY_D, 0,                   /* D £ */
+    0xC7, KEY_GRAVE, 0,                 /* F ` */
+    //0xC8, KEY_G, 0,                   /* G ´ */
     //0xC9, KEY_H, 0,
     //0xCA, KEY_J, 0,
-    0xCB, KEY_LEFTBRACE, 0, /* K [ */
-    0xCC, KEY_RIGHTBRACE, 0, /* L ] */
-    0xCD, KEY_9, FORCE_SHIFT, /* Ö ( */
-    0xCE, KEY_0, FORCE_SHIFT, /* Ä ) */
+    0xCB, KEY_LEFTBRACE, 0,             /* K [ */
+    0xCC, KEY_RIGHTBRACE, 0,            /* L ] */
+    0xCD, KEY_9, FORCE_SHIFT,           /* Ö ( */
+    0xCE, KEY_0, FORCE_SHIFT,           /* Ä ) */
     //0xD1, KEY_HOME, 0,
-    0xD2, KEY_PAGEDOWN, 0,
+    0xD2, KEY_PAGEDOWN, 0,              /* Down */
     //0xD3, KEY_END, 0,
-    0xD4, KEY_SEMICOLON, FORCE_SHIFT, /* Z : */
-    0xD5, KEY_APOSTROPHE, FORCE_SHIFT, /* X " */
+    0xD4, KEY_SEMICOLON, FORCE_SHIFT,   /* Z : */
+    0xD5, KEY_APOSTROPHE, FORCE_SHIFT,  /* X " */
     //0xD6, KEY_C, 0, /* C € */
     0xD7, KEY_SLASH, 0, /* V / */
-    0xD8, KEY_BACKSLASH, FORCE_SHIFT, /* B | */
-    0xD9, KEY_BACKSLASH, 0, /* N \ */
-    //0xDA, KEY_M, 0, /* M µ */
-    //0xDB, KEY_0, FORCE_SHIFT, /* ? */
-    //0xDC, KEY_1, FORCE_SHIFT, /* ! */
-    0xDD, KEY_102ND, 0, /* , < */
-    0xDE, KEY_102ND, FORCE_SHIFT, /* . > */
+    0xD8, KEY_BACKSLASH, FORCE_SHIFT,   /* B | */
+    0xD9, KEY_BACKSLASH, 0,             /* N \ */
+    //0xDA, KEY_M, 0,                   /* M µ */
+    //0xDB, KEY_0, FORCE_SHIFT,         /* ? */
+    //0xDC, KEY_1, FORCE_SHIFT,         /* ! */
+    0xDD, KEY_102ND, 0,                 /* , < */
+    0xDE, KEY_102ND, FORCE_SHIFT,       /* . > */
     //0xEC, KEY_2, FORCE_SHIFT,
     //0xEF, KEY_ENTER, 0,
     //0xE9, KEY_SPACE, 0,
