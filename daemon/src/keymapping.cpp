@@ -16,6 +16,10 @@ keymapping::keymapping(QObject *parent) :
     stickyAltEnabled = false;
     stickySymEnabled = false;
 
+    ctrlWasHeldDown = false;
+    symWasHeldDown = false;
+    altWasHeldDown = false;
+
     ctrlDown = false;
     altDown = false;
     symDown = false;

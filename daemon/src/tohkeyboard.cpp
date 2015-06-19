@@ -1028,6 +1028,7 @@ void Tohkbd::setSettingInt(const QString &key, const int &value)
     }
     else if (key == "stickyCtrlEnabled" && (value == 0 || value == 1))
     {
+        keymap->releaseStickyModifiers();
         keymap->stickyCtrlEnabled = (value == 1);
         settings.beginGroup("generalsettings");
         settings.setValue("stickyCtrlEnabled", (value == 1));
@@ -1035,6 +1036,7 @@ void Tohkbd::setSettingInt(const QString &key, const int &value)
     }
     else if (key == "stickyAltEnabled" && (value == 0 || value == 1))
     {
+        keymap->releaseStickyModifiers();
         keymap->stickyAltEnabled = (value == 1);
         settings.beginGroup("generalsettings");
         settings.setValue("stickyAltEnabled", (value == 1));
@@ -1042,6 +1044,7 @@ void Tohkbd::setSettingInt(const QString &key, const int &value)
     }
     else if (key == "stickySymEnabled" && (value == 0 || value == 1))
     {
+        keymap->releaseStickyModifiers();
         keymap->stickySymEnabled = (value == 1);
         settings.beginGroup("generalsettings");
         settings.setValue("stickySymEnabled", (value == 1));
