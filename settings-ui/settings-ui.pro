@@ -35,7 +35,6 @@ OTHER_FILES += qml/tohkbd2-settingsui.qml \
     qml/pages/ApplicationSelectionPage.qml \
     qml/pages/Shortcuts.qml \
     qml/pages/KeyboardLayout.qml \
-    qml/pages/CustomizeKeys.qml \
     qml/pages/BugReporter.qml \
     qml/pages/GeneralSettings.qml \
     qml/icons/icon-m-test.png \
@@ -51,5 +50,7 @@ OTHER_FILES += qml/tohkbd2-settingsui.qml \
     i18n/*.ts \
     qml/icons/kimmoli.png \
     qml/icons/wazd.png \
-    qml/icons/dirkvl.png
+    qml/icons/dirkvl.png \
+    qml/components/Key.qml \
+    qml/pages/CustomizeKey.qml
 
