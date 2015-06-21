@@ -24,6 +24,7 @@ signals:
     void _showTaskSwitcher();
     void _nextAppTaskSwitcher();
     void _hideTaskSwitcher();
+    void _lauchApplication(const QString &desktoFilename);
 
 public slots:
     QString getActiveLayout();
@@ -37,11 +38,13 @@ public slots:
     void nextAppTaskSwitcher() { emit _nextAppTaskSwitcher(); }
     void hideTaskSwitcher() { emit  _hideTaskSwitcher(); }
     void quit();
+    void launchSuccess(const QString &appName);
+    void launchFailed();
 
 private:
+    void showNotification(const QString &text);
     bool m_dbusRegistered;
-    void showNotification(QString text);
-
+    bool m_launchPending;
 };
 
 #endif // UserDaemon_H

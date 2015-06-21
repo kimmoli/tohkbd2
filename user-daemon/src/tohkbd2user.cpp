@@ -22,7 +22,7 @@
 #include "userdaemon.h"
 #include "adaptor.h"
 #include "viewhelper.h"
-
+#include "applauncher.h"
 
 int main(int argc, char **argv)
 {
@@ -60,6 +60,13 @@ int main(int argc, char **argv)
     QObject::connect(&rw, SIGNAL(_showTaskSwitcher()), helper.data(), SLOT(showWindow()));
     QObject::connect(&rw, SIGNAL(_hideTaskSwitcher()), helper.data(), SLOT(hideWindow()));
     QObject::connect(&rw, SIGNAL(_nextAppTaskSwitcher()), helper.data(), SLOT(nextApp()));
+
+    AppLauncher al;
+
+    QObject::connect(&al, SIGNAL(launchSuccess(QString)), &rw, SLOT(launchSuccess(QString)));
+    QObject::connect(&al, SIGNAL(launchFailed()), &rw, SLOT(launchFailed()));
+    QObject::connect(&rw, SIGNAL(_lauchApplication(QString)), &al, SLOT(launchApplication(QString)));
+    QObject::connect(helper.data(), SIGNAL(_launchApplication(QString)), &al, SLOT(launchApplication(QString)));
 
     QTranslator translator;
     translator.load(QLocale::system().name(), "/usr/share/harbour-tohkbd2-user/i18n");

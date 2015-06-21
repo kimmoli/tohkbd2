@@ -29,6 +29,7 @@ signals:
     void currentAppChanged();
     void numberOfAppsChanged();
     void visibleChanged();
+    void _launchApplication(const QString &desktopFilename);
 
 public slots:
     void detachWindow();

@@ -9,6 +9,7 @@ UserDaemon::UserDaemon(QObject *parent) :
     QObject(parent)
 {
     m_dbusRegistered = false;
+    m_launchPending = false;
 }
 
 UserDaemon::~UserDaemon()
@@ -109,16 +110,8 @@ QString UserDaemon::getOrientationLock()
 
 void UserDaemon::launchApplication(const QString &desktopFilename)
 {
-    MDesktopEntry app(desktopFilename);
-
-    printf("tohkbd2-user: starting \"%s\"\n" ,qPrintable(app.name()));
-
-    showNotification(tr("Starting %1...").arg(app.name()));
-
-    QProcess proc;
-    proc.startDetached("/usr/bin/xdg-open" , QStringList() << desktopFilename);
-
-    QThread::msleep(100);
+    m_launchPending = true;
+    emit _lauchApplication(desktopFilename);
 }
 
 void UserDaemon::showKeyboardConnectionNotification(const bool &connected)
@@ -134,12 +127,22 @@ QString UserDaemon::getVersion()
     return QString(APPVERSION);
 }
 
+void UserDaemon::launchSuccess(const QString &appName)
+{
+    if (m_launchPending)
+        showNotification(tr("Starting %1...").arg(appName));
 
-/******** PRIV *********/
+    m_launchPending = false;
+}
+
+void UserDaemon::launchFailed()
+{
+    m_launchPending = false;
+}
 
 /* show notification
  */
-void UserDaemon::showNotification(QString text)
+void UserDaemon::showNotification(const QString &text)
 {
     MNotification notification(MNotification::DeviceEvent, "", text);
     notification.setImage(SailfishApp::pathTo("/icon-system-keyboard.png").toLocalFile());
