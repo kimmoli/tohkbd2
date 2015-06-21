@@ -24,6 +24,7 @@ BuildRequires:  pkgconfig(mlite5)
 BuildRequires:  pkgconfig(Qt5Quick)
 BuildRequires:  pkgconfig(Qt5Qml)
 BuildRequires:  pkgconfig(mlite5)
+BuildRequires:  pkgconfig(contentaction5)
 BuildRequires:  pkgconfig(sailfishapp) >= 0.0.10
 BuildRequires:  desktop-file-utils
 BuildRequires:  qt5-qttools-linguist

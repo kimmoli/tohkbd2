@@ -212,9 +212,7 @@ void ViewHelper::launchApplication(int n)
 
     view->hide();
 
-    QProcess proc;
-    proc.startDetached("/usr/bin/xdg-open" , QStringList() << appsDesktopFiles.at(n));
-    QThread::msleep(100);
+    emit _launchApplication(appsDesktopFiles.at(n));
 }
 
 QVariantList ViewHelper::getCurrentApps()
