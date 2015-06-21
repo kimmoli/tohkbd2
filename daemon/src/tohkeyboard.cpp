@@ -868,7 +868,7 @@ void Tohkbd::reloadSettings()
 
     for (int i = 0 ; i<FKEYS.length() ; i++)
     {
-        printf("app shortcut %d F%d : %s\n", FKEYS.at(i), i+1, qPrintable(applicationShortcuts[FKEYS.at(i)]));
+        printf("Shortcut F%d : %s\n", i+1, qPrintable(applicationShortcuts[FKEYS.at(i)]));
         /* Write them back, as we need default values there in settings app */
         settings.setValue(QString("KEY_F%1").arg(i+1), applicationShortcuts[FKEYS.at(i)]);
     }
