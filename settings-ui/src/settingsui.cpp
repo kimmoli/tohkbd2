@@ -6,7 +6,6 @@
 #include <QDir>
 #include <QVariantMap>
 #include <QVariantList>
-#include <QProcess>
 #include <QThread>
 #include <QSettings>
 #include <QDebug>
@@ -100,14 +99,6 @@ QVariantMap SettingsUi::getCurrentSettings()
     settings.endGroup();
 
     return map;
-}
-
-void SettingsUi::startApplication(QString appname)
-{
-    QProcess proc;
-    proc.startDetached("/usr/bin/xdg-open" , QStringList() << appname);
-
-    QThread::msleep(100);
 }
 
 QVariantList SettingsUi::getCurrentShortcuts()
