@@ -5,12 +5,27 @@ MouseArea
 {
     id: ma
     property string label: ""
+    property string symLabel: ""
+
+    property bool changed: false
+
     enabled: label.length > 0
 
     onClicked:
     {
         console.log(label)
-        pageStack.push(Qt.resolvedUrl("../pages/CustomizeKey.qml"), { "label": label } )
+
+        var dlg = pageStack.push(Qt.resolvedUrl("../pages/CustomizeKey.qml"),
+                                 {
+                                     "label": label,
+                                     "symLabel": symLabel
+                                 } )
+
+        dlg.accepted.connect(function()
+        {
+            console.log("Change of " + label + " accepted.")
+            changed = true
+        })
     }
     onPressAndHold:
     {
@@ -22,7 +37,8 @@ MouseArea
     Rectangle
     {
         anchors.fill: parent
-        color: Theme.highlightColor
-        opacity: ma.pressed ? 0.6 : 0.0
+        color: (ma.pressed ? Theme.highlightColor : (changed ? "red" : "transparent"))
+        opacity: ma.pressed ? 0.6 : 0.3
+        radius: 10
     }
 }
