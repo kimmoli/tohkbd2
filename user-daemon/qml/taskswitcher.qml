@@ -33,7 +33,7 @@ Item
     {
         id: rotationSensor
         active: viewHelper.visible
-        property int angle: reading.orientation
+        property int angle: active ? reading.orientation : 0
         onAngleChanged:
         {
             if (reading.orientation === 3) /* Landscape inverted */
