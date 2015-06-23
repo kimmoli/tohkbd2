@@ -414,7 +414,16 @@ void Tohkbd::handleGpioInterrupt()
                 if (r.at(0) == 0x0b && r.at(1) == 0x00)
                     keymap->process(r);
 
-                retries = -1;
+                /* Check if interrupt line is still down, there is another report for us then */
+                if (readOneLineFromFile("/sys/class/gpio/gpio" GPIO_INT "/value") == "0")
+                {
+                    printf("Interrupt is still low. Reread report.\n");
+                    retries--;
+                }
+                else
+                {
+                    retries = -1;
+                }
             }
             else
             {
@@ -697,8 +706,6 @@ void Tohkbd::checkDoWeNeedBacklight()
 
     if (forceBacklightOn)
     {
-        printf("backlight forced on\n");
-
         tca8424->setLeds(LED_BACKLIGHT_ON);
     }
     else if (backlightEnabled)
@@ -721,7 +728,7 @@ void Tohkbd::checkDoWeNeedBacklight()
         {
             backlightTimer->start();
         }
-    }
+    } /* No backlight */
     else
     {
         backlightTimer->stop();
