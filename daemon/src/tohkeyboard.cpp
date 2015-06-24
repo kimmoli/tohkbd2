@@ -48,6 +48,9 @@ Tohkbd::Tohkbd(QObject *parent) :
     ssNotifyReplacesId = 0;
     ssFilename = QString();
     gpioInterruptCounter = 0;
+    actualSailfishVersion = QString();
+
+    fix_CapsLock = !checkSailfishVersion("1.1.7.0");
 
     tohkbd2user = new QDBusInterface("com.kimmoli.tohkbd2user", "/", "com.kimmoli.tohkbd2user", QDBusConnection::sessionBus(), this);
     tohkbd2user->setTimeout(2000);
@@ -528,9 +531,11 @@ void Tohkbd::handleKeyPressed(QList< QPair<int, int> > keyCode)
     {
         for (int i=0; i<keyCode.count(); i++)
         {
-            bool tweakCapsLock = (capsLockSeq == 3 && ((keyCode.at(i).first >= KEY_Q && keyCode.at(i).first <= KEY_P)
-                                                       || (keyCode.at(i).first >= KEY_A && keyCode.at(i).first <= KEY_L)
-                                                       || (keyCode.at(i).first >= KEY_Z && keyCode.at(i).first <= KEY_M) ));
+            bool tweakCapsLock = false;
+            if (fix_CapsLock)
+                tweakCapsLock = (capsLockSeq == 3 && ((keyCode.at(i).first >= KEY_Q && keyCode.at(i).first <= KEY_P)
+                                                   || (keyCode.at(i).first >= KEY_A && keyCode.at(i).first <= KEY_L)
+                                                   || (keyCode.at(i).first >= KEY_Z && keyCode.at(i).first <= KEY_M) ));
 
             /* Some of the keys require shift pressed to get correct symbol */
             if (keyCode.at(i).second & FORCE_COMPOSE)
@@ -1221,5 +1226,53 @@ void Tohkbd::handleNotificationActionInvoked(const QDBusMessage& msg)
 
         if (!QDBusConnection::sessionBus().send(m))
             printf("Failed to invoke gallery to show %s\n", qPrintable(ssFilename));
+    }
+}
+
+/*
+ * Check that Sailfish version is at least required version
+ */
+bool Tohkbd::checkSailfishVersion(QString versionToCompare)
+{
+    QString actualVersion = "0.0.0.0";
+
+    if (actualSailfishVersion.isEmpty())
+    {
+        QFile inputFile( "/etc/sailfish-release" );
+
+        if ( inputFile.open( QIODevice::ReadOnly | QIODevice::Text ) )
+        {
+           QTextStream in( &inputFile );
+
+           while (not in.atEnd())
+           {
+               QString line = in.readLine();
+               if (line.startsWith("VERSION_ID="))
+               {
+                   actualVersion = line.split('=').at(1);
+                   break;
+               }
+           }
+           inputFile.close();
+        }
+        actualSailfishVersion = actualVersion;
+
+        printf("Sailfish version %s\n", qPrintable(actualSailfishVersion));
+    }
+
+    QStringList avList = actualSailfishVersion.split(".");
+    QStringList vList = versionToCompare.split(".");
+
+    if (avList.size() == 4 && vList.size() == 4)
+    {
+        long avLong = (avList.at(0).toInt() << 24) | (avList.at(1).toInt() << 16) | (avList.at(2).toInt() << 8) | avList.at(3).toInt();
+        long vLong = (vList.at(0).toInt() << 24) | (vList.at(1).toInt() << 16) | (vList.at(2).toInt() << 8) | vList.at(3).toInt();
+
+        return (avLong >= vLong);
+    }
+    else
+    {
+        printf("Sailfish version check failed!\n");
+        return false;
     }
 }
