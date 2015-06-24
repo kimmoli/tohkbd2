@@ -4,12 +4,12 @@
     <message>
         <location filename="../qml/pages/AboutPage.qml" line="53"/>
         <source>About...</source>
-        <translation>Na temat...</translation>
+        <translation>Informacje o...</translation>
     </message>
     <message>
         <location filename="../qml/pages/AboutPage.qml" line="89"/>
         <source>The TOHKBD2 Team</source>
-        <translation>Drużyna TOHKBD2</translation>
+        <translation>Zespół TOHKBD2</translation>
     </message>
     <message>
         <location filename="../qml/pages/AboutPage.qml" line="146"/>
@@ -43,14 +43,34 @@
 <context>
     <name>BugReporter</name>
     <message>
-        <location filename="../qml/pages/BugReporter.qml" line="28"/>
+        <location filename="../qml/pages/BugReporter.qml" line="31"/>
+        <source>Launching external application...</source>
+        <translation>Uruchamianie zewnętrznej aplikacji...</translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/BugReporter.qml" line="53"/>
         <source>Report a bug</source>
         <translation>Zgłoś błąd</translation>
     </message>
     <message>
-        <location filename="../qml/pages/BugReporter.qml" line="32"/>
-        <source>Launching email application...</source>
-        <translation>Uruchamianie klienta poczty...</translation>
+        <location filename="../qml/pages/BugReporter.qml" line="57"/>
+        <source>Please first check TOHKBD FAQ page at https://together.jolla.com. Button below opens this link in browser.</source>
+        <translation>Proszę sprawdź najpierw odpowiedzi w TOHKBD FAQ na stronie https://together.jolla.com. Przycisk poniżej otwiera ten link w przeglądarce.</translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/BugReporter.qml" line="66"/>
+        <source>Open FAQ</source>
+        <translation>Otwórz FAQ</translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/BugReporter.qml" line="76"/>
+        <source>If there is no answer to your issue, please report it. Button below launches email client.</source>
+        <translation>Jeśli brakuje rozwiązania twojego problemu, proszę zgłoś go. Przycisk poniżej uruchamia klienta poczty e-mail.</translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/BugReporter.qml" line="85"/>
+        <source>Report issue</source>
+        <translation>Zgłoś problem</translation>
     </message>
 </context>
 <context>
@@ -73,7 +93,7 @@
     <message>
         <location filename="../qml/pages/GeneralSettings.qml" line="39"/>
         <source>Backlight is always on when keyboard attached and phone&apos;s display is on</source>
-        <translation>Podświetlenie zawsze włączone gdy klawiatura podłączona i aktywny wyświetlacz</translation>
+        <translation>Podświetlenie zawsze jest włączone gdy klawiatura jest podłączona i wyświetlacz telefonu jest włączony</translation>
     </message>
     <message>
         <location filename="../qml/pages/GeneralSettings.qml" line="47"/>
@@ -83,12 +103,12 @@
     <message>
         <location filename="../qml/pages/GeneralSettings.qml" line="48"/>
         <source>Automatic backlight enable or always off</source>
-        <translation>Automatyczne podświetlenie albo zawsze wyłączone</translation>
+        <translation>Automatyczne podświetlenie włączone albo zawsze wyłączone</translation>
     </message>
     <message>
         <location filename="../qml/pages/GeneralSettings.qml" line="58"/>
         <source>Timeout</source>
-        <translation>Czas trwania</translation>
+        <translation>Czas podtrzymania podświetlania po naciśnięciu klawisza</translation>
     </message>
     <message>
         <location filename="../qml/pages/GeneralSettings.qml" line="82"/>
@@ -118,12 +138,12 @@
     <message>
         <location filename="../qml/pages/GeneralSettings.qml" line="124"/>
         <source>Delay</source>
-        <translation>Opóźnienie</translation>
+        <translation>Opóźnienie przed powtarzaniem wciśniętego klawisza</translation>
     </message>
     <message>
         <location filename="../qml/pages/GeneralSettings.qml" line="146"/>
         <source>Rate</source>
-        <translation>Częstotliwość</translation>
+        <translation>Częstotliwość powtarzania wciśniętego klawisza</translation>
     </message>
     <message>
         <location filename="../qml/pages/GeneralSettings.qml" line="168"/>
@@ -138,7 +158,7 @@
     <message>
         <location filename="../qml/pages/GeneralSettings.qml" line="177"/>
         <source>Sticky modifiers will toggle when pressed, they also work as normal modifier keys</source>
-        <translation>Trwałe modyfikatory zachowują stan po wciśnięciu, działają także jak zwykłe klawisze modyfikatora</translation>
+        <translation>Trwałe modyfikatory po wciśnięciu przełączają i zachowują stan, działają także jak zwykłe klawisze modyfikatora</translation>
     </message>
     <message>
         <location filename="../qml/pages/GeneralSettings.qml" line="187"/>
@@ -199,7 +219,7 @@
     <message>
         <location filename="../qml/pages/Tohkbd2Settings.qml" line="91"/>
         <source>Customize mapping</source>
-        <translation>Zmiana mapowania</translation>
+        <translation>Dostosuj mapowanie</translation>
     </message>
     <message>
         <location filename="../qml/pages/Tohkbd2Settings.qml" line="92"/>

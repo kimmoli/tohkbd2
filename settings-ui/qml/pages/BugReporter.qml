@@ -73,7 +73,7 @@ Page
             }
             Label
             {
-                text: qsTr("If there are no answer to your issue, please report it. Button below launches email client.")
+                text: qsTr("If there is no answer to your issue, please report it. Button below launches email client.")
                 color: Theme.primaryColor
                 width: parent.width - 2*Theme.paddingLarge
                 wrapMode: Text.WordWrap
