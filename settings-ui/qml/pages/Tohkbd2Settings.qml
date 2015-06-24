@@ -87,8 +87,7 @@ Page
         Component.onCompleted:
         {
             settingslist.append({"labelId": qsTr("Shortcuts"),         "iconId":"image://theme/icon-m-shortcut",       "pageId":"Shortcuts.qml",       "isEnabled":(daemonVersion !== "N/A")})
-            settingslist.append({"labelId": qsTr("Layout"),            "iconId":"image://theme/icon-m-keyboard",       "pageId":"KeyboardLayout.qml",  "isEnabled":false})
-            settingslist.append({"labelId": qsTr("Customize mapping"), "iconId":"image://tohkbd2/icon-m-test",         "pageId":"CustomizeKeys.qml",   "isEnabled":false})
+            settingslist.append({"labelId": qsTr("Layout"),            "iconId":"image://theme/icon-m-keyboard",       "pageId":"KeyboardLayout.qml",  "isEnabled":true})
             settingslist.append({"labelId": qsTr("General settings"),  "iconId":"image://tohkbd2/icon-m-test",         "pageId":"GeneralSettings.qml", "isEnabled":(daemonVersion !== "N/A")})
             settingslist.append({"labelId": qsTr("Report a bug"),      "iconId":"image://theme/icon-m-crash-reporter", "pageId":"BugReporter.qml",     "isEnabled":true})
         }

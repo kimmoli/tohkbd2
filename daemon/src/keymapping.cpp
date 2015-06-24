@@ -245,3 +245,55 @@ void keymapping::releaseStickyModifiers()
         emit symChanged();
     }
 }
+
+void keymapping::setLayout(QString toLayout)
+{
+    if (toLayout == layout)
+        return;
+
+    int i = 0;
+
+    if (toLayout == "Scandic")
+    {
+        while (lut_plain_scandic[i])
+        {
+            lut_plain[i] = lut_plain_scandic[i];
+            i++;
+            lut_plain[i] = lut_plain_scandic[i];
+            i++;
+            lut_plain[i] = lut_plain_scandic[i];
+            i++;
+        }
+    }
+    else if (toLayout == "QWERTZ")
+    {
+        while (lut_plain_qwertz[i])
+        {
+            lut_plain[i] = lut_plain_qwertz[i];
+            i++;
+            lut_plain[i] = lut_plain_qwertz[i];
+            i++;
+            lut_plain[i] = lut_plain_qwertz[i];
+            i++;
+        }
+    }
+    else if (toLayout == "AZERTY")
+    {
+        while (lut_plain_azerty[i])
+        {
+            lut_plain[i] = lut_plain_azerty[i];
+            i++;
+            lut_plain[i] = lut_plain_azerty[i];
+            i++;
+            lut_plain[i] = lut_plain_azerty[i];
+            i++;
+        }
+    }
+
+    for ( ; i<256 ; i++)
+        lut_plain[i] = 0;
+
+    layout = toLayout;
+
+    printf("keymap: layout set to %s\n", qPrintable(layout));
+}

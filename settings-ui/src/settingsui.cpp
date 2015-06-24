@@ -12,6 +12,8 @@
 #include <QtDBus/QtDBus>
 #include <algorithm>
 
+#include "../../daemon/src/defaultSettings.h"
+
 #include <mlite5/MDesktopEntry>
 
 #include <linux/input.h>
@@ -85,17 +87,21 @@ QVariantMap SettingsUi::getCurrentSettings()
     QSettings settings("harbour-tohkbd2", "tohkbd2");
     settings.beginGroup("generalsettings");
 
-    map.insert("backlightTimeout", settings.value("backlightTimeout", 2000).toInt());
+    map.insert("backlightTimeout", settings.value("backlightTimeout", BACKLIGHT_TIMEOUT).toInt());
 
-    map.insert("backlightLuxThreshold", settings.value("backlightLuxThreshold", 5).toInt());
-    map.insert("keyRepeatDelay", settings.value("keyRepeatDelay", 250).toInt());
-    map.insert("keyRepeatRate", settings.value("keyRepeatRate", 25).toInt());
-    map.insert("backlightEnabled", settings.value("backlightEnabled", true).toBool());
-    map.insert("forceLandscapeOrientation", settings.value("forceLandscapeOrientation", true).toBool());
-    map.insert("forceBacklightOn", settings.value("forceBacklightOn", false).toBool());
-    map.insert("stickyCtrlEnabled", settings.value("stickyCtrlEnabled", true).toBool());
-    map.insert("stickyAltEnabled", settings.value("stickyAltEnabled", false).toBool());
-    map.insert("stickySymEnabled", settings.value("stickySymEnabled", false).toBool());
+    map.insert("backlightLuxThreshold", settings.value("backlightLuxThreshold", BACKLIGHT_LUXTHRESHOLD).toInt());
+    map.insert("keyRepeatDelay", settings.value("keyRepeatDelay", KEYREPEAT_DELAY).toInt());
+    map.insert("keyRepeatRate", settings.value("keyRepeatRate", KEYREPEAT_RATE).toInt());
+    map.insert("backlightEnabled", settings.value("backlightEnabled", BACKLIGHT_ENABLED).toBool());
+    map.insert("forceLandscapeOrientation", settings.value("forceLandscapeOrientation", FORCE_LANDSCAPE_ORIENTATION).toBool());
+    map.insert("forceBacklightOn", settings.value("forceBacklightOn", FORCE_BACKLIGHT_ON).toBool());
+    map.insert("stickyCtrlEnabled", settings.value("stickyCtrlEnabled", STICKY_CTRL_ENABLED).toBool());
+    map.insert("stickyAltEnabled", settings.value("stickyAltEnabled", STICKY_ALT_ENABLED).toBool());
+    map.insert("stickySymEnabled", settings.value("stickySymEnabled", STICKY_SYM_ENABLED).toBool());
+    settings.endGroup();
+
+    settings.beginGroup("layoutsettings");
+    map.insert("masterLayout", settings.value("masterLayout", QString(MASTER_LAYOUT)).toString());
     settings.endGroup();
 
     return map;
@@ -164,6 +170,20 @@ void SettingsUi::setSettingInt(QString key, int value)
     args.append(key);
     args.append(value);
     tohkbd2daemon.callWithArgumentList(QDBus::AutoDetect, "setSettingInt", args);
+
+    emit settingsChanged();
+}
+
+void SettingsUi::setSettingString(QString key, QString value)
+{
+    qDebug() << "setting" << key << "to" << value;
+
+    QDBusInterface tohkbd2daemon("com.kimmoli.tohkbd2", "/", "com.kimmoli.tohkbd2", QDBusConnection::systemBus());
+    tohkbd2daemon.setTimeout(2000);
+    QList<QVariant> args;
+    args.append(key);
+    args.append(value);
+    tohkbd2daemon.callWithArgumentList(QDBus::AutoDetect, "setSettingString", args);
 
     emit settingsChanged();
 }

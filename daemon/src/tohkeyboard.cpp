@@ -100,6 +100,8 @@ Tohkbd::Tohkbd(QObject *parent) :
 
     reloadSettings();
 
+    keymap->setLayout(masterLayout);
+
     if (currentActiveLayout.isEmpty())
         changeActiveLayout(true);
 
@@ -897,6 +899,10 @@ void Tohkbd::reloadSettings()
     settings.beginGroup("orientation");
     currentOrientationLock = settings.value("originalOrientation", QString()).toString();
     settings.endGroup();
+
+    settings.beginGroup("layoutSettings");
+    masterLayout = settings.value("masterLayout", QString(MASTER_LAYOUT)).toString();
+    settings.endGroup();
 }
 
 /* Save activeLayout to settings
@@ -1060,6 +1066,21 @@ void Tohkbd::setSettingInt(const QString &key, const int &value)
         settings.beginGroup("generalsettings");
         settings.setValue("stickySymEnabled", (value == 1));
         settings.endGroup();
+    }
+}
+
+void Tohkbd::setSettingString(const QString &key, const QString &value)
+{
+    QSettings settings(QSettings::SystemScope, "harbour-tohkbd2", "tohkbd2");
+
+    if (key == "masterLayout")
+    {
+        settings.beginGroup("layoutsettings");
+        settings.setValue(key, value);
+        settings.endGroup();
+
+        masterLayout = value;
+        keymap->setLayout(masterLayout);
     }
 }
 
