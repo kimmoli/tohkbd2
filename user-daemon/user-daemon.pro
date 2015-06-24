@@ -1,7 +1,10 @@
 TARGET = harbour-tohkbd2-user
 
 CONFIG += sailfishapp link_pkgconfig
-PKGCONFIG += sailfishapp mlite5 contentaction5
+PKGCONFIG += sailfishapp mlite5
+
+# PKGCONFIG += contentaction5
+# DEFINES += USECONTENTACTION
 
 QT += dbus gui-private
 
