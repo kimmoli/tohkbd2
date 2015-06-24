@@ -36,6 +36,8 @@ public:
     bool stickyAltEnabled;
     bool stickySymEnabled;
 
+    void setLayout(QString toLayout);
+
 signals:
     void shiftChanged();
     void ctrlChanged();
@@ -59,6 +61,9 @@ private:
     char pressedCode;
     QByteArray _prevInputReport;
 
+    QString layout;
+
+    int lut_plain[256];
 };
 
 #endif // KEYMAPPING_H

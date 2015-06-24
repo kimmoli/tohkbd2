@@ -49,7 +49,7 @@ Page
 
             MouseArea
             {
-                enabled: !zoomin && view.currentIndex == index
+                enabled: false // !zoomin && view.currentIndex == index
                 anchors.fill: parent
                 onClicked:
                 {
@@ -68,25 +68,39 @@ Page
         anchors.bottom: view.top
         anchors.bottomMargin: Theme.paddingLarge
         anchors.horizontalCenter: page.horizontalCenter
-        text: layoutsmodel.count < 5 ? "" : layoutsmodel.get(view.currentIndex).layoutname
+        text: layoutsmodel.count ? layoutsmodel.get(view.currentIndex).layoutname : ""
         color: Theme.primaryColor
         font.pixelSize: Theme.fontSizeLarge
+        opacity: fullimageview.visible ? 0 : 1
+        Behavior on opacity { NumberAnimation {} }
+    }
+    Text
+    {
+        id: layoutlabelActive
+        anchors.bottom: layoutlabel.top
+        anchors.bottomMargin: Theme.paddingSmall
+        anchors.horizontalCenter: page.horizontalCenter
+        text: "Active"
+        color: Theme.primaryColor
+        font.pixelSize: Theme.fontSizeMedium
+        visible: layoutlabel.text === settings["masterLayout"]
         opacity: fullimageview.visible ? 0 : 1
         Behavior on opacity { NumberAnimation {} }
     }
     Button
     {
         id: layoutSelectButton
+        enabled: layoutsmodel.count ? (layoutsmodel.get(view.currentIndex).implemented && opacity == 1) : false
         text: qsTr("Select")
         anchors.top: view.bottom
         anchors.topMargin: Theme.paddingLarge
         anchors.horizontalCenter: page.horizontalCenter
         opacity: fullimageview.visible ? 0 : 1
         Behavior on opacity { NumberAnimation {} }
-        enabled: opacity == 1
 
         onClicked:
         {
+            settingsui.setSettingString("masterLayout", layoutsmodel.get(view.currentIndex).layoutname)
             pageStack.pop()
         }
     }
@@ -317,12 +331,12 @@ Page
 
         Component.onCompleted:
         {
-            layoutsmodel.append({"imagesource":"../images/image-keyboard-scandic.png", "layoutname":"Scandic"})
-            layoutsmodel.append({"imagesource":"../images/image-keyboard-qwerty.png", "layoutname":"QWERTY"})
-            layoutsmodel.append({"imagesource":"../images/image-keyboard-qwertz.png", "layoutname":"QWERTZ"})
-            layoutsmodel.append({"imagesource":"../images/image-keyboard-azerty.png", "layoutname":"AZERTY"})
-            layoutsmodel.append({"imagesource":"../images/image-keyboard-cyrillic.png", "layoutname":"Cyrillic"})
-            layoutsmodel.append({"imagesource":"../images/image-keyboard-stealth.png", "layoutname":"Stealth"})
+            layoutsmodel.append({"imagesource":"../images/image-keyboard-scandic.png", "layoutname":"Scandic", "implemented": true })
+            layoutsmodel.append({"imagesource":"../images/image-keyboard-qwerty.png", "layoutname":"QWERTY", "implemented": false })
+            layoutsmodel.append({"imagesource":"../images/image-keyboard-qwertz.png", "layoutname":"QWERTZ", "implemented": true })
+            layoutsmodel.append({"imagesource":"../images/image-keyboard-azerty.png", "layoutname":"AZERTY", "implemented": true })
+            layoutsmodel.append({"imagesource":"../images/image-keyboard-cyrillic.png", "layoutname":"Cyrillic", "implemented": false })
+            layoutsmodel.append({"imagesource":"../images/image-keyboard-stealth.png", "layoutname":"Stealth", "implemented": false })
         }
     }
 

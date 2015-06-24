@@ -26,4 +26,6 @@
 #define FORCE_LANDSCAPE_ORIENTATION true
 #define FORCE_BACKLIGHT_ON false
 
+#define MASTER_LAYOUT "Scandic"
+
 #endif // DEFAULTSSETTINGS_H
