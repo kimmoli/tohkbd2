@@ -52,6 +52,8 @@ private:
     QVariantList apps;
     QStringList appsDesktopFiles;
 
+    QStringList mruList;
+
 };
 
 #endif // VIEWHELPER_H

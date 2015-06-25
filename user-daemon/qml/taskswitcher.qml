@@ -20,13 +20,16 @@ Item
 
     onNumberOfAppsChanged:
     {
-        updateAppsModel()
-        appName.text = appsModel.get(viewHelper.currentApp).name
+        if (numberOfApps > 0)
+        {
+            updateAppsModel()
+            appName.text = appsModel.get(viewHelper.currentApp).name
 
-        viewHelper.setTouchRegion(Qt.rect(taskSwitchBackground.x,
-                                          taskSwitchBackground.y,
-                                          taskSwitchBackground.width,
-                                          taskSwitchBackground.height))
+            viewHelper.setTouchRegion(Qt.rect(taskSwitchBackground.x,
+                                              taskSwitchBackground.y,
+                                              taskSwitchBackground.width,
+                                              taskSwitchBackground.height))
+        }
     }
 
     Sensors.OrientationSensor

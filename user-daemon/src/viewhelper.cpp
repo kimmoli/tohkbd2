@@ -15,6 +15,8 @@ ViewHelper::ViewHelper(QQuickView *parent) :
     m_numberOfApps = 0;
     m_visible = false;
 
+    mruList.clear();
+
     apps.clear();
     appsDesktopFiles.clear();
 
@@ -102,9 +104,7 @@ void ViewHelper::showWindow()
     QFileInfoList list;
     QDir dir;
     QStringList desktops;
-
-    apps.clear();
-    appsDesktopFiles.clear();
+    QStringList runningApps;
 
     dir.setPath("/usr/share/applications/");
     dir.setFilter(QDir::Files | QDir::NoDotAndDotDot | QDir::NoSymLinks);
@@ -126,36 +126,62 @@ void ViewHelper::showWindow()
         {
             if (app.exec().contains(exec.at(m)) && app.isValid() && !app.hidden() && !app.noDisplay() && desktops.at(i).contains(exec.at(m).split("/").last()))
             {
-                map.clear();
-                map.insert("name", app.name());
-                if (app.icon().startsWith("icon-launcher-") || app.icon().startsWith("icon-l-") || app.icon().startsWith("icons-Applications"))
-                    map.insert("iconId", QString("image://theme/%1").arg(app.icon()));
-                else if (app.icon().startsWith("/"))
-                    map.insert("iconId", QString("%1").arg(app.icon()));
-                else
-                    map.insert("iconId", QString("/usr/share/icons/hicolor/86x86/apps/%1.png").arg(app.icon()));
+                /* This is newly started app, not in our list. it goes to first */
+                if (!appsDesktopFiles.contains(desktops.at(i)))
+                {
+                    printf("tohkbd2-user: new app found %s\n", qPrintable(desktops.at(i)));
 
-                apps.append(map);
-                appsDesktopFiles.append(desktops.at(i));
+                    map.clear();
+                    map.insert("name", app.name());
+                    if (app.icon().startsWith("icon-launcher-") || app.icon().startsWith("icon-l-") || app.icon().startsWith("icons-Applications"))
+                        map.insert("iconId", QString("image://theme/%1").arg(app.icon()));
+                    else if (app.icon().startsWith("/"))
+                        map.insert("iconId", QString("%1").arg(app.icon()));
+                    else
+                        map.insert("iconId", QString("/usr/share/icons/hicolor/86x86/apps/%1.png").arg(app.icon()));
 
-                printf("tohkbd2-user: %s\n", qPrintable(desktops.at(i)));
+                    apps.prepend(map);
+                    appsDesktopFiles.prepend(desktops.at(i));
+                    runningApps.prepend(desktops.at(i));
+                }
+                else /* It is already there, nothing to do */
+                {
+                    printf("tohkbd2-user: existing app %s\n", qPrintable(desktops.at(i)));
+                    runningApps.append(desktops.at(i));
+                }
 
                 exec.removeAt(m);
 
-                if (apps.count() > 15)
+                if (runningApps.count() > 15)
                     break;
             }
         }
-        if (apps.count() > 15)
+        if (runningApps.count() > 15)
             break;
     }
 
-    m_numberOfApps = apps.count();
+    for (int i = 0 ; i < appsDesktopFiles.count() ; i++)
+    {
+        if (!runningApps.contains(appsDesktopFiles.at(i)))
+        {
+            printf("tohkbd2-user: removing app %s\n", qPrintable(appsDesktopFiles.at(i)));
+            appsDesktopFiles.removeAt(i);
+            apps.removeAt(i);
+        }
+    }
 
+    /* Force updating the model in QML */
+    m_numberOfApps = 0;
+    emit numberOfAppsChanged();
+
+    m_numberOfApps = appsDesktopFiles.count();
     emit numberOfAppsChanged();
 
     if (m_numberOfApps > 1)
     {
+        m_currentApp = 1;
+        emit currentAppChanged();
+
         view->showFullScreen();
         m_visible = true;
         emit visibleChanged();
@@ -197,7 +223,6 @@ void ViewHelper::setNumberOfApps(int n)
     }
 
     emit numberOfAppsChanged();
-
 }
 
 void ViewHelper::setCurrentApp(int n)
@@ -208,11 +233,17 @@ void ViewHelper::setCurrentApp(int n)
 
 void ViewHelper::launchApplication(int n)
 {
-    printf("tohkbd2-user: Starting %s\n", qPrintable(appsDesktopFiles.at(n)));
+    QString desktopFile = appsDesktopFiles.at(n);
+
+    printf("tohkbd2-user: Starting %s\n", qPrintable(desktopFile));
 
     view->hide();
 
-    emit _launchApplication(appsDesktopFiles.at(n));
+    /* Put this launched app to first of the list */
+    appsDesktopFiles.prepend(appsDesktopFiles.takeAt(n));
+    apps.prepend(apps.takeAt(n));
+
+    emit _launchApplication(desktopFile);
 }
 
 QVariantList ViewHelper::getCurrentApps()
