@@ -250,3 +250,32 @@ QVariantList ViewHelper::getCurrentApps()
 {
     return apps;
 }
+
+/*
+ * Reboot related stuff
+ */
+void ViewHelper::requestReboot()
+{
+    view->showFullScreen();
+
+    emit startRebootRemorse();
+}
+
+void ViewHelper::cancelReboot()
+{
+    printf("tohkbd2-user: reboot cancelled\n");
+
+    view->hide();
+}
+
+void ViewHelper::reboot()
+{
+    printf("tohkbd2-user: rebooting!\n");
+
+    view->hide();
+
+    QProcess proc;
+    proc.startDetached("/usr/sbin/dsmetool" , QStringList() << QString("--reboot"));
+
+    QThread::msleep(100);
+}

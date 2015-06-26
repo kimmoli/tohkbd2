@@ -3,12 +3,8 @@
 #include <mlite5/MDesktopEntry>
 #include <QSharedPointer>
 
-#ifdef USECONTENTACTION
-  #include <contentaction5/contentaction.h>
-#else
-  #include <QThread>
-  #include <QProcess>
-#endif
+#include <QThread>
+#include <QProcess>
 
 AppLauncher::AppLauncher(QObject *parent) :
     QObject(parent)
@@ -32,15 +28,9 @@ void AppLauncher::launchApplication(const QString &desktopFilename)
 
     emit launchSuccess(app->name());
 
-#ifdef USECONTENTACTION
-    ContentAction::Action action;
-    action = ContentAction::Action::launcherAction(app, QStringList());
-    action.trigger();
-#else
     QProcess proc;
     proc.startDetached("/usr/bin/xdg-open" , QStringList() << desktopFilename);
 
     QThread::msleep(100);
-#endif
 }
 

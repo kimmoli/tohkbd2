@@ -26,6 +26,9 @@
 
 int main(int argc, char **argv)
 {
+    /* To make remorse timer run without steroids */
+    setenv("QSG_RENDER_LOOP", "basic", 1);
+
     QScopedPointer<QGuiApplication> app(SailfishApp::application(argc, argv));
     QScopedPointer<QQuickView> view(SailfishApp::createView());
     QObject::connect(view->engine(), SIGNAL(quit()), app.data(), SLOT(quit()));
@@ -60,6 +63,7 @@ int main(int argc, char **argv)
     QObject::connect(&rw, SIGNAL(_showTaskSwitcher()), helper.data(), SLOT(showWindow()));
     QObject::connect(&rw, SIGNAL(_hideTaskSwitcher()), helper.data(), SLOT(hideWindow()));
     QObject::connect(&rw, SIGNAL(_nextAppTaskSwitcher()), helper.data(), SLOT(nextApp()));
+    QObject::connect(&rw, SIGNAL(_requestReboot()), helper.data(), SLOT(requestReboot()));
 
     AppLauncher al;
 
