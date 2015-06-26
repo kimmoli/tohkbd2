@@ -526,6 +526,18 @@ void Tohkbd::handleKeyPressed(QList< QPair<int, int> > keyCode)
         }
     }
 
+    /* Catch ctrl-alt-del (Works only from left ctrl) */
+
+    if (keymap->altPressed && keymap->ctrlPressed && keyCode.at(0).first == KEY_DELETE)
+    {
+        printf("Requesting user daemon to reset with remorse.\n");
+
+        tohkbd2user->call(QDBus::AutoDetect, "resetWithRemorse");
+
+        keyIsPressed = true;
+        return;
+    }
+
     if (processAllKeys)
     {
         for (int i=0; i<keyCode.count(); i++)
