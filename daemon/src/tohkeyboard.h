@@ -52,6 +52,8 @@ public slots:
     void handleKeyPressed(QList< QPair<int, int> > keyCode);
     void handleKeyReleased();
 
+    void toggleCapsLock();
+
     /* timer timeouts */
     void backlightTimerTimeout();
     void presenceTimerTimeout();
@@ -102,7 +104,6 @@ private:
     tca8424driver *tca8424;
     keymapping *keymap;
 
-    int capsLockSeq;
     int backlightLuxThreshold;
     int keyRepeatDelay;
     int keyRepeatRate;
@@ -134,6 +135,7 @@ private:
     bool forceLandscapeOrientation;
     bool taskSwitcherVisible;
     bool selfieLedOn;
+    bool capsLock;
 
     QDBusInterface *tohkbd2user;
 
