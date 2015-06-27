@@ -256,7 +256,7 @@ static const int lut_sym[] =
     //0xDC, KEY_1, FORCE_SHIFT,         /* ! */
     0xDD, KEY_102ND, 0,                 /* , < */
     0xDE, KEY_102ND, FORCE_SHIFT,       /* . > */
-    //0xEC, KEY_2, FORCE_SHIFT,
+    0xEC, KEY_TOH_NEWEMAIL, 0,          /* @ */
     //0xEF, KEY_ENTER, 0,
     //0xE9, KEY_SPACE, 0,
     0,0,0

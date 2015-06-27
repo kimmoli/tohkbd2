@@ -517,6 +517,21 @@ void Tohkbd::handleKeyPressed(QList< QPair<int, int> > keyCode)
                 tca8424->setLeds(selfieLedOn ? LED_SELFIE_ON : LED_SELFIE_OFF);
                 break;
 
+            case KEY_TOH_NEWEMAIL:
+                {
+                QDBusMessage m = QDBusMessage::createMethodCall("com.jolla.email.ui",
+                                                                "/com/jolla/email/ui",
+                                                                "",
+                                                                "mailto" );
+
+                QList<QVariant> args;
+                args.append(QStringList() << "mailto:");
+                m.setArguments(args);
+
+                QDBusConnection::sessionBus().send(m);
+                }
+                break;
+
             default:
                 break;
         }
@@ -571,12 +586,6 @@ void Tohkbd::handleKeyPressed(QList< QPair<int, int> > keyCode)
                 uinputif->sendUinputKeyPress(KEY_COMPOSE, 1);
             if ((keyCode.at(i).second & FORCE_RIGHTALT))
                 uinputif->sendUinputKeyPress(KEY_RIGHTALT, 1);
-//            if ((keyCode.at(i).second & FORCE_SHIFT) || keymap->shift->pressed || tweakCapsLock)
-//                uinputif->sendUinputKeyPress(KEY_LEFTSHIFT, 1);
-//            if ((keyCode.at(i).second & FORCE_ALT) || keymap->alt->pressed)
-//                uinputif->sendUinputKeyPress(KEY_LEFTALT, 1);
-//            if ((keyCode.at(i).second & FORCE_CTRL) || keymap->ctrl->pressed)
-//                uinputif->sendUinputKeyPress(KEY_LEFTCTRL, 1);
             if ((keyCode.at(i).second & FORCE_SHIFT) || tweakCapsLock)
                 uinputif->sendUinputKeyPress(KEY_LEFTSHIFT, 1);
             if ((keyCode.at(i).second & FORCE_ALT))
@@ -589,11 +598,6 @@ void Tohkbd::handleKeyPressed(QList< QPair<int, int> > keyCode)
             QThread::msleep(KEYREPEAT_RATE);
             uinputif->sendUinputKeyPress(keyCode.at(i).first, 0);
 
-//            if ((keyCode.at(i).second & FORCE_CTRL) || keymap->ctrl->pressed)
-//                uinputif->sendUinputKeyPress(KEY_LEFTCTRL, 0);
-//            if ((keyCode.at(i).second & FORCE_ALT) || keymap->alt->pressed)
-//                uinputif->sendUinputKeyPress(KEY_LEFTALT, 0);
-//            if ((keyCode.at(i).second & FORCE_SHIFT) || keymap->shift->pressed || tweakCapsLock)
             if ((keyCode.at(i).second & FORCE_CTRL))
                 uinputif->sendUinputKeyPress(KEY_LEFTCTRL, 0);
             if ((keyCode.at(i).second & FORCE_ALT))
