@@ -95,9 +95,14 @@ QVariantMap SettingsUi::getCurrentSettings()
     map.insert("backlightEnabled", settings.value("backlightEnabled", BACKLIGHT_ENABLED).toBool());
     map.insert("forceLandscapeOrientation", settings.value("forceLandscapeOrientation", FORCE_LANDSCAPE_ORIENTATION).toBool());
     map.insert("forceBacklightOn", settings.value("forceBacklightOn", FORCE_BACKLIGHT_ON).toBool());
+    map.insert("stickyShiftEnabled", settings.value("stickyShiftEnabled", STICKY_SHIFT_ENABLED).toBool());
     map.insert("stickyCtrlEnabled", settings.value("stickyCtrlEnabled", STICKY_CTRL_ENABLED).toBool());
     map.insert("stickyAltEnabled", settings.value("stickyAltEnabled", STICKY_ALT_ENABLED).toBool());
     map.insert("stickySymEnabled", settings.value("stickySymEnabled", STICKY_SYM_ENABLED).toBool());
+    map.insert("lockingShiftEnabled", settings.value("lockingShiftEnabled", LOCKING_SHIFT_ENABLED).toBool());
+    map.insert("lockingCtrlEnabled", settings.value("lockingCtrlEnabled", LOCKING_CTRL_ENABLED).toBool());
+    map.insert("lockingAltEnabled", settings.value("lockingAltEnabled", LOCKING_ALT_ENABLED).toBool());
+    map.insert("lockingSymEnabled", settings.value("lockingSymEnabled", LOCKING_SYM_ENABLED).toBool());
     settings.endGroup();
 
     settings.beginGroup("layoutsettings");

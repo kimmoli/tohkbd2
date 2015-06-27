@@ -35,7 +35,8 @@ SOURCES += \
     src/tca8424driver.cpp \
     src/keymapping.cpp \
     src/adaptor.cpp \
-    src/eepromdriver.cpp
+    src/eepromdriver.cpp \
+    src/modifierhandler.cpp
 
 HEADERS += \
     src/toh.h \
@@ -48,7 +49,8 @@ HEADERS += \
     src/adaptor.h \
     src/defaultSettings.h \
     src/eepromdriver.h \
-    src/keymapping_lut.h
+    src/keymapping_lut.h \
+    src/modifierhandler.h
 
 OTHER_FILES += \
     config/$${TARGET}.service \

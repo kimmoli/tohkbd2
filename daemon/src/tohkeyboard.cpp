@@ -20,6 +20,7 @@
 #include "uinputif.h"
 #include "defaultSettings.h"
 #include "eepromdriver.h"
+#include "modifierhandler.h"
 
 static const char *SERVICE = SERVICE_NAME;
 static const char *PATH = "/";
@@ -33,7 +34,6 @@ Tohkbd::Tohkbd(QObject *parent) :
     dbusRegistered = false;
     interruptsEnabled = false;
     vddEnabled = false;
-    capsLockSeq = 0;
     vkbLayoutIsTohkbd = false;
     currentActiveLayout = QString();
     currentOrientationLock = QString();
@@ -46,6 +46,7 @@ Tohkbd::Tohkbd(QObject *parent) :
     taskSwitcherVisible = false;
     selfieLedOn = false;
     gpioInterruptCounter = 0;
+    capsLock = false;
 
     tohkbd2user = new QDBusInterface("com.kimmoli.tohkbd2user", "/", "com.kimmoli.tohkbd2user", QDBusConnection::sessionBus(), this);
     tohkbd2user->setTimeout(2000);
@@ -115,6 +116,7 @@ Tohkbd::Tohkbd(QObject *parent) :
     connect(keymap, SIGNAL(ctrlChanged()), this, SLOT(handleCtrlChanged()));
     connect(keymap, SIGNAL(altChanged()), this, SLOT(handleAltChanged()));
     connect(keymap, SIGNAL(symChanged()), this, SLOT(handleSymChanged()));
+    connect(keymap, SIGNAL(toggleCapsLock()), this, SLOT(toggleCapsLock()));
     connect(keymap, SIGNAL(keyPressed(QList< QPair<int, int> >)), this, SLOT(handleKeyPressed(QList< QPair<int, int> >)));
     connect(keymap, SIGNAL(keyReleased()), this, SLOT(handleKeyReleased()));
 
@@ -356,12 +358,35 @@ void Tohkbd::controlLeds(bool restore)
 
     if (restore)
     {
-        tca8424->setLeds(  (keymap->symPressed  ? LED_SYMLOCK_ON   : LED_SYMLOCK_OFF)
-                         | (keymap->ctrlPressed ? LED_SYMLOCK_ON   : LED_SYMLOCK_OFF)
-                         | (keymap->altPressed  ? LED_SYMLOCK_ON   : LED_SYMLOCK_OFF)
-                         | ((capsLockSeq == 3)  ? LED_CAPSLOCK_ON  : LED_CAPSLOCK_OFF)
-                         | (selfieLedOn         ? LED_SELFIE_ON    : LED_SELFIE_OFF)
-                         | (forceBacklightOn    ? LED_BACKLIGHT_ON : LED_BACKLIGHT_OFF) );
+        /* If backlight was on, do not turn it off */
+        int i = LED_CAPSLOCK_OFF | LED_SYMLOCK_OFF | LED_SELFIE_OFF;
+
+        if (((keymap->shift->mode == modifierHandler::Sticky) && keymap->shift->pressed)
+          || ((keymap->shift->mode == modifierHandler::Lock) && keymap->shift->locked))
+            i |= LED_SYMLOCK_ON;
+
+        if (((keymap->ctrl->mode == modifierHandler::Sticky) && keymap->ctrl->pressed)
+          || ((keymap->ctrl->mode == modifierHandler::Lock) && keymap->ctrl->locked))
+            i |= LED_SYMLOCK_ON;
+
+        if (((keymap->alt->mode == modifierHandler::Sticky) && keymap->alt->pressed)
+          || ((keymap->alt->mode == modifierHandler::Lock) && keymap->alt->locked))
+            i |= LED_SYMLOCK_ON;
+
+        if (((keymap->sym->mode == modifierHandler::Sticky) && keymap->sym->pressed)
+          || ((keymap->sym->mode == modifierHandler::Lock) && keymap->sym->locked))
+            i |= LED_SYMLOCK_ON;
+
+        if (capsLock)
+            i |= LED_CAPSLOCK_ON;
+
+        if (selfieLedOn)
+            i |= LED_SELFIE_ON;
+
+        if (forceBacklightOn)
+            i |= LED_BACKLIGHT_ON;
+
+        tca8424->setLeds(i);
     }
     else
     {
@@ -453,13 +478,10 @@ void Tohkbd::handleKeyPressed(QList< QPair<int, int> > keyCode)
         slideEventEmitted = true;
     }
 
-    if ((capsLockSeq == 1 || capsLockSeq == 2)) /* Abort caps-lock if other key pressed */
-        capsLockSeq = 0;
-
     checkDoWeNeedBacklight();
 
     /* alt+TAB is the task-switcher */
-    if (keymap->altPressed && keyCode.at(0).first == KEY_TAB)
+    if (keymap->alt->pressed && keyCode.at(0).first == KEY_TAB)
     {
         if (!taskSwitcherVisible)
         {
@@ -526,7 +548,7 @@ void Tohkbd::handleKeyPressed(QList< QPair<int, int> > keyCode)
 
     /* Catch ctrl-alt-del (Works only from left ctrl) */
 
-    if (keymap->altPressed && keymap->ctrlPressed && keyCode.at(0).first == KEY_DELETE)
+    if (keymap->alt->pressed && keymap->ctrl->pressed && keyCode.at(0).first == KEY_DELETE)
     {
         printf("Requesting user daemon to reset with remorse.\n");
 
@@ -540,20 +562,26 @@ void Tohkbd::handleKeyPressed(QList< QPair<int, int> > keyCode)
     {
         for (int i=0; i<keyCode.count(); i++)
         {
-            bool tweakCapsLock = (capsLockSeq == 3 && ((keyCode.at(i).first >= KEY_Q && keyCode.at(i).first <= KEY_P)
-                                                       || (keyCode.at(i).first >= KEY_A && keyCode.at(i).first <= KEY_L)
-                                                       || (keyCode.at(i).first >= KEY_Z && keyCode.at(i).first <= KEY_M) ));
+            bool tweakCapsLock = (capsLock && ((keyCode.at(i).first >= KEY_Q && keyCode.at(i).first <= KEY_P)
+                                           || (keyCode.at(i).first >= KEY_A && keyCode.at(i).first <= KEY_L)
+                                           || (keyCode.at(i).first >= KEY_Z && keyCode.at(i).first <= KEY_M) ));
 
             /* Some of the keys require shift pressed to get correct symbol */
             if (keyCode.at(i).second & FORCE_COMPOSE)
                 uinputif->sendUinputKeyPress(KEY_COMPOSE, 1);
             if ((keyCode.at(i).second & FORCE_RIGHTALT))
                 uinputif->sendUinputKeyPress(KEY_RIGHTALT, 1);
-            if ((keyCode.at(i).second & FORCE_SHIFT) || keymap->shiftPressed || tweakCapsLock)
+//            if ((keyCode.at(i).second & FORCE_SHIFT) || keymap->shift->pressed || tweakCapsLock)
+//                uinputif->sendUinputKeyPress(KEY_LEFTSHIFT, 1);
+//            if ((keyCode.at(i).second & FORCE_ALT) || keymap->alt->pressed)
+//                uinputif->sendUinputKeyPress(KEY_LEFTALT, 1);
+//            if ((keyCode.at(i).second & FORCE_CTRL) || keymap->ctrl->pressed)
+//                uinputif->sendUinputKeyPress(KEY_LEFTCTRL, 1);
+            if ((keyCode.at(i).second & FORCE_SHIFT) || tweakCapsLock)
                 uinputif->sendUinputKeyPress(KEY_LEFTSHIFT, 1);
-            if ((keyCode.at(i).second & FORCE_ALT) || keymap->altPressed)
+            if ((keyCode.at(i).second & FORCE_ALT))
                 uinputif->sendUinputKeyPress(KEY_LEFTALT, 1);
-            if ((keyCode.at(i).second & FORCE_CTRL) || keymap->ctrlPressed)
+            if ((keyCode.at(i).second & FORCE_CTRL))
                 uinputif->sendUinputKeyPress(KEY_LEFTCTRL, 1);
 
             /* Mimic key pressing */
@@ -561,11 +589,16 @@ void Tohkbd::handleKeyPressed(QList< QPair<int, int> > keyCode)
             QThread::msleep(KEYREPEAT_RATE);
             uinputif->sendUinputKeyPress(keyCode.at(i).first, 0);
 
-            if ((keyCode.at(i).second & FORCE_CTRL) || keymap->ctrlPressed)
+//            if ((keyCode.at(i).second & FORCE_CTRL) || keymap->ctrl->pressed)
+//                uinputif->sendUinputKeyPress(KEY_LEFTCTRL, 0);
+//            if ((keyCode.at(i).second & FORCE_ALT) || keymap->alt->pressed)
+//                uinputif->sendUinputKeyPress(KEY_LEFTALT, 0);
+//            if ((keyCode.at(i).second & FORCE_SHIFT) || keymap->shift->pressed || tweakCapsLock)
+            if ((keyCode.at(i).second & FORCE_CTRL))
                 uinputif->sendUinputKeyPress(KEY_LEFTCTRL, 0);
-            if ((keyCode.at(i).second & FORCE_ALT) || keymap->altPressed)
+            if ((keyCode.at(i).second & FORCE_ALT))
                 uinputif->sendUinputKeyPress(KEY_LEFTALT, 0);
-            if ((keyCode.at(i).second & FORCE_SHIFT) || keymap->shiftPressed || tweakCapsLock)
+            if ((keyCode.at(i).second & FORCE_SHIFT) || tweakCapsLock)
                 uinputif->sendUinputKeyPress(KEY_LEFTSHIFT, 0);
             if ((keyCode.at(i).second & FORCE_RIGHTALT))
                 uinputif->sendUinputKeyPress(KEY_RIGHTALT, 0);
@@ -609,64 +642,34 @@ void Tohkbd::handleKeyReleased()
  */
 void Tohkbd::handleShiftChanged()
 {
+    controlLeds(true);
     checkDoWeNeedBacklight();
 
-    if (keymap->shiftPressed && capsLockSeq == 0) /* Shift pressed first time */
-        capsLockSeq = 1;
-    else if (!keymap->shiftPressed && capsLockSeq == 1) /* Shift released */
-        capsLockSeq = 2;
-    else if (keymap->shiftPressed && capsLockSeq == 2) /* Shift pressed 2nd time */
-    {
-        capsLockSeq = 3;
-        uinputif->sendUinputKeyPress(KEY_CAPSLOCK, 1);
-        QThread::msleep(KEYREPEAT_RATE);
-        uinputif->sendUinputKeyPress(KEY_CAPSLOCK, 0);
-        uinputif->synUinputDevice();
-        tca8424->setLeds(LED_CAPSLOCK_ON);
-        printf("CapsLock on\n");
-    }
-    else if (keymap->shiftPressed && capsLockSeq == 3) /* Shift pressed 3rd time */
-    {
-        capsLockSeq = 0;
-        uinputif->sendUinputKeyPress(KEY_CAPSLOCK, 1);
-        QThread::msleep(KEYREPEAT_RATE);
-        uinputif->sendUinputKeyPress(KEY_CAPSLOCK, 0);
-        uinputif->synUinputDevice();
-        tca8424->setLeds(LED_CAPSLOCK_OFF);
-        printf("CapsLock off\n");
-    }
+    uinputif->sendUinputKeyPress(KEY_LEFTSHIFT, keymap->shift->pressed ? 1 : 0);
+    QThread::msleep(KEYREPEAT_RATE);
+    uinputif->synUinputDevice();
 }
 
 void Tohkbd::handleCtrlChanged()
 {
+    controlLeds(true);
     checkDoWeNeedBacklight();
 
-    if ((capsLockSeq == 1 || capsLockSeq == 2)) /* Abort caps-lock if other key pressed */
-        capsLockSeq = 0;
-
-    printf("ctrl changed %s\n", keymap->ctrlPressed ? "down" : "up");
-
-    if (keymap->stickyCtrlEnabled)
-    {
-        tca8424->setLeds(keymap->ctrlPressed ? LED_SYMLOCK_ON : LED_SYMLOCK_OFF);
-    }
+    uinputif->sendUinputKeyPress(KEY_LEFTCTRL, keymap->ctrl->pressed ? 1 : 0);
+    QThread::msleep(KEYREPEAT_RATE);
+    uinputif->synUinputDevice();
 }
 
 void Tohkbd::handleAltChanged()
 {
+    controlLeds(true);
     checkDoWeNeedBacklight();
 
-    if ((capsLockSeq == 1 || capsLockSeq == 2)) /* Abort caps-lock if other key pressed */
-        capsLockSeq = 0;
+    uinputif->sendUinputKeyPress(KEY_LEFTALT, keymap->alt->pressed ? 1 : 0);
+    QThread::msleep(KEYREPEAT_RATE);
+    uinputif->synUinputDevice();
 
-    printf("alt changed %s\n", keymap->altPressed ? "down" : "up");
-
-    if (keymap->stickyAltEnabled)
-    {
-        tca8424->setLeds(keymap->altPressed ? LED_SYMLOCK_ON : LED_SYMLOCK_OFF);
-    }
-
-    if (!keymap->altPressed && taskSwitcherVisible)
+    if (!keymap->alt->pressed && taskSwitcherVisible)
     {
         /* hide taskswitcher when alt is released
          * this will also activate selected application */
@@ -677,16 +680,32 @@ void Tohkbd::handleAltChanged()
 
 void Tohkbd::handleSymChanged()
 {
+    controlLeds(true);
     checkDoWeNeedBacklight();
+}
 
-    if ((capsLockSeq == 1 || capsLockSeq == 2)) /* Abort caps-lock if other key pressed */
-        capsLockSeq = 0;
 
-    if (keymap->stickySymEnabled)
+void Tohkbd::toggleCapsLock()
+{
+    uinputif->sendUinputKeyPress(KEY_CAPSLOCK, 1);
+    QThread::msleep(KEYREPEAT_RATE);
+    uinputif->sendUinputKeyPress(KEY_CAPSLOCK, 0);
+    uinputif->synUinputDevice();
+
+    capsLock = !capsLock;
+
+    if (capsLock)
     {
-        tca8424->setLeds(keymap->symPressed ? LED_SYMLOCK_ON : LED_SYMLOCK_OFF);
+        tca8424->setLeds(LED_CAPSLOCK_ON);
+        printf("CapsLock on\n");
+    }
+    else
+    {
+        tca8424->setLeds(LED_CAPSLOCK_OFF);
+        printf("CapsLock off\n");
     }
 }
+
 
 /* Read first line from a text file
  * returns empty QString if failed
@@ -866,6 +885,7 @@ void Tohkbd::presenceTimerTimeout()
 void Tohkbd::reloadSettings()
 {
     QSettings settings(QSettings::SystemScope, "harbour-tohkbd2", "tohkbd2");
+
     settings.beginGroup("vkb");
     currentActiveLayout = settings.value("activeLayout", "").toString();
     settings.endGroup();
@@ -893,25 +913,51 @@ void Tohkbd::reloadSettings()
     }
     settings.endGroup();
 
-    settings.beginGroup("generalsettings");
-    backlightTimer->setInterval(settings.value("backlightTimeout", BACKLIGHT_TIMEOUT).toInt());
-    backlightLuxThreshold = settings.value("backlightLuxThreshold", BACKLIGHT_LUXTHRESHOLD).toInt();
-    backlightEnabled = settings.value("backlightEnabled", BACKLIGHT_ENABLED).toBool();
-    keyRepeatDelay = settings.value("keyRepeatDelay", KEYREPEAT_DELAY).toInt();
-    keyRepeatRate = settings.value("keyRepeatRate", KEYREPEAT_RATE).toInt();
-    keymap->stickyCtrlEnabled = settings.value("stickyCtrlEnabled", STICKY_CTRL_ENABLED).toBool();
-    keymap->stickyAltEnabled = settings.value("stickyAltEnabled", STICKY_ALT_ENABLED).toBool();
-    keymap->stickySymEnabled = settings.value("stickySymEnabled", STICKY_SYM_ENABLED).toBool();
-    forceLandscapeOrientation = settings.value("forceLandscapeOrientation", FORCE_LANDSCAPE_ORIENTATION).toBool();
-    forceBacklightOn = settings.value("forceBacklightOn", FORCE_BACKLIGHT_ON).toBool();
-    settings.endGroup();
-
     settings.beginGroup("orientation");
     currentOrientationLock = settings.value("originalOrientation", QString()).toString();
     settings.endGroup();
 
     settings.beginGroup("layoutSettings");
     masterLayout = settings.value("masterLayout", QString(MASTER_LAYOUT)).toString();
+    settings.endGroup();
+
+    settings.beginGroup("generalsettings");
+    backlightTimer->setInterval(settings.value("backlightTimeout", BACKLIGHT_TIMEOUT).toInt());
+    backlightLuxThreshold = settings.value("backlightLuxThreshold", BACKLIGHT_LUXTHRESHOLD).toInt();
+    backlightEnabled = settings.value("backlightEnabled", BACKLIGHT_ENABLED).toBool();
+    keyRepeatDelay = settings.value("keyRepeatDelay", KEYREPEAT_DELAY).toInt();
+    keyRepeatRate = settings.value("keyRepeatRate", KEYREPEAT_RATE).toInt();
+
+    if (settings.value("stickyShiftEnabled", STICKY_SHIFT_ENABLED).toBool())
+        keymap->shift->setMode(modifierHandler::Sticky);
+    else if (settings.value("lockingShiftEnabled", LOCKING_SHIFT_ENABLED).toBool())
+        keymap->shift->setMode(modifierHandler::Lock);
+    else
+        keymap->shift->setMode(modifierHandler::Normal);
+
+    if (settings.value("stickyCtrlEnabled", STICKY_CTRL_ENABLED).toBool())
+        keymap->ctrl->setMode(modifierHandler::Sticky);
+    else if (settings.value("lockingCtrlEnabled", LOCKING_CTRL_ENABLED).toBool())
+        keymap->ctrl->setMode(modifierHandler::Lock);
+    else
+        keymap->ctrl->setMode(modifierHandler::Normal);
+
+    if (settings.value("stickyAltEnabled", STICKY_ALT_ENABLED).toBool())
+        keymap->alt->setMode(modifierHandler::Sticky);
+    else if (settings.value("lockingAltEnabled", LOCKING_ALT_ENABLED).toBool())
+        keymap->alt->setMode(modifierHandler::Lock);
+    else
+        keymap->alt->setMode(modifierHandler::Normal);
+
+    if (settings.value("stickySymEnabled", STICKY_SYM_ENABLED).toBool())
+        keymap->sym->setMode(modifierHandler::Sticky);
+    else if (settings.value("lockingSymEnabled", LOCKING_SYM_ENABLED).toBool())
+        keymap->sym->setMode(modifierHandler::Lock);
+    else
+        keymap->sym->setMode(modifierHandler::Normal);
+
+    forceLandscapeOrientation = settings.value("forceLandscapeOrientation", FORCE_LANDSCAPE_ORIENTATION).toBool();
+    forceBacklightOn = settings.value("forceBacklightOn", FORCE_BACKLIGHT_ON).toBool();
     settings.endGroup();
 }
 
@@ -992,54 +1038,55 @@ void Tohkbd::setSettingInt(const QString &key, const int &value)
 
     if (key == "backlightTimeout" && value >= 100 && value <= 5000)
     {
-        backlightTimer->setInterval(value);
         settings.beginGroup("generalsettings");
         settings.setValue("backlightTimeout", value);
+        backlightTimer->setInterval(value);
         settings.endGroup();
     }
     else if (key == "backlightLuxThreshold" && value >= 1 && value <= 50)
     {
-        backlightLuxThreshold = value;
         settings.beginGroup("generalsettings");
         settings.setValue("backlightLuxThreshold", value);
+        backlightLuxThreshold = value;
         settings.endGroup();
     }
     else if (key == "keyRepeatDelay" && value >= 50 && value <= 500)
     {
-        keyRepeatDelay = value;
         settings.beginGroup("generalsettings");
         settings.setValue("keyRepeatDelay", value);
+        keyRepeatDelay = value;
         settings.endGroup();
     }
     else if (key == "keyRepeatRate" && value >= 25 && value <= 100)
     {
-        keyRepeatRate = value;
         settings.beginGroup("generalsettings");
         settings.setValue("keyRepeatRate", value);
+        keyRepeatRate = value;
         settings.endGroup();
     }
     else if (key == "backlightEnabled" && (value == 0 || value == 1))
     {
-        backlightEnabled = (value == 1);
         settings.beginGroup("generalsettings");
         settings.setValue("backlightEnabled", (value == 1));
+        backlightEnabled = (value == 1);
         settings.endGroup();
         checkDoWeNeedBacklight();
     }
     else if (key == "forceBacklightOn" && (value == 0 || value == 1))
     {
-        forceBacklightOn = (value == 1);
         settings.beginGroup("generalsettings");
         settings.setValue("forceBacklightOn", (value == 1));
+        forceBacklightOn = (value == 1);
         settings.endGroup();
         checkDoWeNeedBacklight();
     }
     else if (key == "forceLandscapeOrientation" && (value == 0 || value == 1))
     {
-        forceLandscapeOrientation = (value == 1);
         settings.beginGroup("generalsettings");
         settings.setValue("forceLandscapeOrientation", (value == 1));
+        forceLandscapeOrientation = (value == 1);
         settings.endGroup();
+
         if (value == 0 && !currentOrientationLock.isEmpty())
         {
             QList<QVariant> args;
@@ -1053,30 +1100,64 @@ void Tohkbd::setSettingInt(const QString &key, const int &value)
             tohkbd2user->callWithArgumentList(QDBus::AutoDetect, "setOrientationLock", args);
         }
     }
+    else if (key == "stickyShiftEnabled" && (value == 0 || value == 1))
+    {
+        settings.beginGroup("generalsettings");
+        settings.setValue("stickyShiftEnabled", (value == 1));
+        keymap->shift->setMode((value == 1) ? modifierHandler::Sticky : modifierHandler::Normal);
+        settings.endGroup();
+    }
     else if (key == "stickyCtrlEnabled" && (value == 0 || value == 1))
     {
-        keymap->releaseStickyModifiers();
-        keymap->stickyCtrlEnabled = (value == 1);
         settings.beginGroup("generalsettings");
         settings.setValue("stickyCtrlEnabled", (value == 1));
+        keymap->ctrl->setMode((value == 1) ? modifierHandler::Sticky : modifierHandler::Normal);
         settings.endGroup();
     }
     else if (key == "stickyAltEnabled" && (value == 0 || value == 1))
     {
-        keymap->releaseStickyModifiers();
-        keymap->stickyAltEnabled = (value == 1);
         settings.beginGroup("generalsettings");
         settings.setValue("stickyAltEnabled", (value == 1));
+        keymap->alt->setMode((value == 1) ? modifierHandler::Sticky : modifierHandler::Normal);
         settings.endGroup();
     }
     else if (key == "stickySymEnabled" && (value == 0 || value == 1))
     {
-        keymap->releaseStickyModifiers();
-        keymap->stickySymEnabled = (value == 1);
         settings.beginGroup("generalsettings");
         settings.setValue("stickySymEnabled", (value == 1));
+        keymap->sym->setMode((value == 1) ? modifierHandler::Sticky : modifierHandler::Normal);
         settings.endGroup();
     }
+    else if (key == "lockingShiftEnabled" && (value == 0 || value == 1))
+    {
+        settings.beginGroup("generalsettings");
+        settings.setValue("lockingShiftEnabled", (value == 1));
+        keymap->shift->setMode((value == 1) ? modifierHandler::Lock : modifierHandler::Normal);
+        settings.endGroup();
+    }
+    else if (key == "lockingCtrlEnabled" && (value == 0 || value == 1))
+    {
+        settings.beginGroup("generalsettings");
+        settings.setValue("lockingCtrlEnabled", (value == 1));
+        keymap->ctrl->setMode((value == 1) ? modifierHandler::Lock : modifierHandler::Normal);
+        settings.endGroup();
+    }
+    else if (key == "lockingAltEnabled" && (value == 0 || value == 1))
+    {
+        settings.beginGroup("generalsettings");
+        settings.setValue("lockingAltEnabled", (value == 1));
+        keymap->alt->setMode((value == 1) ? modifierHandler::Lock : modifierHandler::Normal);
+        settings.endGroup();
+    }
+    else if (key == "lockingSymEnabled" && (value == 0 || value == 1))
+    {
+        settings.beginGroup("generalsettings");
+        settings.setValue("lockingSymEnabled", (value == 1));
+        keymap->sym->setMode((value == 1) ? modifierHandler::Lock : modifierHandler::Normal);
+        settings.endGroup();
+    }
+
+    keymap->releaseStickyModifiers(true);
 }
 
 void Tohkbd::setSettingString(const QString &key, const QString &value)
