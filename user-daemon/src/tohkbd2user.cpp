@@ -23,6 +23,7 @@
 #include "adaptor.h"
 #include "viewhelper.h"
 #include "applauncher.h"
+#include "screenshot.h"
 
 int main(int argc, char **argv)
 {
@@ -71,6 +72,13 @@ int main(int argc, char **argv)
     QObject::connect(&al, SIGNAL(launchFailed()), &rw, SLOT(launchFailed()));
     QObject::connect(&rw, SIGNAL(_lauchApplication(QString)), &al, SLOT(launchApplication(QString)));
     QObject::connect(helper.data(), SIGNAL(_launchApplication(QString)), &al, SLOT(launchApplication(QString)));
+
+    ScreenShot ss;
+
+    QObject::connect(&rw, SIGNAL(_takeScreenShot()), &ss, SLOT(takeScreenShot()));
+
+    QDBusConnection::sessionBus().connect("org.freedesktop.Notifications", "/org/freedesktop/Notifications", "org.freedesktop.Notifications", "ActionInvoked",
+                                            &ss, SLOT(handleNotificationActionInvoked(const QDBusMessage&)));
 
     QTranslator translator;
     translator.load(QLocale::system().name(), "/usr/share/harbour-tohkbd2-user/i18n");
