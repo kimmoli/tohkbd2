@@ -23,5 +23,10 @@
         <extracomment>Notification shown when application is started by pressing shortcut key</extracomment>
         <translation type="unfinished"></translation>
     </message>
+    <message id="reboot-remorse">
+        <source>Rebooting</source>
+        <extracomment>Remorse timer text, &quot;Rebooting&quot; in 5 seconds</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 </TS>

@@ -21,5 +21,10 @@
         <extracomment>Notification shown when application is started by pressing shortcut key</extracomment>
         <translation>Käynnistetään %1...</translation>
     </message>
+    <message id="reboot-remorse">
+        <source>Rebooting</source>
+        <extracomment>Remorse timer text, &quot;Rebooting&quot; in 5 seconds</extracomment>
+        <translation>Puhelin käynnistyy uudelleen</translation>
+    </message>
 </context>
 </TS>

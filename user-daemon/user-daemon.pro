@@ -8,7 +8,7 @@ QT += dbus gui-private
 # DBus
 system(qdbusxml2cpp config/com.kimmoli.tohkbd2user.xml -i src/userdaemon.h -a src/adaptor)
 
-#system(lupdate src -no-obsolete -ts $$PWD/i18n/engineering_en.ts)
+#system(lupdate src qml -no-obsolete -ts $$PWD/i18n/engineering_en.ts)
 system(lrelease -idbased $$PWD/i18n/*.ts)
 
 DEFINES += "APPVERSION=\\\"$${SPECVERSION}\\\""

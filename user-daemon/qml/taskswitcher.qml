@@ -35,7 +35,9 @@ Item
 
         onStartRebootRemorse:
         {
-            rebootRemorse.execute(remorsePlaceholder, qsTr("Rebooting"))
+            //: Remorse timer text, "Rebooting" in 5 seconds
+            //% "Rebooting"
+            rebootRemorse.execute(remorsePlaceholder, qsTrId("reboot-remorse"))
 
             /* Block all other touches */
             viewHelper.setTouchRegion(Qt.rect(0,0,root.width, root.height))
