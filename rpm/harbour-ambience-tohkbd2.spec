@@ -64,6 +64,7 @@ desktop-file-install --delete-original       \
 %{_datadir}/harbour-tohkbd2-user/
 %{_datadir}/harbour-tohkbd2-user/i18n/
 %{_datadir}/dbus-1/
+%{_datadir}/harbour-tohkbd2-settingsui
 %{_datadir}/harbour-tohkbd2-settingsui/qml/
 %{_datadir}/harbour-tohkbd2-settingsui/i18n/
 %{_datadir}/applications/

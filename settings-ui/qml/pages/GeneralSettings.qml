@@ -25,18 +25,24 @@ Page
 
             PageHeader
             {
-                title: qsTr("General settings")
+                title: qsTrId("general-settings")
             }
 
             SectionHeader
             {
-                text: qsTr("Backlight")
+                //: Section header for backlight settings
+                //% "Backlight"
+                text: qsTrId("backlight-sect-header")
             }
             TextSwitch
             {
                 id: alwaysOn
-                text: qsTr("Always on")
-                description: qsTr("Backlight is always on when keyboard attached and phone's display is on")
+                //: Backlight always on switch text
+                //% "Always on"
+                text: qsTrId("bg-always-on-sw")
+                //: Backlight always on description
+                //% "Backlight is always on when keyboard attached and phone's display is on"
+                description: qsTrId("bg-always-on-desc")
                 onCheckedChanged: settingsui.setSettingInt("forceBacklightOn", checked ? 1 : 0)
                 width: parent.width - 2*Theme.paddingLarge
                 Component.onCompleted: checked = settings["forceBacklightOn"]
@@ -44,8 +50,12 @@ Page
             TextSwitch
             {
                 id: automatic
-                text: qsTr("Automatic")
-                description: qsTr("Automatic backlight enable or always off")
+                //: Backlight automatic switch text
+                //% "Automatic"
+                text: qsTrId("bg-automatic-sw")
+                //: Backlight automatic description
+                //% "Automatic backlight enable or always off"
+                description: qsTrId("bg-automatic-desc")
                 onCheckedChanged: settingsui.setSettingInt("backlightEnabled", checked ? 1 : 0)
                 width: parent.width - 2*Theme.paddingLarge
                 Component.onCompleted: checked = settings["backlightEnabled"]
@@ -55,7 +65,9 @@ Page
             {
                 width: parent.width - 2*Theme.paddingLarge
                 anchors.horizontalCenter: parent.horizontalCenter
-                label: qsTr("Backlight timeout")
+                //: Backlight timeout slider name
+                //% "Backlight timeout"
+                label: qsTrId("bg-timeout-slider")
                 minimumValue: 100
                 maximumValue: 5000
                 value: settings["backlightTimeout"]
@@ -79,7 +91,9 @@ Page
             {
                 width: parent.width - 2*Theme.paddingLarge
                 anchors.horizontalCenter: parent.horizontalCenter
-                label: qsTr("Brightness threshold")
+                //: Backlight brightness threshold slider
+                //% "Brightness threshold"
+                label: qsTrId("bg-brightness-slider")
                 minimumValue: 1
                 maximumValue: 50
                 value: settings["backlightLuxThreshold"]
@@ -102,12 +116,18 @@ Page
 
             SectionHeader
             {
-                text: qsTr("Orientation")
+                //: Section header for orientation settings
+                //% "Orientation"
+                text: qsTrId("orientation-sect-header")
             }
             TextSwitch
             {
-                text: qsTr("Force Landscape")
-                description: qsTr("Force landscape orientation when keyboard attached")
+                //: Force landsacep switch text
+                //% "Force Landscape"
+                text: qsTrId("orientation-force-landscape-sw")
+                //: Force landsacep switch description
+                //% "Force landscape orientation when keyboard attached"
+                description: qsTrId("orientation-force-landscape-desc")
                 onCheckedChanged: settingsui.setSettingInt("forceLandscapeOrientation", checked ? 1 : 0)
                 width: parent.width - 2*Theme.paddingLarge
                 Component.onCompleted: checked = settings["forceLandscapeOrientation"]
@@ -115,13 +135,17 @@ Page
 
             SectionHeader
             {
-                text: qsTr("Repeat")
+                //: Section header for repeat settings
+                //% "Repeat"
+                text: qsTrId("repeat-sect-header")
             }
             Slider
             {
                 width: parent.width - 2*Theme.paddingLarge
                 anchors.horizontalCenter: parent.horizontalCenter
-                label: qsTr("Repeat start delay")
+                //: Keyboard repeat start delay slider
+                //% "Repeat start delay"
+                label: qsTrId("repeat-delay-slider")
                 minimumValue: 50
                 maximumValue: 500
                 value: settings["keyRepeatDelay"]
@@ -143,7 +167,9 @@ Page
             {
                 width: parent.width - 2*Theme.paddingLarge
                 anchors.horizontalCenter: parent.horizontalCenter
-                label: qsTr("Repeat rate")
+                //: Keyboard repeat rate slider
+                //% "Repeat rate"
+                label: qsTrId("repeat-rate-slider")
                 minimumValue: 25
                 maximumValue: 100
                 value: settings["keyRepeatRate"]
@@ -165,16 +191,22 @@ Page
             {
                 width: parent.width - 2*Theme.paddingLarge
                 anchors.horizontalCenter: parent.horizontalCenter
-                placeholderText: qsTr("Test here")
+                //: Placeholder text for textfield to test repeat settings
+                //% "Test here"
+                placeholderText: qsTrId("test-here")
             }
 
             SectionHeader
             {
-                text: qsTr("Sticky and locking modifier keys")
+                //: Section header for sticky and locking settings
+                //% "Sticky and locking modifier keys"
+                text: qsTrId("sticky-sect-header")
             }
             Label
             {
-                text: qsTr("Sticky modifiers will toggle when pressed once and released after pressing any other key. Locking modifier will lock on double-press and released on third. In both modes you can also use them as normal modifier keys")
+                //: Description text for sticky and locking modifier keys
+                //% "Sticky modifiers will toggle when pressed once and released after pressing any other key. Locking modifier will lock on double-press and released on third. In both modes you can also use them as normal modifier keys"
+                text: qsTrId("sticky-desc")
                 wrapMode: Text.Wrap
                 font.pixelSize: Theme.fontSizeExtraSmall
                 color: Theme.secondaryColor
@@ -188,7 +220,8 @@ Page
                 TextSwitch
                 {
                     id: stickyShift
-                    text: qsTr("Sticky Shift")
+                    //% "Sticky Shift"
+                    text: qsTrId("sticky-shift")
                     onCheckedChanged:
                     {
                         if (checked)
@@ -201,7 +234,8 @@ Page
                 TextSwitch
                 {
                     id: lockingShift
-                    text: qsTr("Locking Shift")
+                    //% "Locking Shift"
+                    text: qsTrId("locking-shift")
                     onCheckedChanged:
                     {
                         if (checked)
@@ -218,7 +252,8 @@ Page
                 TextSwitch
                 {
                     id: stickyCtrl
-                    text: qsTr("Sticky Ctrl")
+                    //% "Sticky Ctrl"
+                    text: qsTrId("sticky-ctrl")
                     onCheckedChanged:
                     {
                         if (checked)
@@ -231,7 +266,8 @@ Page
                 TextSwitch
                 {
                     id: lockingCtrl
-                    text: qsTr("Locking Ctrl")
+                    //% "Locking Ctrl"
+                    text: qsTrId("locking-ctrl")
                     onCheckedChanged:
                     {
                         if (checked)
@@ -248,7 +284,8 @@ Page
                 TextSwitch
                 {
                     id: stickyAlt
-                    text: qsTr("Sticky Alt")
+                    //% "Sticky Alt"
+                    text: qsTrId("sticky-alt")
                     onCheckedChanged:
                     {
                         if (checked)
@@ -261,7 +298,8 @@ Page
                 TextSwitch
                 {
                     id: lockingAlt
-                    text: qsTr("Locking Alt")
+                    //% "Locking Alt"
+                    text: qsTrId("locking-alt")
                     onCheckedChanged:
                     {
                         if (checked)
@@ -278,7 +316,8 @@ Page
                 TextSwitch
                 {
                     id: stickySym
-                    text: qsTr("Sticky Sym")
+                    //% "Sticky Sym"
+                    text: qsTrId("sticky-sym")
                     onCheckedChanged:
                     {
                         if (checked)
@@ -291,7 +330,8 @@ Page
                 TextSwitch
                 {
                     id: lockingSym
-                    text: qsTr("Locking Sym")
+                    //% "Locking Sym"
+                    text: qsTrId("locking-sym")
                     onCheckedChanged:
                     {
                         if (checked)

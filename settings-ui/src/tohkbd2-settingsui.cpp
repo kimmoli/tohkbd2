@@ -25,6 +25,10 @@ int main(int argc, char *argv[])
 
     QScopedPointer<QGuiApplication> app(SailfishApp::application(argc, argv));
 
+    QTranslator engineeringTranslator;
+    engineeringTranslator.load("engineering_en", "/usr/share/harbour-tohkbd2-settingsui/i18n");
+    app->installTranslator(&engineeringTranslator);
+
     QTranslator translator;
     translator.load(QLocale::system().name(), "/usr/share/harbour-tohkbd2-settingsui/i18n");
     app->installTranslator(&translator);

@@ -20,7 +20,9 @@ Page
         {
             MenuItem
             {
-                text: qsTr("Reset all to defaults")
+                //: Pulldown menu optiion to reset default values
+                //% "Reset all to defaults"
+                text: qsTrId("reset-to-defaults")
                 onClicked: settingsui.setShortcutsToDefault()
             }
         }
@@ -35,7 +37,7 @@ Page
             spacing: Theme.paddingLarge
             PageHeader
             {
-                title: qsTr("Shortcuts")
+                title: qsTrId("shortcuts")
             }
 
             Repeater

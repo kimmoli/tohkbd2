@@ -32,11 +32,15 @@ Dialog
             spacing: Theme.paddingLarge
             PageHeader
             {
-                title: qsTr("Customize %1 -key").arg(label)
+                //: page header for key customizer, shows label of the key
+                //% "Customize %1 -key"
+                title: qsTrId("customize-key-header").arg(label)
             }
             Label
             {
-                text: qsTr("You are about to change behaviour of this key")
+                //: warning text shown on customizer page
+                //% "You are about to change behaviour of this key"
+                text: qsTrId("customize-key-warning")
                 color: Theme.primaryColor
                 width: parent.width - 2*Theme.paddingLarge
                 wrapMode: Text.WordWrap
@@ -46,7 +50,9 @@ Dialog
 
             Label
             {
-                text: qsTr("Plain key")
+                //: Text shon above the key without any modifiers, e.g. A
+                //% "Plain key"
+                text: qsTrId("plain-key")
                 anchors.horizontalCenter: parent.horizontalCenter
             }
             Label
@@ -76,12 +82,16 @@ Dialog
             }
             Label
             {
-                text: qsTr("Key with Sym")
+                //: Text shon above the key wit sym modifier, e.g. ;
+                //% "Key with Sym"
+                text: qsTrId("with-sym-key")
                 anchors.horizontalCenter: parent.horizontalCenter
             }
             Label
             {
-                text: symLabel.length > 0 ? symLabel : qsTr("None")
+                //: This text is shown instead of key label (e.g. A) if there is nothing assigned to this key
+                //% "None"
+                text: symLabel.length > 0 ? symLabel : qsTrId("none-key")
                 font.bold: true
                 font.pixelSize: Theme.fontSizeLarge
                 anchors.horizontalCenter: parent.horizontalCenter
