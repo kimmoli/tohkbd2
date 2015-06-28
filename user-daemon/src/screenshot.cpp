@@ -40,7 +40,9 @@ void ScreenShot::takeScreenShot()
     else
         printf("tohkbd2-user: Screenshot failed\n");
 
-    notificationSend(tr("Screenshot saved"), ssFilename);
+    //: Notification shown after screenshot is taken
+    //% "Screenshot saved"
+    notificationSend(qtTrId("screenshot-saved"), ssFilename);
 }
 
 

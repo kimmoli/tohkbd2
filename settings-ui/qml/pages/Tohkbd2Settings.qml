@@ -19,11 +19,15 @@ Page
         {
             MenuItem
             {
-                text: qsTr("About...")
+                //: Menu option and header for about page
+                //% "About..."
+                text: qsTrId("about")
                 onClicked: pageStack.push(Qt.resolvedUrl("AboutPage.qml"),
                                           { "version": settingsui.version,
                                               "year": "2014-2015",
-                                              "name": qsTr("TOHKBD2 Settings"),
+                                              //: Application name
+                                              //% "TOHKBD Settings"
+                                              "name": qsTrId("tohkbd2-settings-app-name"),
                                               "imagelocation": "/usr/share/icons/hicolor/86x86/apps/harbour-tohkbd2-settingsui.png"} )
             }
         }
@@ -37,7 +41,9 @@ Page
 
             PageHeader
             {
-                title: qsTr("Settings")
+                //: Main page header
+                //% "Settings"
+                title: qsTrId("settings")
             }
 
             Item
@@ -86,10 +92,21 @@ Page
 
         Component.onCompleted:
         {
-            settingslist.append({"labelId": qsTr("Shortcuts"),         "iconId":"image://theme/icon-m-shortcut",       "pageId":"Shortcuts.qml",       "isEnabled":(daemonVersion !== "N/A")})
-            settingslist.append({"labelId": qsTr("Layout"),            "iconId":"image://theme/icon-m-keyboard",       "pageId":"KeyboardLayout.qml",  "isEnabled":true})
-            settingslist.append({"labelId": qsTr("General settings"),  "iconId":"image://tohkbd2/icon-m-test",         "pageId":"GeneralSettings.qml", "isEnabled":(daemonVersion !== "N/A")})
-            settingslist.append({"labelId": qsTr("Report a bug"),      "iconId":"image://theme/icon-m-crash-reporter", "pageId":"BugReporter.qml",     "isEnabled":true})
+            //: Main menu selection for shortcuts configurations
+            //% "Shortcuts"
+            settingslist.append({"labelId": qsTrId("shortcuts"),         "iconId":"image://theme/icon-m-shortcut",       "pageId":"Shortcuts.qml",       "isEnabled":(daemonVersion !== "N/A")})
+
+            //: Main menu selection for layout selection
+            //% "Layout"
+            settingslist.append({"labelId": qsTrId("layout"),            "iconId":"image://theme/icon-m-keyboard",       "pageId":"KeyboardLayout.qml",  "isEnabled":true})
+
+            //: Main menu selection for general settings
+            //% "General settings"
+            settingslist.append({"labelId": qsTrId("general-settings"),    "iconId":"image://tohkbd2/icon-m-test",         "pageId":"GeneralSettings.qml", "isEnabled":(daemonVersion !== "N/A")})
+
+            //: Main menu selection for FAQ and reporting an issue
+            //% "Report a bug"
+            settingslist.append({"labelId": qsTrId("report-a-bug"),        "iconId":"image://theme/icon-m-crash-reporter", "pageId":"BugReporter.qml",     "isEnabled":true})
         }
     }
 

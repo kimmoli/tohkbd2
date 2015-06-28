@@ -117,9 +117,17 @@ void UserDaemon::launchApplication(const QString &desktopFilename)
 void UserDaemon::showKeyboardConnectionNotification(const bool &connected)
 {
     if (connected)
-        showNotification(tr("Keyboard connected"));
+    {
+        //: Notification shown when keyboard is connected
+        //% "Keyboard connected"
+        showNotification(qtTrId("keyb-connected"));
+    }
     else
-        showNotification(tr("Keyboard removed"));
+    {
+        //: Notification shown when keyboard is removed
+        //% "Keyboard removed"
+        showNotification(qtTrId("keyb-removed"));
+    }
 }
 
 QString UserDaemon::getVersion()
@@ -130,7 +138,11 @@ QString UserDaemon::getVersion()
 void UserDaemon::launchSuccess(const QString &appName)
 {
     if (m_launchPending)
-        showNotification(tr("Starting %1...").arg(appName));
+    {
+        //: Notification shown when application is started by pressing shortcut key
+        //% "Starting %1..."
+        showNotification(qtTrId("starting-app").arg(appName));
+    }
 
     m_launchPending = false;
 }

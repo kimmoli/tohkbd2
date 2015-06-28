@@ -9,7 +9,7 @@ CoverBackground
 {
     CoverPlaceholder
     {
-        text: "Tohkbd2-settings"
+        text: qsTrId("tohkbd2-settings-app-name")
         icon.source: "/usr/share/icons/hicolor/86x86/apps/harbour-tohkbd2-settingsui.png"
     }
 }

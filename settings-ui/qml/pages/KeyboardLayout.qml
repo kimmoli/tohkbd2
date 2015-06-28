@@ -80,7 +80,9 @@ Page
         anchors.bottom: layoutlabel.top
         anchors.bottomMargin: Theme.paddingSmall
         anchors.horizontalCenter: page.horizontalCenter
-        text: "Active"
+        //: label showing this layout is currently selected
+        //% "Active"
+        text: qsTrId("active-layout")
         color: Theme.primaryColor
         font.pixelSize: Theme.fontSizeMedium
         visible: layoutlabel.text === settings["masterLayout"]
@@ -91,7 +93,9 @@ Page
     {
         id: layoutSelectButton
         enabled: layoutsmodel.count ? (layoutsmodel.get(view.currentIndex).implemented && opacity == 1) : false
-        text: qsTr("Select")
+        //: Button text for button to select this as active LayoutItem
+        //% "Select"
+        text: qsTrId("select-layout")
         anchors.top: view.bottom
         anchors.topMargin: Theme.paddingLarge
         anchors.horizontalCenter: page.horizontalCenter

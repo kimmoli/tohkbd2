@@ -25,7 +25,9 @@ Page
             width: page.width
             PageHeader
             {
-                title: qsTr("Applications")
+                //: Application shortcut selector page header
+                //% "Select application"
+                title: qsTrId("select-application")
             }
         }
 

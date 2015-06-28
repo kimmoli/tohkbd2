@@ -80,6 +80,10 @@ int main(int argc, char **argv)
     QDBusConnection::sessionBus().connect("org.freedesktop.Notifications", "/org/freedesktop/Notifications", "org.freedesktop.Notifications", "ActionInvoked",
                                             &ss, SLOT(handleNotificationActionInvoked(const QDBusMessage&)));
 
+    QTranslator engineeringTranslator;
+    engineeringTranslator.load("engineering_en", "/usr/share/harbour-tohkbd2-user/i18n");
+    app->installTranslator(&engineeringTranslator);
+
     QTranslator translator;
     translator.load(QLocale::system().name(), "/usr/share/harbour-tohkbd2-user/i18n");
     app->installTranslator(&translator);
