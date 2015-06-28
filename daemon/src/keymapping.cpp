@@ -73,8 +73,12 @@ void keymapping::process(QByteArray inputReport)
             ir.append(0xE9);
     }
 
-    if (leftShiftDown && symDown)
+    if (leftShiftDown && sym->pressed)
+    {
+        releaseStickyModifiers();
         emit toggleCapsLock();
+        return;
+    }
 
     shift->set(leftShiftDown || shiftDown, ir.isEmpty());
     ctrl->set(ctrlDown, ir.isEmpty());

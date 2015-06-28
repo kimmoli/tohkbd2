@@ -651,6 +651,10 @@ void Tohkbd::handleKeyReleased()
  */
 void Tohkbd::handleShiftChanged()
 {
+    /* Release capslock if shift is pressed, to aVOID tHIS */
+    if (capsLock && keymap->shift->pressed)
+        toggleCapsLock();
+
     controlLeds(true);
     checkDoWeNeedBacklight();
 
