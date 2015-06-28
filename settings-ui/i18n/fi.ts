@@ -43,14 +43,34 @@
 <context>
     <name>BugReporter</name>
     <message>
-        <location filename="../qml/pages/BugReporter.qml" line="28"/>
+        <location filename="../qml/pages/BugReporter.qml" line="31"/>
+        <source>Launching external application...</source>
+        <translation>Käynnistetään sovellusta....</translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/BugReporter.qml" line="53"/>
         <source>Report a bug</source>
         <translation>Ilmoita ongelmasta</translation>
     </message>
     <message>
-        <location filename="../qml/pages/BugReporter.qml" line="32"/>
-        <source>Launching email application...</source>
-        <translation>Käynnistetään sähköpostia...</translation>
+        <location filename="../qml/pages/BugReporter.qml" line="57"/>
+        <source>Please first check TOHKBD FAQ page at https://together.jolla.com. Button below opens this link in browser.</source>
+        <translation>Katso ensin TOHKBD UKK sivua osoitteessa https://together.jolla.com. Allaoleva painike avaa linkin selaimeen.</translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/BugReporter.qml" line="66"/>
+        <source>Open FAQ</source>
+        <translation>Avaa UKK</translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/BugReporter.qml" line="76"/>
+        <source>If there is no answer to your issue, please report it. Button below launches email client.</source>
+        <translation>Jos et löydä vastausta ongelmaasi UKK:stä, allaolevasta napista voit kertoa ongelmastasi sähköpostilla.</translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/BugReporter.qml" line="85"/>
+        <source>Report issue</source>
+        <translation>Ilmoita ongelmasta</translation>
     </message>
 </context>
 <context>

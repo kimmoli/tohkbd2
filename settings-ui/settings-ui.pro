@@ -35,21 +35,22 @@ OTHER_FILES += qml/tohkbd2-settingsui.qml \
     qml/pages/ApplicationSelectionPage.qml \
     qml/pages/Shortcuts.qml \
     qml/pages/KeyboardLayout.qml \
-    qml/pages/CustomizeKeys.qml \
     qml/pages/BugReporter.qml \
     qml/pages/GeneralSettings.qml \
     qml/icons/icon-m-test.png \
-    qml/images/layout_qwertz.png \
-    qml/images/layout_qwertz.png \
-    qml/images/layout_qwerty.png \
-    qml/images/layout_nordic.png \
-    qml/images/layout_cyrillic.png \
-    qml/images/layout_azerty.png \
     qml/icons/icon-m-keyframe.png \
     harbour-tohkbd2-settingsui.desktop \
     harbour-tohkbd2-settingsui.png \
     i18n/*.ts \
     qml/icons/kimmoli.png \
     qml/icons/wazd.png \
-    qml/icons/dirkvl.png
+    qml/icons/dirkvl.png \
+    qml/components/Key.qml \
+    qml/pages/CustomizeKey.qml \
+    qml/images/image-keyboard-azerty.png \
+    qml/images/image-keyboard-cyrillic.png \
+    qml/images/image-keyboard-qwerty.png \
+    qml/images/image-keyboard-qwertz.png \
+    qml/images/image-keyboard-scandic.png \
+    qml/images/image-keyboard-stealth.png
 

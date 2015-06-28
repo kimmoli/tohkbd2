@@ -1,7 +1,10 @@
 #include <stdio.h>
 #include "applauncher.h"
 #include <mlite5/MDesktopEntry>
-#include <contentaction5/contentaction.h>
+#include <QSharedPointer>
+
+#include <QThread>
+#include <QProcess>
 
 AppLauncher::AppLauncher(QObject *parent) :
     QObject(parent)
@@ -25,8 +28,9 @@ void AppLauncher::launchApplication(const QString &desktopFilename)
 
     emit launchSuccess(app->name());
 
-    ContentAction::Action action;
-    action = ContentAction::Action::launcherAction(app, QStringList());
-    action.trigger();
+    QProcess proc;
+    proc.startDetached("/usr/bin/xdg-open" , QStringList() << desktopFilename);
+
+    QThread::msleep(100);
 }
 

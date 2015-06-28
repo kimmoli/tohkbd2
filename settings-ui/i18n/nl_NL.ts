@@ -14,22 +14,22 @@
     <message>
         <location filename="../qml/pages/AboutPage.qml" line="146"/>
         <source>Settings UI version: </source>
-        <translation>Versie van de instellingeninterface:</translation>
+        <translation>TOHKBD app versie:</translation>
     </message>
     <message>
         <location filename="../qml/pages/AboutPage.qml" line="153"/>
         <source>Daemon version: </source>
-        <translation>Daemon-versie: </translation>
+        <translation>TOHKBD daemon versie:</translation>
     </message>
     <message>
         <location filename="../qml/pages/AboutPage.qml" line="160"/>
         <source>User daemon version: </source>
-        <translation>Gebruikersdaemon-versie:</translation>
+        <translation>Versie van de gebruikersdaemon:</translation>
     </message>
     <message>
         <location filename="../qml/pages/AboutPage.qml" line="167"/>
         <source>Sailfish version: </source>
-        <translation>Sailfish-versie: </translation>
+        <translation>SailfishOS versie:</translation>
     </message>
 </context>
 <context>
@@ -43,14 +43,34 @@
 <context>
     <name>BugReporter</name>
     <message>
-        <location filename="../qml/pages/BugReporter.qml" line="28"/>
+        <location filename="../qml/pages/BugReporter.qml" line="31"/>
+        <source>Launching external application...</source>
+        <translation>Bezig met het openen van de externe applicatie...</translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/BugReporter.qml" line="53"/>
         <source>Report a bug</source>
         <translation>Een bug rapporteren</translation>
     </message>
     <message>
-        <location filename="../qml/pages/BugReporter.qml" line="32"/>
-        <source>Launching email application...</source>
-        <translation>Bezig met het starten van de e-mailapplicatie...</translation>
+        <location filename="../qml/pages/BugReporter.qml" line="57"/>
+        <source>Please first check TOHKBD FAQ page at https://together.jolla.com. Button below opens this link in browser.</source>
+        <translation>Kijk eerst in de TOHKBD FAQ-pagina op https://together.jolla.com. De knop hieronder opent de link in de webbrowser.</translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/BugReporter.qml" line="66"/>
+        <source>Open FAQ</source>
+        <translation>FAQ openen</translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/BugReporter.qml" line="76"/>
+        <source>If there is no answer to your issue, please report it. Button below launches email client.</source>
+        <translation>Als er geen antwoord voor uw vraag/probleem is, rapporteer deze dan. De knop hieronder opent de e-mailapp.</translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/BugReporter.qml" line="85"/>
+        <source>Report issue</source>
+        <translation>Probleem rapporteren</translation>
     </message>
 </context>
 <context>
@@ -73,7 +93,7 @@
     <message>
         <location filename="../qml/pages/GeneralSettings.qml" line="39"/>
         <source>Backlight is always on when keyboard attached and phone&apos;s display is on</source>
-        <translation>De achtergrondverlichting is altijd aan als het toetsenbord is aangekoppeld en het telefoonscherm aan staat</translation>
+        <translation>De achtergrondverlichting staat altijd aan als het toetsenbord is aangekoppeld en het telefoonscherm aan staat</translation>
     </message>
     <message>
         <location filename="../qml/pages/GeneralSettings.qml" line="47"/>
@@ -93,7 +113,7 @@
     <message>
         <location filename="../qml/pages/GeneralSettings.qml" line="82"/>
         <source>Brightness threshold</source>
-        <translation>Helderheid-drempelwaarde</translation>
+        <translation>Drempelwaarde van de helderheid</translation>
     </message>
     <message>
         <location filename="../qml/pages/GeneralSettings.qml" line="105"/>
@@ -133,27 +153,27 @@
     <message>
         <location filename="../qml/pages/GeneralSettings.qml" line="173"/>
         <source>Sticky modifiers</source>
-        <translation>Vaste aanpassingstoetsen</translation>
+        <translation>Speciale toetsen</translation>
     </message>
     <message>
         <location filename="../qml/pages/GeneralSettings.qml" line="177"/>
         <source>Sticky modifiers will toggle when pressed, they also work as normal modifier keys</source>
-        <translation>Vaste wijzigingen worden geschakeld bij het indrukken; ze werken ook als normale aanpassingstoetsen</translation>
+        <translation>Druk een speciale toets in om ze (blijvend) in/uit te schakelen; of gebruik ze in een toetscombinatie</translation>
     </message>
     <message>
         <location filename="../qml/pages/GeneralSettings.qml" line="187"/>
         <source>Sticky Ctrl</source>
-        <translation>Vaste Ctrl</translation>
+        <translation>Speciale Ctrl</translation>
     </message>
     <message>
         <location filename="../qml/pages/GeneralSettings.qml" line="194"/>
         <source>Sticky Alt</source>
-        <translation>Vaste Alt</translation>
+        <translation>Speciale Alt</translation>
     </message>
     <message>
         <location filename="../qml/pages/GeneralSettings.qml" line="201"/>
         <source>Sticky Sym</source>
-        <translation>Vaste Sym</translation>
+        <translation>Speciale Sym</translation>
     </message>
 </context>
 <context>

@@ -43,14 +43,34 @@
 <context>
     <name>BugReporter</name>
     <message>
-        <location filename="../qml/pages/BugReporter.qml" line="28"/>
+        <location filename="../qml/pages/BugReporter.qml" line="31"/>
+        <source>Launching external application...</source>
+        <translation>Lanzando aplicación externa...</translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/BugReporter.qml" line="53"/>
         <source>Report a bug</source>
         <translation>Informar de un error</translation>
     </message>
     <message>
-        <location filename="../qml/pages/BugReporter.qml" line="32"/>
-        <source>Launching email application...</source>
-        <translation>Lanzando el gestor de correo...</translation>
+        <location filename="../qml/pages/BugReporter.qml" line="57"/>
+        <source>Please first check TOHKBD FAQ page at https://together.jolla.com. Button below opens this link in browser.</source>
+        <translation>Por favor, primero comprueba la página del FAQ de TOHKBD en https://together.jolla.com . El botón de debajo abre este enlace en el navegador. </translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/BugReporter.qml" line="66"/>
+        <source>Open FAQ</source>
+        <translation>Abrir el FAQ</translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/BugReporter.qml" line="76"/>
+        <source>If there is no answer to your issue, please report it. Button below launches email client.</source>
+        <translation>Si no hay respuesta a tu problema, por favor repórtalo. El botón de debajo lanza el cliente de correo.</translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/BugReporter.qml" line="85"/>
+        <source>Report issue</source>
+        <translation>Reportar problema</translation>
     </message>
 </context>
 <context>

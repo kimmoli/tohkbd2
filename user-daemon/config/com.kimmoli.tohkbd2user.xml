@@ -22,9 +22,11 @@
         <method name="showTaskSwitcher" />
         <method name="nextAppTaskSwitcher" />
         <method name="hideTaskSwitcher" />
+        <method name="resetWithRemorse" />
         <method name="getVersion">
             <arg name="value" type="s" direction="out" />
         </method>
+        <method name="takeScreenShot" />
         <method name="quit" />
     </interface>
 </node>

@@ -20,10 +20,18 @@
 #define KEYREPEAT_DELAY 250
 #define KEYREPEAT_RATE 25
 
+#define STICKY_SHIFT_ENABLED false
 #define STICKY_CTRL_ENABLED true
 #define STICKY_ALT_ENABLED false
 #define STICKY_SYM_ENABLED false
+#define LOCKING_SHIFT_ENABLED false
+#define LOCKING_CTRL_ENABLED false
+#define LOCKING_ALT_ENABLED false
+#define LOCKING_SYM_ENABLED false
+
 #define FORCE_LANDSCAPE_ORIENTATION true
 #define FORCE_BACKLIGHT_ON false
+
+#define MASTER_LAYOUT "Scandic"
 
 #endif // DEFAULTSSETTINGS_H

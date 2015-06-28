@@ -24,18 +24,22 @@ public:
     Q_INVOKABLE void setCurrentApp(int n);
     Q_INVOKABLE void setNumberOfApps(int n);
     Q_INVOKABLE void setTouchRegion(const QRect &rect);
+    Q_INVOKABLE void reboot();
+    Q_INVOKABLE void cancelReboot();
 
 signals:
     void currentAppChanged();
     void numberOfAppsChanged();
     void visibleChanged();
     void _launchApplication(const QString &desktopFilename);
+    void startRebootRemorse();
 
 public slots:
     void detachWindow();
     void hideWindow();
     void showWindow();
     void nextApp();
+    void requestReboot();
 
 private:
     void setMouseRegion(const QRegion &region);
@@ -51,6 +55,8 @@ private:
 
     QVariantList apps;
     QStringList appsDesktopFiles;
+
+    QStringList mruList;
 
 };
 

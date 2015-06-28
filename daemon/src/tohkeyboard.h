@@ -42,7 +42,6 @@ public:
 public slots:
     /* dbus signal handler slots */
     void handleDisplayStatus(const QDBusMessage& msg);
-    void handleNotificationActionInvoked(const QDBusMessage& msg);
 
     /* keymap handler slots */
     void handleShiftChanged();
@@ -51,6 +50,8 @@ public slots:
     void handleSymChanged();
     void handleKeyPressed(QList< QPair<int, int> > keyCode);
     void handleKeyReleased();
+
+    void toggleCapsLock();
 
     /* timer timeouts */
     void backlightTimerTimeout();
@@ -67,6 +68,7 @@ public slots:
     Q_NOREPLY void setShortcut(const QString &key, const QString &appPath);
     Q_NOREPLY void setShortcutsToDefault();
     Q_NOREPLY void setSettingInt(const QString &key, const int &value);
+    Q_NOREPLY void setSettingString(const QString &key, const QString &value);
 
 signals:
 
@@ -89,8 +91,6 @@ private:
     void keyboardConnectedNotification(bool connected);
     void checkEEPROM();
     bool tohcoreBind(bool bind);
-    void notificationSend(QString summary, QString body);
-    void screenShot();
     void controlLeds(bool restore);
     bool checkSailfishVersion(QString versionToCompare);
 
@@ -102,7 +102,6 @@ private:
     tca8424driver *tca8424;
     keymapping *keymap;
 
-    int capsLockSeq;
     int backlightLuxThreshold;
     int keyRepeatDelay;
     int keyRepeatRate;
@@ -135,11 +134,9 @@ private:
     bool forceLandscapeOrientation;
     bool taskSwitcherVisible;
     bool selfieLedOn;
+    bool capsLock;
 
     QDBusInterface *tohkbd2user;
-
-    unsigned int ssNotifyReplacesId;
-    QString ssFilename;
 
     QByteArray FKEYS;
 
@@ -147,6 +144,7 @@ private:
     QTime gpioInterruptFloodDetect;
 
     bool fix_CapsLock;
+    QString masterLayout;
 };
 
 

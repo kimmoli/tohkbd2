@@ -25,6 +25,8 @@ signals:
     void _nextAppTaskSwitcher();
     void _hideTaskSwitcher();
     void _lauchApplication(const QString &desktoFilename);
+    void _requestReboot();
+    void _takeScreenShot();
 
 public slots:
     QString getActiveLayout();
@@ -37,7 +39,10 @@ public slots:
     void showTaskSwitcher() { emit  _showTaskSwitcher(); }
     void nextAppTaskSwitcher() { emit _nextAppTaskSwitcher(); }
     void hideTaskSwitcher() { emit  _hideTaskSwitcher(); }
+    void resetWithRemorse();
+    void takeScreenShot() { emit _takeScreenShot(); }
     void quit();
+
     void launchSuccess(const QString &appName);
     void launchFailed();
 

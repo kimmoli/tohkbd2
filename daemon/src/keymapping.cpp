@@ -6,23 +6,17 @@
 keymapping::keymapping(QObject *parent) :
     QObject(parent)
 {
-    shiftPressed = false;
-    ctrlPressed = false;
-    altPressed = false;
-    symPressed = false;
     pressedCode = 0;
 
-    stickyCtrlEnabled = false;
-    stickyAltEnabled = false;
-    stickySymEnabled = false;
+    shift = new modifierHandler("shift");
+    ctrl = new modifierHandler("ctrl");
+    alt = new modifierHandler("alt");
+    sym = new modifierHandler("sym");
 
-    ctrlWasHeldDown = false;
-    symWasHeldDown = false;
-    altWasHeldDown = false;
-
-    ctrlDown = false;
-    altDown = false;
-    symDown = false;
+    connect(shift, SIGNAL(changed()), this, SIGNAL(shiftChanged()));
+    connect(ctrl, SIGNAL(changed()), this, SIGNAL(ctrlChanged()));
+    connect(alt, SIGNAL(changed()), this, SIGNAL(altChanged()));
+    connect(sym, SIGNAL(changed()), this, SIGNAL(symChanged()));
 }
 
 /* REV 2 Keyboard mapping
@@ -44,10 +38,11 @@ void keymapping::process(QByteArray inputReport)
     QList< QPair<int,int> > retKey;
     char irCode = 0;
 
-    bool __shiftPressed = false;
-    ctrlDown = false;
-    altDown = false;
-    symDown = false;
+    bool leftShiftDown = false;
+    bool shiftDown = false;
+    bool ctrlDown = false;
+    bool altDown = false;
+    bool symDown = false;
 
     printf("Processing report: ");
     for (n=0 ; n<inputReport.count() ; n++)
@@ -64,9 +59,9 @@ void keymapping::process(QByteArray inputReport)
     /* First check modifiers from modifier byte */
     if (inputReport.at(3) & 0x02) symDown = true;
     if (inputReport.at(3) & 0x08) ctrlDown = true;
-    if (inputReport.at(3) & 0x10) __shiftPressed = true;
+    if (inputReport.at(3) & 0x10) leftShiftDown = true;
     /* And other modifiers from the usage codes */
-    if (ir.contains(0xEA)) { __shiftPressed = true; ir.remove(ir.indexOf(0xEA), 1); }
+    if (ir.contains(0xEA)) { shiftDown = true; ir.remove(ir.indexOf(0xEA), 1); }
     if (ir.contains(0xCF)) { altDown = true; ir.remove(ir.indexOf(0xCF), 1); }
     if (ir.contains(0xBF)) { ctrlDown = true; ir.remove(ir.indexOf(0xBF), 1); }
     if (ir.contains(0xED)) { symDown = true; ir.remove(ir.indexOf(0xED), 1); }
@@ -78,88 +73,17 @@ void keymapping::process(QByteArray inputReport)
             ir.append(0xE9);
     }
 
-    if (__shiftPressed != shiftPressed)
-    {
-        shiftPressed = __shiftPressed;
-        emit shiftChanged();
-    }
+    if (leftShiftDown && symDown)
+        emit toggleCapsLock();
 
-    /* CTRL */
-    if (stickyCtrlEnabled && ctrlDown && ctrlPressed && !ir.isEmpty())
-    {
-        ctrlWasHeldDown = true;
-    }
-
-    if (stickyCtrlEnabled && ctrlDown && ir.isEmpty() && !pressedCode)
-    {
-        releaseStickyModifiers();
-        ctrlPressed = !ctrlPressed;
-        emit ctrlChanged();
-    }
-    else if (!stickyCtrlEnabled && (ctrlDown != ctrlPressed))
-    {
-        ctrlPressed = ctrlDown;
-        emit ctrlChanged();
-    }
-
-    /* ALT */
-    if (stickyAltEnabled && altDown && altPressed && !ir.isEmpty())
-    {
-        altWasHeldDown = true;
-    }
-
-    if (stickyAltEnabled && altDown && ir.isEmpty() && !pressedCode)
-    {
-        releaseStickyModifiers();
-        altPressed = !altPressed;
-        emit altChanged();
-    }
-    else if (!stickyAltEnabled && (altDown != altPressed))
-    {
-        altPressed = altDown;
-        emit altChanged();
-    }
-
-    /* SYM */
-    if (stickySymEnabled && symDown && symPressed && !ir.isEmpty())
-    {
-        symWasHeldDown = true;
-    }
-
-    if (stickySymEnabled && symDown && ir.isEmpty() && !pressedCode)
-    {
-        releaseStickyModifiers();
-        symPressed = !symPressed;
-        emit symChanged();
-    }
-    else if (!stickySymEnabled && (symDown != symPressed))
-    {
-        symPressed = symDown;
-        emit symChanged();
-    }
+    shift->set(leftShiftDown || shiftDown, ir.isEmpty());
+    ctrl->set(ctrlDown, ir.isEmpty());
+    alt->set(altDown, ir.isEmpty());
+    sym->set(symDown, ir.isEmpty());
 
     /* Shortcut out if no actual key pressed */
     if (ir.length() == 0)
     {
-        if (ctrlWasHeldDown && !ctrlDown && ctrlPressed)
-        {
-            ctrlWasHeldDown = false;
-            ctrlPressed = false;
-            emit ctrlChanged();
-        }
-        if (altWasHeldDown && !altDown && altPressed)
-        {
-            altWasHeldDown = false;
-            altPressed = false;
-            emit altChanged();
-        }
-        if (symWasHeldDown && !symDown && symPressed)
-        {
-            symWasHeldDown = false;
-            symPressed = false;
-            emit symChanged();
-        }
-
         if (pressedCode)
         {
             pressedCode = 0;
@@ -170,7 +94,7 @@ void keymapping::process(QByteArray inputReport)
     }
 
     /* Check for new code in report. */
-    for(int i=ir.length()-1 ; i>=0 ; --i)
+    for (int i=ir.length()-1 ; i >= 0 ; --i)
     {
         if (!_prevInputReport.contains(ir.at(i)))
         {
@@ -179,20 +103,7 @@ void keymapping::process(QByteArray inputReport)
         }
     }
 
-    if (!symPressed && irCode) /* Without SYM modifier */
-    {
-        int i = 0;
-        while (lut_plain[i])
-        {
-            if (irCode == lut_plain[i])
-            {
-                retKey.append(qMakePair(lut_plain[i+1], lut_plain[i+2]));
-                break;
-            }
-            i += 3;
-        }
-    }
-    else if (symPressed && irCode) /* With SYM modifier */
+    if (sym->pressed && irCode) /* With SYM modifier */
     {
         int i = 0;
         while (lut_sym[i])
@@ -205,6 +116,20 @@ void keymapping::process(QByteArray inputReport)
             i += 3;
         }
     }
+    else if (irCode) /* Without SYM modifier */
+    {
+        int i = 0;
+        while (lut_plain[i])
+        {
+            if (irCode == lut_plain[i])
+            {
+                retKey.append(qMakePair(lut_plain[i+1], lut_plain[i+2]));
+                break;
+            }
+            i += 3;
+        }
+    }
+
 
     /* If key is changed on the fly without break... emit released */
     if (pressedCode)
@@ -227,21 +152,62 @@ void keymapping::process(QByteArray inputReport)
     _prevInputReport = ir;
 }
 
-void keymapping::releaseStickyModifiers()
+void keymapping::releaseStickyModifiers(bool force)
 {
-    if (ctrlPressed && !ctrlDown)
+    shift->clear(force);
+    ctrl->clear(force);
+    alt->clear(force);
+    sym->clear(force);
+}
+
+void keymapping::setLayout(QString toLayout)
+{
+    if (toLayout == layout)
+        return;
+
+    int i = 0;
+
+    if (toLayout == "Scandic")
     {
-        ctrlPressed = false;
-        emit ctrlChanged();
+        while (lut_plain_scandic[i])
+        {
+            lut_plain[i] = lut_plain_scandic[i];
+            i++;
+            lut_plain[i] = lut_plain_scandic[i];
+            i++;
+            lut_plain[i] = lut_plain_scandic[i];
+            i++;
+        }
     }
-    if (altPressed && !altDown)
+    else if (toLayout == "QWERTZ")
     {
-        altPressed = false;
-        emit altChanged();
+        while (lut_plain_qwertz[i])
+        {
+            lut_plain[i] = lut_plain_qwertz[i];
+            i++;
+            lut_plain[i] = lut_plain_qwertz[i];
+            i++;
+            lut_plain[i] = lut_plain_qwertz[i];
+            i++;
+        }
     }
-    if (symPressed && !symDown)
+    else if (toLayout == "AZERTY")
     {
-        symPressed = false;
-        emit symChanged();
+        while (lut_plain_azerty[i])
+        {
+            lut_plain[i] = lut_plain_azerty[i];
+            i++;
+            lut_plain[i] = lut_plain_azerty[i];
+            i++;
+            lut_plain[i] = lut_plain_azerty[i];
+            i++;
+        }
     }
+
+    for ( ; i<256 ; i++)
+        lut_plain[i] = 0;
+
+    layout = toLayout;
+
+    printf("keymap: layout set to %s\n", qPrintable(layout));
 }

@@ -10,29 +10,42 @@ Item
     height: Screen.height
     rotation: 0
 
-    property int currentApp: viewHelper.currentApp
-    property int numberOfApps: viewHelper.numberOfApps
-
-    onCurrentAppChanged:
+    Connections
     {
-        appName.text = appsModel.get(viewHelper.currentApp).name
-    }
+        target: viewHelper
 
-    onNumberOfAppsChanged:
-    {
-        updateAppsModel()
-        appName.text = appsModel.get(viewHelper.currentApp).name
+        onCurrentAppChanged:
+        {
+            appName.text = appsModel.get(viewHelper.currentApp).name
+        }
 
-        viewHelper.setTouchRegion(Qt.rect(taskSwitchBackground.x,
-                                          taskSwitchBackground.y,
-                                          taskSwitchBackground.width,
-                                          taskSwitchBackground.height))
+        onNumberOfAppsChanged:
+        {
+            if (viewHelper.numberOfApps > 0)
+            {
+                updateAppsModel()
+                appName.text = appsModel.get(viewHelper.currentApp).name
+
+                viewHelper.setTouchRegion(Qt.rect(taskSwitchBackground.x,
+                                                  taskSwitchBackground.y,
+                                                  taskSwitchBackground.width,
+                                                  taskSwitchBackground.height))
+            }
+        }
+
+        onStartRebootRemorse:
+        {
+            rebootRemorse.execute(remorsePlaceholder, qsTr("Rebooting"))
+
+            /* Block all other touches */
+            viewHelper.setTouchRegion(Qt.rect(0,0,root.width, root.height))
+        }
     }
 
     Sensors.OrientationSensor
     {
         id: rotationSensor
-        active: viewHelper.visible
+        active: viewHelper.visible || rebootRemorse.visible
         property int angle: active ? reading.orientation : 0
         onAngleChanged:
         {
@@ -69,9 +82,31 @@ Item
         opacity: 0.5
     }
 
+    Item
+    {
+        anchors.centerIn: root
+        rotation: 90
+        width: root.height
+        height: Theme.itemSizeLarge
+
+        Item
+        {
+            id: remorsePlaceholder
+            anchors.fill: parent
+        }
+    }
+
+    RemorseItem
+    {
+        id: rebootRemorse
+        onTriggered: viewHelper.reboot()
+        onCanceled: viewHelper.cancelReboot()
+    }
+
     Rectangle
     {
         id: taskSwitchBackground
+        visible: viewHelper.visible
         anchors.centerIn: root
         anchors.horizontalCenterOffset: Theme.paddingLarge
         color: Theme.rgba(Theme.highlightBackgroundColor, Theme.highlightBackgroundOpacity)
@@ -79,66 +114,66 @@ Item
         width: Theme.itemSizeLarge * taskSwitchGrid.rows + 2 * Theme.paddingLarge
         height: Theme.itemSizeLarge * taskSwitchGrid.columns + Theme.paddingLarge
         clip: true
-    }
 
-    Label
-    {
-        id: appName
-        rotation: 90
-        anchors.centerIn: taskSwitchBackground
-        anchors.horizontalCenterOffset: Theme.paddingSmall + (Theme.itemSizeLarge * (taskSwitchGrid.rows/2))
-        text: "???"
-        font.pixelSize: Theme.fontSizeSmall
-        color: Theme.primaryColor
-    }
-
-    Grid
-    {
-        id: taskSwitchGrid
-        anchors.centerIn: taskSwitchBackground
-        anchors.horizontalCenterOffset: -Theme.paddingLarge/2
-        rotation: 90
-        property int i : appsModel.count
-        columns: (i<6) ? i : ((i<12) ? ((i%2 == 0) ? i/2 : i/2 +1) : ((i%3 == 0) ? i/3 : i/3 +1))
-        rows: (i<6) ? 1 : ((i<12) ? 2 : 3)
-
-        Repeater
+        Label
         {
-            id: appIconRepeater
-            model: appsModel
+            id: appName
+            rotation: 90
+            anchors.centerIn: taskSwitchBackground
+            anchors.horizontalCenterOffset: Theme.paddingSmall + (Theme.itemSizeLarge * (taskSwitchGrid.rows/2))
+            text: "???"
+            font.pixelSize: Theme.fontSizeSmall
+            color: Theme.primaryColor
+        }
 
-            Item
+        Grid
+        {
+            id: taskSwitchGrid
+            anchors.centerIn: taskSwitchBackground
+            anchors.horizontalCenterOffset: -Theme.paddingLarge/2
+            rotation: 90
+            property int i : appsModel.count
+            columns: (i<6) ? i : ((i<12) ? ((i%2 == 0) ? i/2 : i/2 +1) : ((i%3 == 0) ? i/3 : i/3 +1))
+            rows: (i<6) ? 1 : ((i<12) ? 2 : 3)
+
+            Repeater
             {
-                width: Theme.itemSizeLarge
-                height: Theme.itemSizeLarge
+                id: appIconRepeater
+                model: appsModel
 
-                Rectangle
+                Item
                 {
-                    id: appIconBackground
-                    anchors.fill: parent
-                    color: viewHelper.currentApp === index ? Theme.highlightColor : "transparent"
-                    opacity: 0.7
-                    radius: Theme.paddingSmall
-                }
+                    width: Theme.itemSizeLarge
+                    height: Theme.itemSizeLarge
 
-                Image
-                {
-                    id: appIcon
-                    anchors.centerIn: appIconBackground
-                    source: iconId
-                    property real size: Theme.iconSizeLauncher
+                    Rectangle
+                    {
+                        id: appIconBackground
+                        anchors.fill: parent
+                        color: viewHelper.currentApp === index ? Theme.highlightColor : "transparent"
+                        opacity: 0.7
+                        radius: Theme.paddingSmall
+                    }
 
-                    sourceSize.width: size
-                    sourceSize.height: size
-                    width: size
-                    height: size
-                }
+                    Image
+                    {
+                        id: appIcon
+                        anchors.centerIn: appIconBackground
+                        source: iconId
+                        property real size: Theme.iconSizeLauncher
 
-                MouseArea
-                {
-                    anchors.fill: parent
-                    onPressed: viewHelper.setCurrentApp(index)
-                    onClicked: viewHelper.launchApplication(index)
+                        sourceSize.width: size
+                        sourceSize.height: size
+                        width: size
+                        height: size
+                    }
+
+                    MouseArea
+                    {
+                        anchors.fill: parent
+                        onPressed: viewHelper.setCurrentApp(index)
+                        onClicked: viewHelper.launchApplication(index)
+                    }
                 }
             }
         }

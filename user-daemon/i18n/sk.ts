@@ -1,17 +1,17 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="it" version="2.0">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="sk" version="2.0">
 <context>
     <name>UserDaemon</name>
     <message>
         <source>Starting %1...</source>
-        <translation>Inizio %1...</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Keyboard connected</source>
-        <translation>Tastiera collegata</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Keyboard removed</source>
-        <translation>Tastiera rimossa</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 </TS>

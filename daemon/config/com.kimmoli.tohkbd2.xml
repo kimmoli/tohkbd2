@@ -17,6 +17,10 @@
             <arg name="key" type="s" direction="in" />
             <arg name="value" type="i" direction="in" />
         </method>
+        <method name="setSettingString">
+            <arg name="key" type="s" direction="in" />
+            <arg name="value" type="s" direction="in" />
+        </method>
         <signal name="keyboardConnectedChanged">
             <arg name="connected" type="b" direction="out" />
         </signal>

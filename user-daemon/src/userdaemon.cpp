@@ -148,3 +148,10 @@ void UserDaemon::showNotification(const QString &text)
     notification.setImage(SailfishApp::pathTo("/icon-system-keyboard.png").toLocalFile());
     notification.publish();
 }
+
+void UserDaemon::resetWithRemorse()
+{
+    printf("tohkbd2-user: reset requested\n");
+
+    emit _requestReboot();
+}
