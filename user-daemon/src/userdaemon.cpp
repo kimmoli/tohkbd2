@@ -53,30 +53,6 @@ void UserDaemon::quit()
     QCoreApplication::quit();
 }
 
-void UserDaemon::setActiveLayout(const QString &value)
-{
-    if (value.contains("qml"))
-    {
-        printf("tohkbd2-user: setting active layout to \"%s\"\n", qPrintable(value));
-
-        MGConfItem ci("/sailfish/text_input/active_layout");
-        ci.set(value);
-    }
-    else
-    {
-        printf("tohkbd2-user: value \"%s\" does not look like layout, refused to write\n", qPrintable(value));
-    }
-}
-
-QString UserDaemon::getActiveLayout()
-{
-    MGConfItem ci("/sailfish/text_input/active_layout");
-
-    printf("tohkbd2-user: active layout is \"%s\"\n", qPrintable(ci.value().toString()));
-
-    return ci.value().toString();
-}
-
 void UserDaemon::setOrientationLock(const QString &value)
 {
     if (value == "dynamic" || value == "landscape" || value == "portrait")
