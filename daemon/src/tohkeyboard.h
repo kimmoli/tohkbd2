@@ -84,7 +84,7 @@ private:
     bool setVddState(bool state);
     bool setInterruptEnable(bool);
     void emitKeypadSlideEvent(bool openKeypad);
-    bool checkKeypadPresence();
+    bool checkKeypadPresence(bool firstRun = false);
     void reloadSettings();
     void saveActiveLayout();
     void saveOrientation();

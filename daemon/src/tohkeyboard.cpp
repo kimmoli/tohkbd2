@@ -110,7 +110,7 @@ Tohkbd::Tohkbd(QObject *parent) :
         saveOrientation();
     }
 
-    checkKeypadPresence();
+    checkKeypadPresence(true);
 
     connect(keymap, SIGNAL(shiftChanged()), this, SLOT(handleShiftChanged()));
     connect(keymap, SIGNAL(ctrlChanged()), this, SLOT(handleCtrlChanged()));
@@ -283,9 +283,10 @@ void Tohkbd::handleDisplayStatus(const QDBusMessage& msg)
 /* Check is keypad present
  */
 
-bool Tohkbd::checkKeypadPresence()
+bool Tohkbd::checkKeypadPresence(bool firstRun)
 {
     bool __prev_keypadPresence = keypadIsPresent;
+
     if (!vddEnabled)
     {
         /* keyboard is being connected to base */
@@ -333,7 +334,7 @@ bool Tohkbd::checkKeypadPresence()
         keypadIsPresent = true;
     }
 
-    if (__prev_keypadPresence != keypadIsPresent)
+    if ((__prev_keypadPresence != keypadIsPresent) || firstRun)
     {
         emit keyboardConnectedChanged(keypadIsPresent);
         emitKeypadSlideEvent(keypadIsPresent);
