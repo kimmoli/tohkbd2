@@ -5,6 +5,7 @@
 #include <QtDBus/QtDBus>
 #include <QDateTime>
 #include <QDBusMessage>
+#include <nemonotifications-qt5/notification.h>
 
 class ScreenShot : public QObject
 {
@@ -16,13 +17,9 @@ signals:
 
 public slots:
     void takeScreenShot();
-    void handleNotificationActionInvoked(const QDBusMessage& msg);
 
 private:
-    void notificationSend(QString summary, QString body);
-
-    unsigned int ssNotifyReplacesId;
-    QString ssFilename;
+    Notification notif;
 };
 
 #endif // SCREENSHOT_H

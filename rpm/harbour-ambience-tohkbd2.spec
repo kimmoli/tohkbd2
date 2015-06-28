@@ -25,6 +25,7 @@ BuildRequires:  pkgconfig(Qt5Quick)
 BuildRequires:  pkgconfig(Qt5Qml)
 BuildRequires:  pkgconfig(mlite5)
 BuildRequires:  pkgconfig(sailfishapp) >= 0.0.10
+BuildRequires:  pkgconfig(nemonotifications-qt5)
 BuildRequires:  desktop-file-utils
 BuildRequires:  qt5-qttools-linguist
 
@@ -61,15 +62,16 @@ desktop-file-install --delete-original       \
 %{_sysconfdir}/udev/rules.d/
 %{_sysconfdir}/dbus-1/system.d/
 %{_datadir}/maliit/plugins/com/jolla/layouts/
-%{_datadir}/harbour-tohkbd2-user/
+%{_datadir}/harbour-tohkbd2-user/icon-system-keyboard.png
 %{_datadir}/harbour-tohkbd2-user/i18n/
+%{_datadir}/harbour-tohkbd2-user/qml/
 %{_datadir}/dbus-1/
 %{_datadir}/harbour-tohkbd2-settingsui/qml/
 %{_datadir}/harbour-tohkbd2-settingsui/i18n/
 %{_datadir}/applications/
 %{_datadir}/icons/hicolor/86x86/apps/
-%{_datadir}/ambience/%{name}/
-%{_datadir}/ambience/%{name}/images/
+%{_datadir}/ambience/%{name}/%{name}.ambience
+%{_datadir}/ambience/%{name}/images/%{name}.jpg
 
 
 %post

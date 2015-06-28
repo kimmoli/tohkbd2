@@ -144,9 +144,11 @@ void UserDaemon::launchFailed()
  */
 void UserDaemon::showNotification(const QString &text)
 {
-    MNotification notification(MNotification::DeviceEvent, "", text);
-    notification.setImage(SailfishApp::pathTo("/icon-system-keyboard.png").toLocalFile());
-    notification.publish();
+    Notification notif;
+
+    notif.setPreviewBody(text);
+    notif.setHintValue("x-nemo-preview-icon", SailfishApp::pathTo("/icon-system-keyboard.png").toLocalFile());
+    notif.publish();
 }
 
 void UserDaemon::resetWithRemorse()
