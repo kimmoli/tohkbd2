@@ -92,6 +92,7 @@ private:
     void checkEEPROM();
     bool tohcoreBind(bool bind);
     void controlLeds(bool restore);
+    bool checkSailfishVersion(QString versionToCompare);
 
     int gpio_fd;
 
@@ -114,6 +115,7 @@ private:
 
     QString currentActiveLayout;
     QString currentOrientationLock;
+    QString actualSailfishVersion;
 
     QList< QPair<int, int> > lastKeyCode;
     QHash<int, QString> applicationShortcuts;
@@ -141,6 +143,7 @@ private:
     int gpioInterruptCounter;
     QTime gpioInterruptFloodDetect;
 
+    bool fix_CapsLock;
     QString masterLayout;
 };
 

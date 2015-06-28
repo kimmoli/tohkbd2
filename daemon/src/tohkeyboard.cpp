@@ -46,6 +46,9 @@ Tohkbd::Tohkbd(QObject *parent) :
     taskSwitcherVisible = false;
     selfieLedOn = false;
     gpioInterruptCounter = 0;
+    actualSailfishVersion = QString();
+
+    fix_CapsLock = !checkSailfishVersion("1.1.7.0");
     capsLock = false;
 
     tohkbd2user = new QDBusInterface("com.kimmoli.tohkbd2user", "/", "com.kimmoli.tohkbd2user", QDBusConnection::sessionBus(), this);
@@ -577,9 +580,11 @@ void Tohkbd::handleKeyPressed(QList< QPair<int, int> > keyCode)
     {
         for (int i=0; i<keyCode.count(); i++)
         {
-            bool tweakCapsLock = (capsLock && ((keyCode.at(i).first >= KEY_Q && keyCode.at(i).first <= KEY_P)
-                                           || (keyCode.at(i).first >= KEY_A && keyCode.at(i).first <= KEY_L)
-                                           || (keyCode.at(i).first >= KEY_Z && keyCode.at(i).first <= KEY_M) ));
+            bool tweakCapsLock = false;
+            if (fix_CapsLock)
+                tweakCapsLock = (capsLockSeq == 3 && ((keyCode.at(i).first >= KEY_Q && keyCode.at(i).first <= KEY_P)
+                                                   || (keyCode.at(i).first >= KEY_A && keyCode.at(i).first <= KEY_L)
+                                                   || (keyCode.at(i).first >= KEY_Z && keyCode.at(i).first <= KEY_M) ));
 
             /* Some of the keys require shift pressed to get correct symbol */
             if (keyCode.at(i).second & FORCE_COMPOSE)
@@ -1249,5 +1254,3 @@ bool Tohkbd::tohcoreBind(bool bind)
 
     return false;
 }
-
-
