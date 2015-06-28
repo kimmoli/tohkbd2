@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QtDBus/QtDBus>
 #include <mlite5/MGConfItem>
-#include <mlite5/MNotification>
+#include <nemonotifications-qt5/notification.h>
 #include <mlite5/MDesktopEntry>
 
 #define SERVICE_NAME "com.kimmoli.tohkbd2user"

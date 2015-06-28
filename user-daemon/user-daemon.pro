@@ -1,7 +1,7 @@
 TARGET = harbour-tohkbd2-user
 
 CONFIG += sailfishapp link_pkgconfig
-PKGCONFIG += sailfishapp mlite5
+PKGCONFIG += sailfishapp mlite5 nemonotifications-qt5
 
 QT += dbus gui-private
 
