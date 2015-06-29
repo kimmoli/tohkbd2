@@ -28,9 +28,9 @@
         <extracomment>Remorse timer text, &quot;Rebooting&quot; in 5 seconds</extracomment>
         <translation type="unfinished"></translation>
     </message>
-    <message id="restart-lipstick-button">
-        <source>Restart Lipstick</source>
-        <extracomment>Button below reboot remorse timer, to cancel reboot and just restart lipstick</extracomment>
+    <message id="restart-lipstick-remorse">
+        <source>Restarting Lipstick</source>
+        <extracomment>Remorse timer text, &quot;Restarting Lipstick&quot; in 5 seconds</extracomment>
         <translation type="unfinished"></translation>
     </message>
 </context>

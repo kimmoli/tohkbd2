@@ -26,5 +26,10 @@
         <extracomment>Remorse timer text, &quot;Rebooting&quot; in 5 seconds</extracomment>
         <translation>Puhelin käynnistyy uudelleen</translation>
     </message>
+    <message id="restart-lipstick-remorse">
+        <source>Restarting Lipstick</source>
+        <extracomment>Remorse timer text, &quot;Restarting Lipstick&quot; in 5 seconds</extracomment>
+        <translation>Lipstick käynnistyy uudelleen</translation>
+    </message>
 </context>
 </TS>
