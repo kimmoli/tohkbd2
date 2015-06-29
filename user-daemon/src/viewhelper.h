@@ -26,6 +26,7 @@ public:
     Q_INVOKABLE void setTouchRegion(const QRect &rect);
     Q_INVOKABLE void reboot();
     Q_INVOKABLE void cancelReboot();
+    Q_INVOKABLE void restartLipstick();
 
 signals:
     void currentAppChanged();

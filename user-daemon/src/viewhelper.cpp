@@ -279,3 +279,13 @@ void ViewHelper::reboot()
 
     QThread::msleep(100);
 }
+
+void ViewHelper::restartLipstick()
+{
+    printf("tohkbd2-user: restarting lipstick!\n");
+
+    QProcess proc;
+    proc.startDetached("systemctl" , QStringList() << QString("--user") << QString("restart") << QString("lipstick"));
+
+    QThread::msleep(100);
+}

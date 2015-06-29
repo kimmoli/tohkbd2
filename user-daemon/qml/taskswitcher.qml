@@ -105,6 +105,24 @@ Item
         onCanceled: viewHelper.cancelReboot()
     }
 
+    Button
+    {
+        //: Button below reboot remorse timer, to cancel reboot and just restart lipstick
+        //% "Restart Lipstick"
+        text: qsTrId("restart-lipstick-button")
+
+        anchors.left: remorsePlaceholder.parent.left
+        anchors.leftMargin: Theme.itemSizeLarge
+        anchors.verticalCenter: parent.verticalCenter
+        rotation: 90
+        visible: rebootRemorse.visible
+        onClicked:
+        {
+            rebootRemorse.cancel()
+            viewHelper.restartLipstick()
+        }
+    }
+
     Rectangle
     {
         id: taskSwitchBackground
