@@ -88,7 +88,6 @@ QVariantMap SettingsUi::getCurrentSettings()
     settings.beginGroup("generalsettings");
 
     map.insert("backlightTimeout", settings.value("backlightTimeout", BACKLIGHT_TIMEOUT).toInt());
-
     map.insert("backlightLuxThreshold", settings.value("backlightLuxThreshold", BACKLIGHT_LUXTHRESHOLD).toInt());
     map.insert("keyRepeatDelay", settings.value("keyRepeatDelay", KEYREPEAT_DELAY).toInt());
     map.insert("keyRepeatRate", settings.value("keyRepeatRate", KEYREPEAT_RATE).toInt());
@@ -202,6 +201,27 @@ void SettingsUi::setShortcutsToDefault()
     tohkbd2daemon.call(QDBus::AutoDetect, "setShortcutsToDefault");
 
     emit shortcutsChanged();
+}
+
+void SettingsUi::setSettingsToDefault()
+{
+    setSettingInt("backlightTimeout", BACKLIGHT_TIMEOUT);
+    setSettingInt("backlightLuxThreshold", BACKLIGHT_LUXTHRESHOLD);
+    setSettingInt("keyRepeatDelay", KEYREPEAT_DELAY);
+    setSettingInt("keyRepeatRate", KEYREPEAT_RATE);
+    setSettingInt("backlightEnabled", BACKLIGHT_ENABLED ? 1 : 0);
+    setSettingInt("forceLandscapeOrientation", FORCE_LANDSCAPE_ORIENTATION ? 1 : 0);
+    setSettingInt("forceBacklightOn", FORCE_BACKLIGHT_ON ? 1 : 0);
+    setSettingInt("stickyShiftEnabled", STICKY_SHIFT_ENABLED ? 1 : 0);
+    setSettingInt("stickyCtrlEnabled", STICKY_CTRL_ENABLED ? 1 : 0);
+    setSettingInt("stickyAltEnabled", STICKY_ALT_ENABLED ? 1 : 0);
+    setSettingInt("stickySymEnabled", STICKY_SYM_ENABLED ? 1 : 0);
+    setSettingInt("lockingShiftEnabled", LOCKING_SHIFT_ENABLED ? 1 : 0);
+    setSettingInt("lockingCtrlEnabled", LOCKING_CTRL_ENABLED ? 1 : 0);
+    setSettingInt("lockingAltEnabled", LOCKING_ALT_ENABLED ? 1 : 0);
+    setSettingInt("lockingSymEnabled", LOCKING_SYM_ENABLED ? 1 : 0);
+
+    emit settingsChanged();
 }
 
 QString SettingsUi::readDaemonVersion()

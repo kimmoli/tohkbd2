@@ -17,6 +17,19 @@ Page
 
         contentHeight: column.height
 
+        PullDownMenu
+        {
+            MenuItem
+            {
+                text: qsTrId("reset-to-defaults")
+                onClicked:
+                {
+                    settingsui.setSettingsToDefault()
+                    pageStack.pop()
+                }
+            }
+        }
+
         Column
         {
             id: column
