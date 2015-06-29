@@ -163,9 +163,9 @@ void UserDaemon::showNotification(const QString &text)
     notif.publish();
 }
 
-void UserDaemon::resetWithRemorse()
+void UserDaemon::actionWithRemorse(const QString &action)
 {
-    printf("tohkbd2-user: reset requested\n");
+    printf("tohkbd2-user: requested %s.\n", qPrintable(action));
 
-    emit _requestReboot();
+    emit _requestActionWithRemorse(action);
 }

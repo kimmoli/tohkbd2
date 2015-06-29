@@ -6,6 +6,7 @@
 #include <QDir>
 #include <qpa/qplatformnativeinterface.h>
 #include <QFileInfo>
+#include "../daemon/src/defaultSettings.h"
 
 ViewHelper::ViewHelper(QQuickView *parent) :
     QObject(parent),
@@ -254,38 +255,58 @@ QVariantList ViewHelper::getCurrentApps()
 /*
  * Reboot related stuff
  */
-void ViewHelper::requestReboot()
+void ViewHelper::requestActionWithRemorse(const QString &action)
 {
-    view->showFullScreen();
+    m_remorseAction = action;
 
-    emit startRebootRemorse();
+    if (m_remorseAction == ACTION_REBOOT_REMORSE)
+    {
+        view->showFullScreen();
+
+        //: Remorse timer text, "Rebooting" in 5 seconds
+        //% "Rebooting"
+        m_remorseText = qtTrId("reboot-remorse");
+        emit remorseTextChanged();
+
+        emit startRemorse();
+    }
+    else if (m_remorseAction == ACTION_RESTART_LIPSTICK_REMORSE)
+    {
+        view->showFullScreen();
+
+        //: Remorse timer text, "Restarting Lipstick" in 5 seconds
+        //% "Restarting Lipstick"
+        m_remorseText = qtTrId("restart-lipstick-remorse");
+        emit remorseTextChanged();
+
+        emit startRemorse();
+    }
 }
 
-void ViewHelper::cancelReboot()
+
+void ViewHelper::remorseCancelled()
 {
-    printf("tohkbd2-user: reboot cancelled\n");
+    printf("tohkbd2-user: %s cancelled\n", qPrintable(m_remorseAction));
 
     view->hide();
 }
 
-void ViewHelper::reboot()
+void ViewHelper::remorseTriggered()
 {
-    printf("tohkbd2-user: rebooting!\n");
+    printf("tohkbd2-user: executing %s.\n", qPrintable(m_remorseAction));
 
     view->hide();
 
     QProcess proc;
-    proc.startDetached("/usr/sbin/dsmetool" , QStringList() << QString("--reboot"));
 
-    QThread::msleep(100);
-}
-
-void ViewHelper::restartLipstick()
-{
-    printf("tohkbd2-user: restarting lipstick!\n");
-
-    QProcess proc;
-    proc.startDetached("systemctl" , QStringList() << QString("--user") << QString("restart") << QString("lipstick"));
+    if (m_remorseAction == ACTION_REBOOT_REMORSE)
+    {
+        proc.startDetached("/usr/sbin/dsmetool" , QStringList() << QString("--reboot"));
+    }
+    else if (m_remorseAction == ACTION_RESTART_LIPSTICK_REMORSE)
+    {
+        proc.startDetached("systemctl" , QStringList() << QString("--user") << QString("restart") << QString("lipstick"));
+    }
 
     QThread::msleep(100);
 }

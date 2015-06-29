@@ -22,7 +22,9 @@
         <method name="showTaskSwitcher" />
         <method name="nextAppTaskSwitcher" />
         <method name="hideTaskSwitcher" />
-        <method name="resetWithRemorse" />
+        <method name="actionWithRemorse">
+            <arg name="action" type="s" direction="in" />
+        </method>
         <method name="getVersion">
             <arg name="value" type="s" direction="out" />
         </method>

@@ -33,11 +33,9 @@ Item
             }
         }
 
-        onStartRebootRemorse:
+        onStartRemorse:
         {
-            //: Remorse timer text, "Rebooting" in 5 seconds
-            //% "Rebooting"
-            rebootRemorse.execute(remorsePlaceholder, qsTrId("reboot-remorse"))
+            remorseTimer.execute(remorsePlaceholder, viewHelper.remorseText)
 
             /* Block all other touches */
             viewHelper.setTouchRegion(Qt.rect(0,0,root.width, root.height))
@@ -47,7 +45,7 @@ Item
     Sensors.OrientationSensor
     {
         id: rotationSensor
-        active: viewHelper.visible || rebootRemorse.visible
+        active: viewHelper.visible || remorseTimer.visible
         property int angle: active ? reading.orientation : 0
         onAngleChanged:
         {
@@ -100,27 +98,9 @@ Item
 
     RemorseItem
     {
-        id: rebootRemorse
-        onTriggered: viewHelper.reboot()
-        onCanceled: viewHelper.cancelReboot()
-    }
-
-    Button
-    {
-        //: Button below reboot remorse timer, to cancel reboot and just restart lipstick
-        //% "Restart Lipstick"
-        text: qsTrId("restart-lipstick-button")
-
-        anchors.left: remorsePlaceholder.parent.left
-        anchors.leftMargin: Theme.itemSizeLarge
-        anchors.verticalCenter: parent.verticalCenter
-        rotation: 90
-        visible: rebootRemorse.visible
-        onClicked:
-        {
-            rebootRemorse.cancel()
-            viewHelper.restartLipstick()
-        }
+        id: remorseTimer
+        onTriggered: viewHelper.remorseTriggered()
+        onCanceled: viewHelper.remorseCancelled()
     }
 
     Rectangle

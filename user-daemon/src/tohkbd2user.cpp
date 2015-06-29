@@ -72,7 +72,7 @@ int main(int argc, char **argv)
     QObject::connect(&rw, SIGNAL(_showTaskSwitcher()), helper.data(), SLOT(showWindow()));
     QObject::connect(&rw, SIGNAL(_hideTaskSwitcher()), helper.data(), SLOT(hideWindow()));
     QObject::connect(&rw, SIGNAL(_nextAppTaskSwitcher()), helper.data(), SLOT(nextApp()));
-    QObject::connect(&rw, SIGNAL(_requestReboot()), helper.data(), SLOT(requestReboot()));
+    QObject::connect(&rw, SIGNAL(_requestActionWithRemorse(QString)), helper.data(), SLOT(requestActionWithRemorse(QString)));
 
     AppLauncher al;
 

@@ -564,13 +564,29 @@ void Tohkbd::handleKeyPressed(QList< QPair<int, int> > keyCode)
         }
     }
 
-    /* Catch ctrl-alt-del (Works only from left ctrl) */
+    /* Catch ctrl-alt-del (Works only from left ctrl or stickies) */
 
     if (keymap->alt->pressed && keymap->ctrl->pressed && keyCode.at(0).first == KEY_DELETE)
     {
-        printf("Requesting user daemon to reset with remorse.\n");
+        printf("Requesting user daemon to reboot with remorse.\n");
 
-        tohkbd2user->call(QDBus::AutoDetect, "resetWithRemorse");
+        QList<QVariant> args;
+        args.append(QString(ACTION_REBOOT_REMORSE));
+        tohkbd2user->callWithArgumentList(QDBus::AutoDetect, "actionWithRemorse", args);
+
+        keyIsPressed = true;
+        return;
+    }
+
+    /* Catch ctrl-alt-backspace to restart lipstick (Works only from left ctrl or stickies) */
+
+    if (keymap->alt->pressed && keymap->ctrl->pressed && keyCode.at(0).first == KEY_BACKSPACE)
+    {
+        printf("Requesting user daemon to restart lipstick with remorse.\n");
+
+        QList<QVariant> args;
+        args.append(QString(ACTION_RESTART_LIPSTICK_REMORSE));
+        tohkbd2user->callWithArgumentList(QDBus::AutoDetect, "actionWithRemorse", args);
 
         keyIsPressed = true;
         return;

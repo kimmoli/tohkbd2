@@ -15,6 +15,7 @@ class ViewHelper : public QObject
     Q_PROPERTY(int currentApp READ getCurrentApp NOTIFY currentAppChanged())
     Q_PROPERTY(int numberOfApps READ getNumberOfApps NOTIFY numberOfAppsChanged())
     Q_PROPERTY(bool visible READ getVisible NOTIFY visibleChanged)
+    Q_PROPERTY(QString remorseText READ getRemorseText NOTIFY remorseTextChanged)
 
 public:
     explicit ViewHelper(QQuickView *parent = 0);
@@ -24,23 +25,23 @@ public:
     Q_INVOKABLE void setCurrentApp(int n);
     Q_INVOKABLE void setNumberOfApps(int n);
     Q_INVOKABLE void setTouchRegion(const QRect &rect);
-    Q_INVOKABLE void reboot();
-    Q_INVOKABLE void cancelReboot();
-    Q_INVOKABLE void restartLipstick();
+    Q_INVOKABLE void remorseTriggered();
+    Q_INVOKABLE void remorseCancelled();
 
 signals:
     void currentAppChanged();
     void numberOfAppsChanged();
     void visibleChanged();
     void _launchApplication(const QString &desktopFilename);
-    void startRebootRemorse();
+    void startRemorse();
+    void remorseTextChanged();
 
 public slots:
     void detachWindow();
     void hideWindow();
     void showWindow();
     void nextApp();
-    void requestReboot();
+    void requestActionWithRemorse(const QString &action);
 
 private:
     void setMouseRegion(const QRegion &region);
@@ -49,6 +50,7 @@ private:
     int getCurrentApp();
     int getNumberOfApps();
     bool getVisible();
+    QString getRemorseText() { return m_remorseText; }
 
     int m_numberOfApps;
     int m_currentApp;
@@ -59,6 +61,8 @@ private:
 
     QStringList mruList;
 
+    QString m_remorseAction;
+    QString m_remorseText;
 };
 
 #endif // VIEWHELPER_H

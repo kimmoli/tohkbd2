@@ -34,4 +34,7 @@
 
 #define MASTER_LAYOUT "Scandic"
 
+#define ACTION_REBOOT_REMORSE "reboot-remorse"
+#define ACTION_RESTART_LIPSTICK_REMORSE "restart-lipstick-remorse"
+
 #endif // DEFAULTSSETTINGS_H
