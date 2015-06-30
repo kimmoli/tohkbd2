@@ -4,6 +4,7 @@
 
 import QtQuick 2.0
 import Sailfish.Silica 1.0
+import "../components"
 
 Page
 {
@@ -11,8 +12,17 @@ Page
 
     allowedOrientations: Orientation.Portrait | Orientation.Landscape | Orientation.LandscapeInverted
 
+    KeyboardHandler
+    {
+        id: kbdif
+        onKeyUpPressed: flick.flick(0, -1000)
+        onKeyDownPressed: flick.flick(0, 1000)
+        onKeyBackspacePressed: pageStack.pop()
+    }
+
     SilicaFlickable
     {
+        id: flick
         anchors.fill: parent
 
         contentHeight: column.height
@@ -207,6 +217,12 @@ Page
                 //: Placeholder text for textfield to test repeat settings
                 //% "Test here"
                 placeholderText: qsTrId("test-here")
+                onFocusChanged:
+                {
+                    /* Restore focus back to keyboard handler */
+                    if (!focus)
+                        kbdif.focus = true
+                }
             }
 
             SectionHeader

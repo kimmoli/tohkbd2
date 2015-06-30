@@ -52,5 +52,6 @@ OTHER_FILES += qml/tohkbd2-settingsui.qml \
     qml/images/image-keyboard-qwerty.png \
     qml/images/image-keyboard-qwertz.png \
     qml/images/image-keyboard-scandic.png \
-    qml/images/image-keyboard-stealth.png
+    qml/images/image-keyboard-stealth.png \
+    qml/components/KeyboardHandler.qml
 

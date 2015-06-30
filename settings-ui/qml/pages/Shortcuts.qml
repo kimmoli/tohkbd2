@@ -4,6 +4,7 @@
 
 import QtQuick 2.0
 import Sailfish.Silica 1.0
+import "../components"
 
 Page
 {
@@ -11,9 +12,27 @@ Page
 
     allowedOrientations: Orientation.Portrait | Orientation.Landscape | Orientation.LandscapeInverted
 
+    KeyboardHandler
+    {
+        id: kbdif
+        upDownItemCount: shortcutsModel.count
+        onKeyUpPressed: flickRepeaterMover(flick, repeater, pageheader, page)
+        onKeyDownPressed: flickRepeaterMover(flick, repeater, pageheader, page)
+        onKeyEnterPressed:
+        {
+            pageStack.push(appSelector, {"keyId": shortcutsModel.get(upDownSelection).key})
+        }
+
+        onKeyBackspacePressed: pageStack.pop()
+    }
+
     SilicaFlickable
     {
+        id: flick
         anchors.fill: parent
+
+        Behavior on contentY { NumberAnimation { duration: 200 } }
+
         VerticalScrollDecorator {}
 
         PullDownMenu
@@ -34,18 +53,22 @@ Page
             id: column
 
             width: page.width
-            spacing: Theme.paddingLarge
+            spacing: Theme.paddingSmall
             PageHeader
             {
+                id: pageheader
                 title: qsTrId("shortcuts")
             }
 
             Repeater
             {
+                id: repeater
                 model: shortcutsModel
+
                 ListItem
                 {
                     id: shortcutItem
+                    highlighted: down || kbdif.upDownSelection === index
 
                     Image
                     {
@@ -115,13 +138,17 @@ Page
                         text: name
                     }
 
-                    height: Theme.itemSizeMedium
+                    height: Theme.itemSizeLarge
 
-                    onClicked: pageStack.push(appSelector, {"keyId": key})
+                    onClicked:
+                    {
+                        kbdif.upDownSelection = index
+                        pageStack.push(appSelector, {"keyId": key})
+                    }
+
+                    onDownChanged: kbdif.upDownSelection = index
                 }
-
             }
-
         }
     }
 

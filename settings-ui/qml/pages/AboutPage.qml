@@ -4,7 +4,7 @@
 
 import QtQuick 2.0
 import Sailfish.Silica 1.0
-
+import "../components"
 
 Page
 {
@@ -35,8 +35,17 @@ Page
         z: 100
     }
 
+    KeyboardHandler
+    {
+        id: kbdif
+        onKeyUpPressed: flick.flick(0, -1000)
+        onKeyDownPressed: flick.flick(0, 1000)
+        onKeyBackspacePressed: pageStack.pop()
+    }
+
     SilicaFlickable
     {
+        id: flick
         anchors.fill: parent
 
         contentHeight: column.height

@@ -4,12 +4,21 @@
 
 import QtQuick 2.0
 import Sailfish.Silica 1.0
+import "../components"
 
 Page
 {
     id: page
 
     allowedOrientations: Orientation.Portrait | Orientation.Landscape | Orientation.LandscapeInverted
+
+    KeyboardHandler
+    {
+        id: kbdif
+        onKeyUpPressed: flick.flick(0, -1000)
+        onKeyDownPressed: flick.flick(0, 1000)
+        onKeyBackspacePressed: pageStack.pop()
+    }
 
     Rectangle
     {
