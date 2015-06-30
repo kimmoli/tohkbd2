@@ -122,7 +122,7 @@ Tohkbd::Tohkbd(QObject *parent) :
     connect(keymap, SIGNAL(toggleCapsLock()), this, SLOT(toggleCapsLock()));
     connect(keymap, SIGNAL(keyPressed(QList< QPair<int, int> >)), this, SLOT(handleKeyPressed(QList< QPair<int, int> >)));
     connect(keymap, SIGNAL(keyReleased()), this, SLOT(handleKeyReleased()));
-
+    connect(keymap, SIGNAL(bogusDetected()), tca8424, SLOT(reset()));
 }
 
 /* Remove uinput device, stop threads and unregister from dbus

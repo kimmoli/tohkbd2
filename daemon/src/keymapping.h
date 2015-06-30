@@ -44,6 +44,7 @@ signals:
     void keyPressed(QList< QPair<int, int> > keyCode);
     void keyReleased();
     void toggleCapsLock();
+    void bogusDetected();
 
 public slots:
 

@@ -56,6 +56,14 @@ void keymapping::process(QByteArray inputReport)
     while ((j = ir.indexOf((char)0x00)) != -1)
         ir.remove(j, 1);
 
+    for (j=0; j<ir.length(); j++) /* Quickly check does input report contain bogus */
+        if (ir.at(j) < 0xa0)
+        {
+            printf("keymap: bogus value on input report detected. Resetting TCA\n");
+            emit bogusDetected();
+            return;
+        }
+
     /* First check modifiers from modifier byte */
     if (inputReport.at(3) & 0x02) symDown = true;
     if (inputReport.at(3) & 0x08) ctrlDown = true;
