@@ -16,8 +16,8 @@ Page
     {
         id: kbdif
         upDownItemCount: shortcutsModel.count
-        onKeyUpPressed: flickRepeaterMover(flick, repeater, pageheader, page)
-        onKeyDownPressed: flickRepeaterMover(flick, repeater, pageheader, page)
+        onKeyUpPressed: flickRepeaterMover(flick, repeater)
+        onKeyDownPressed: flickRepeaterMover(flick, repeater)
         onKeyEnterPressed:
         {
             pageStack.push(appSelector, {"keyId": shortcutsModel.get(upDownSelection).key})

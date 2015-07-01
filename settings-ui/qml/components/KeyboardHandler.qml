@@ -73,16 +73,14 @@ Item
     /* When using SilicaFlickable and Repeater in Column, this moves flickable so selected item should be visible.
      * For softer movement, add e.g. following to SilicaFlickable
      * Behavior on contentY { NumberAnimation { duration: 200 } }
+     *
+     * Thanks for refractoring, xkr47
      */
-    function flickRepeaterMover(flick, repeater, pageheader, page)
+    function flickRepeaterMover(flick, repeater)
     {
         var itm = repeater.itemAt(upDownSelection)
-
-        if ((itm.y + itm.height) - flick.contentY > page.height)
-            flick.contentY = itm.y - ((page.height / itm.height) -1 ) * itm.height
-
-        if ((itm.y < flick.contentY))
-            flick.contentY = itm.y - pageheader.height
+        var minY = itm.y + itm.height - flick.height
+        var maxY = itm.y - repeater.itemAt(0).y
+        flick.contentY = Math.min(maxY, Math.max(minY, flick.contentY))
     }
-
 }
