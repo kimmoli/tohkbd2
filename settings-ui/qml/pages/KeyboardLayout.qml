@@ -10,8 +10,6 @@ Page
 {
     id: page
 
-    allowedOrientations: Orientation.Portrait | Orientation.Landscape | Orientation.LandscapeInverted
-
     backNavigation: !zoomin
     clip: true
 

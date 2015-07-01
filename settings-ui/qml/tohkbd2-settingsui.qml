@@ -10,6 +10,8 @@ ApplicationWindow
 {
     id: apppage
 
+    _defaultPageOrientations: Orientation.Portrait | Orientation.Landscape | Orientation.LandscapeInverted
+
     onApplicationActiveChanged:
     {
         if (!applicationActive && bugReportPageOpen)
