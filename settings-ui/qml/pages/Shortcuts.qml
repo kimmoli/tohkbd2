@@ -24,6 +24,12 @@ Page
         }
 
         onKeyBackspacePressed: pageStack.pop()
+
+        Connections
+        {
+            target: page
+            onOrientationTransitionRunningChanged: if (!orientationTransitionRunning) kbdif.flickRepeaterMover(flick, repeater)
+        }
     }
 
     SilicaFlickable
