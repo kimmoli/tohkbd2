@@ -289,6 +289,7 @@ void Tohkbd::handleDisplayStatus(const QDBusMessage& msg)
 bool Tohkbd::checkKeypadPresence()
 {
     bool __prev_keypadPresence = keypadIsPresent;
+
     if (!vddEnabled)
     {
         /* keyboard is being connected to base */
@@ -440,17 +441,13 @@ void Tohkbd::handleGpioInterrupt()
 
                 /* Process report only if it has correct length of 11 */
                 if (r.at(0) == 0x0b && r.at(1) == 0x00)
-                    keymap->process(r);
-
-                /* Check if interrupt line is still down, there is another report for us then */
-                if (readOneLineFromFile("/sys/class/gpio/gpio" GPIO_INT "/value") == "0")
                 {
-                    printf("Interrupt is still low. Reread report.\n");
-                    retries--;
+                    keymap->process(r);
+                    retries = -1;
                 }
                 else
                 {
-                    retries = -1;
+                    retries--;
                 }
             }
             else
@@ -472,124 +469,128 @@ void Tohkbd::handleKeyPressed(QList< QPair<int, int> > keyCode)
 {
     bool processAllKeys = true;
 
-    if (!displayIsOn && !slideEventEmitted)
+    /* No need to do this all if we are repeating */
+    if (!keyRepeat)
     {
-        emitKeypadSlideEvent(true);
-        /* slideEventEmitted is used to limit events to just one
-         * emitted once when key pressed while display is off
-         * it is reset when display turns on. */
-        slideEventEmitted = true;
-    }
-
-    checkDoWeNeedBacklight();
-
-    /* alt+TAB is the task-switcher */
-    if (keymap->alt->pressed && keyCode.at(0).first == KEY_TAB)
-    {
-        if (!taskSwitcherVisible)
+        if (!displayIsOn && !slideEventEmitted)
         {
-            /* show taskswitcher and advance one app */
-            taskSwitcherVisible = true;
-            tohkbd2user->call(QDBus::AutoDetect, "nextAppTaskSwitcher");
-            tohkbd2user->call(QDBus::AutoDetect, "showTaskSwitcher");
-        }
-        else
-        {
-            /* Toggle to next app */
-            tohkbd2user->call(QDBus::AutoDetect, "nextAppTaskSwitcher");
-        }
-        /* Don't process further */
-        keyIsPressed = true;
-        return;
-    }
-
-    /* Check custom key mappings */
-
-    if (keyCode.at(0).first > KEY_MAX)
-    {
-        switch (keyCode.at(0).first)
-        {
-            /* Sym-Int takes a screenshot */
-            case KEY_TOH_SCREENSHOT:
-                tohkbd2user->call(QDBus::AutoDetect, "takeScreenShot");
-                break;
-
-            /* Sym-Del toggles "selfie" led */
-            case KEY_TOH_SELFIE:
-                selfieLedOn = !selfieLedOn;
-                tca8424->setLeds(selfieLedOn ? LED_SELFIE_ON : LED_SELFIE_OFF);
-                break;
-
-            case KEY_TOH_NEWEMAIL:
-                {
-                QDBusMessage m = QDBusMessage::createMethodCall("com.jolla.email.ui",
-                                                                "/com/jolla/email/ui",
-                                                                "",
-                                                                "mailto" );
-
-                QList<QVariant> args;
-                args.append(QStringList() << "mailto:");
-                m.setArguments(args);
-
-                QDBusConnection::sessionBus().send(m);
-                }
-                break;
-
-            default:
-                break;
+            emitKeypadSlideEvent(true);
+            /* slideEventEmitted is used to limit events to just one
+             * emitted once when key pressed while display is off
+             * it is reset when display turns on. */
+            slideEventEmitted = true;
         }
 
-        /* Don't process further */
-        keyIsPressed = true;
-        return;
-    }
+        checkDoWeNeedBacklight();
 
-    /* if F1...F12 key is pressed then launch detached process */
-
-    if (FKEYS.contains(keyCode.at(0).first))
-    {
-        QString cmd = applicationShortcuts[keyCode.at(0).first];
-
-        if (!cmd.isEmpty())
+        /* alt+TAB is the task-switcher */
+        if (keymap->alt->pressed && keyCode.at(0).first == KEY_TAB)
         {
-            printf("Requesting user daemon to start %s\n", qPrintable(cmd));
+            if (!taskSwitcherVisible)
+            {
+                /* show taskswitcher and advance one app */
+                taskSwitcherVisible = true;
+                tohkbd2user->call(QDBus::AutoDetect, "nextAppTaskSwitcher");
+                tohkbd2user->call(QDBus::AutoDetect, "showTaskSwitcher");
+            }
+            else
+            {
+                /* Toggle to next app */
+                tohkbd2user->call(QDBus::AutoDetect, "nextAppTaskSwitcher");
+            }
+            /* Don't process further */
+            keyIsPressed = true;
+            return;
+        }
 
-            QList<QVariant> args;
-            args.append(cmd);
-            tohkbd2user->callWithArgumentList(QDBus::AutoDetect, "launchApplication", args);
+        /* Check custom key mappings */
+
+        if (keyCode.at(0).first > KEY_MAX)
+        {
+            switch (keyCode.at(0).first)
+            {
+                /* Sym-Int takes a screenshot */
+                case KEY_TOH_SCREENSHOT:
+                    tohkbd2user->call(QDBus::AutoDetect, "takeScreenShot");
+                    break;
+
+                /* Sym-Del toggles "selfie" led */
+                case KEY_TOH_SELFIE:
+                    selfieLedOn = !selfieLedOn;
+                    tca8424->setLeds(selfieLedOn ? LED_SELFIE_ON : LED_SELFIE_OFF);
+                    break;
+
+                case KEY_TOH_NEWEMAIL:
+                    {
+                    QDBusMessage m = QDBusMessage::createMethodCall("com.jolla.email.ui",
+                                                                    "/com/jolla/email/ui",
+                                                                    "",
+                                                                    "mailto" );
+
+                    QList<QVariant> args;
+                    args.append(QStringList() << "mailto:");
+                    m.setArguments(args);
+
+                    QDBusConnection::sessionBus().send(m);
+                    }
+                    break;
+
+                default:
+                    break;
+            }
 
             /* Don't process further */
             keyIsPressed = true;
             return;
         }
-    }
 
-    /* Catch ctrl-alt-del (Works only from left ctrl or stickies) */
+        /* if F1...F12 key is pressed then launch detached process */
 
-    if (keymap->alt->pressed && keymap->ctrl->pressed && keyCode.at(0).first == KEY_DELETE)
-    {
-        printf("Requesting user daemon to reboot with remorse.\n");
+        if (FKEYS.contains(keyCode.at(0).first))
+        {
+            QString cmd = applicationShortcuts[keyCode.at(0).first];
 
-        QList<QVariant> args;
-        args.append(QString(ACTION_REBOOT_REMORSE));
-        tohkbd2user->callWithArgumentList(QDBus::AutoDetect, "actionWithRemorse", args);
+            if (!cmd.isEmpty())
+            {
+                printf("Requesting user daemon to start %s\n", qPrintable(cmd));
 
-        keyIsPressed = true;
-        return;
-    }
+                QList<QVariant> args;
+                args.append(cmd);
+                tohkbd2user->callWithArgumentList(QDBus::AutoDetect, "launchApplication", args);
 
-    /* Catch ctrl-alt-backspace to restart lipstick (Works only from left ctrl or stickies) */
+                /* Don't process further */
+                keyIsPressed = true;
+                return;
+            }
+        }
 
-    if (keymap->alt->pressed && keymap->ctrl->pressed && keyCode.at(0).first == KEY_BACKSPACE)
-    {
-        printf("Requesting user daemon to restart lipstick with remorse.\n");
+        /* Catch ctrl-alt-del (Works only from left ctrl or stickies) */
 
-        QList<QVariant> args;
-        args.append(QString(ACTION_RESTART_LIPSTICK_REMORSE));
-        tohkbd2user->callWithArgumentList(QDBus::AutoDetect, "actionWithRemorse", args);
+        if (keymap->alt->pressed && keymap->ctrl->pressed && keyCode.at(0).first == KEY_DELETE)
+        {
+            printf("Requesting user daemon to reboot with remorse.\n");
 
-        keyIsPressed = true;
-        return;
+            QList<QVariant> args;
+            args.append(QString(ACTION_REBOOT_REMORSE));
+            tohkbd2user->callWithArgumentList(QDBus::AutoDetect, "actionWithRemorse", args);
+
+            keyIsPressed = true;
+            return;
+        }
+
+        /* Catch ctrl-alt-backspace to restart lipstick (Works only from left ctrl or stickies) */
+
+        if (keymap->alt->pressed && keymap->ctrl->pressed && keyCode.at(0).first == KEY_BACKSPACE)
+        {
+            printf("Requesting user daemon to restart lipstick with remorse.\n");
+
+            QList<QVariant> args;
+            args.append(QString(ACTION_RESTART_LIPSTICK_REMORSE));
+            tohkbd2user->callWithArgumentList(QDBus::AutoDetect, "actionWithRemorse", args);
+
+            keyIsPressed = true;
+            return;
+        }
     }
 
     if (processAllKeys)
@@ -646,8 +647,23 @@ void Tohkbd::handleKeyPressed(QList< QPair<int, int> > keyCode)
  */
 void Tohkbd::repeatTimerTimeout()
 {
+    if (!keyRepeat)
+    {
+        /* Check is the interrupt stuck down on first repeat timer timeout*/
+        if (readOneLineFromFile("/sys/class/gpio/gpio" GPIO_INT "/value") == "0")
+        {
+            printf("repeatTimerTimeout: interrupt is active, trying to handle it now.\n");
+            handleGpioInterrupt();
+            return;
+        }
+    }
+
     keyRepeat = true;
     handleKeyPressed(lastKeyCode);
+
+    /* Keep backlight on when repeating if it was turned on when key pressed first time */
+    if (backlightTimer->isActive())
+        backlightTimer->start();
 }
 
 /* Stop repeat timer when key released
@@ -906,6 +922,12 @@ void Tohkbd::presenceTimerTimeout()
     if (checkKeypadPresence())
     {
         presenceTimer->start();
+
+        if (readOneLineFromFile("/sys/class/gpio/gpio" GPIO_INT "/value") == "0")
+        {
+            printf("checkKeypadPresence: interrupt is active, trying to handle it now.\n");
+            handleGpioInterrupt();
+        }
     }
 }
 
