@@ -232,7 +232,7 @@ Page
             Label
             {
                 //: Description text for sticky and locking modifier keys
-                //% "Sticky modifiers will toggle when pressed once and released after pressing any other key. Locking modifier will lock on double-press and released on third. In both modes you can also use them as normal modifier keys"
+                //% "Sticky modifiers will toggle when pressed once and released after pressing any other key. Locking modifier will lock on double-press and released on third. In both modes you can also use them as normal modifier keys."
                 text: qsTrId("sticky-desc")
                 wrapMode: Text.Wrap
                 font.pixelSize: Theme.fontSizeExtraSmall

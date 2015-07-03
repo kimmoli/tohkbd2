@@ -50,7 +50,7 @@
     </message>
     <message id="report-a-bug">
         <source>Report a bug</source>
-        <extracomment>Main menu selection for FAQ and reporting an issue</extracomment>
+        <extracomment>Main menu selection for FAQ and reporting an issue, page header for bug reporter page. button text for triggering email app.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message id="faq-text">
@@ -66,11 +66,6 @@
     <message id="report-text">
         <source>If there is no answer to your issue, please report it. Button below launches email client.</source>
         <extracomment>Description above report issue -button</extracomment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message id="report-button">
-        <source>Report issue</source>
-        <extracomment>Button text, clicking this will launch email app</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message id="customize-key-header">
@@ -179,7 +174,8 @@
         <translation type="unfinished"></translation>
     </message>
     <message id="sticky-desc">
-        <source>Sticky modifiers will toggle when pressed once and released after pressing any other key. Locking modifier will lock on double-press and released on third. In both modes you can also use them as normal modifier keys</source>
+        <source>Sticky modifiers will toggle when pressed once and released after pressing any other key. Locking modifier will lock on double-press and released on third. In both modes you can also use them as normal modifier keys.</source>
+        <oldsource>Sticky modifiers will toggle when pressed once and released after pressing any other key. Locking modifier will lock on double-press and released on third. In both modes you can also use them as normal modifier keys</oldsource>
         <extracomment>Description text for sticky and locking modifier keys</extracomment>
         <translation type="unfinished"></translation>
     </message>

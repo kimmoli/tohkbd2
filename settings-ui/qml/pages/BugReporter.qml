@@ -97,9 +97,7 @@ Page
             }
             Button
             {
-                //: Button text, clicking this will launch email app
-                //% "Report issue"
-                text: qsTrId("report-button")
+                text: qsTrId("report-a-bug")
                 anchors.horizontalCenter: column.horizontalCenter
                 onClicked:
                 {

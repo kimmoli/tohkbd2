@@ -124,7 +124,7 @@ Page
             //% "General settings"
             settingslist.append({"labelId": qsTrId("general-settings"),  "iconId":"image://theme/icon-m-developer-mode", "pageId":"GeneralSettings.qml", "isEnabled":(daemonVersion !== "N/A")})
 
-            //: Main menu selection for FAQ and reporting an issue
+            //: Main menu selection for FAQ and reporting an issue, page header for bug reporter page. button text for triggering email app.
             //% "Report a bug"
             settingslist.append({"labelId": qsTrId("report-a-bug"),      "iconId":"image://theme/icon-m-crash-reporter", "pageId":"BugReporter.qml",     "isEnabled":true})
         }
