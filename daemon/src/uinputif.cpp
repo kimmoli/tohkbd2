@@ -24,7 +24,7 @@ static const char conf_devname[] = "tohkbd";
 
 int UinputIf::fd = -1;
 
-static const int eventsToRegister[] = { EV_KEY, EV_SW, EV_SYN,
+static const int eventsToRegister[] = { EV_KEY, EV_SW, EV_SYN, EV_LED,
                                         -1 };
 
 static const int keysToRegister[] = {  KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT,KEY_HOME, KEY_END, KEY_PAGEDOWN, KEY_PAGEUP,
@@ -42,6 +42,9 @@ static const int keysToRegister[] = {  KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT,KEY
                                            -1 };
 
 static const int switchesToRegister[] = { SW_LID, SW_KEYPAD_SLIDE,
+                                          -1 };
+
+static const int ledsToRegister[] = { LED_CAPSL,
                                           -1 };
 
 UinputIf::UinputIf(QObject *parent) :
@@ -94,6 +97,16 @@ int UinputIf::openUinputDevice()
         if (ioctl(fd, UI_SET_SWBIT, switchesToRegister[i]) < 0)
         {
             printf("uinput: error: ioctl UI_SET_SWBIT %d\n", i);
+            return false;
+        }
+    }
+
+    /* Enable selected LEDs */
+    for (i=0; ledsToRegister[i] != -1; i++)
+    {
+        if (ioctl(fd, UI_SET_LEDBIT, ledsToRegister[i]) < 0)
+        {
+            printf("uinput: error: ioctl UI_SET_LEDBIT %d\n", i);
             return false;
         }
     }
