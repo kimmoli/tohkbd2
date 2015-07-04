@@ -3,7 +3,9 @@ TARGET = harbour-tohkbd2
 QT += dbus
 QT -= gui
 
-system(qdbusxml2cpp config/com.kimmoli.tohkbd2.xml -i src/tohkeyboard.h -a src/adaptor)
+# D-bus adaptor and interface
+system(qdbusxml2cpp config/com.kimmoli.tohkbd2.xml -i src/tohkeyboard.h -a src/daemonAdaptor)
+system(qdbusxml2cpp config/com.kimmoli.tohkbd2.xml -p ../daemon/src/daemonInterface)
 
 DEFINES += "APPVERSION=\\\"$${SPECVERSION}\\\""
 
@@ -34,9 +36,10 @@ SOURCES += \
     src/driverBase.cpp \
     src/tca8424driver.cpp \
     src/keymapping.cpp \
-    src/adaptor.cpp \
+    src/daemonAdaptor.cpp \
     src/eepromdriver.cpp \
-    src/modifierhandler.cpp
+    src/modifierhandler.cpp \
+    ../user-daemon/src/userInterface.cpp
 
 HEADERS += \
     src/toh.h \
@@ -46,11 +49,12 @@ HEADERS += \
     src/driverBase.h \
     src/tca8424driver.h \
     src/keymapping.h \
-    src/adaptor.h \
+    src/daemonAdaptor.h \
     src/defaultSettings.h \
     src/eepromdriver.h \
     src/keymapping_lut.h \
-    src/modifierhandler.h
+    src/modifierhandler.h \
+    ../user-daemon/src/userInterface.h
 
 OTHER_FILES += \
     config/$${TARGET}.service \

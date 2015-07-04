@@ -51,7 +51,7 @@ Tohkbd::Tohkbd(QObject *parent) :
     fix_CapsLock = !checkSailfishVersion("1.1.7.0");
     capsLock = false;
 
-    tohkbd2user = new QDBusInterface("com.kimmoli.tohkbd2user", "/", "com.kimmoli.tohkbd2user", QDBusConnection::sessionBus(), this);
+    tohkbd2user = new ComKimmoliTohkbd2userInterface("com.kimmoli.tohkbd2user", "/", QDBusConnection::sessionBus(), this);
     tohkbd2user->setTimeout(2000);
 
     thread = new QThread();
@@ -132,9 +132,7 @@ Tohkbd::~Tohkbd()
     /* Restore orientation when shutting down */
     if (forceLandscapeOrientation)
     {
-        QList<QVariant> args;
-        args.append(currentOrientationLock);
-        tohkbd2user->callWithArgumentList(QDBus::AutoDetect, "setOrientationLock", args);
+        tohkbd2user->setOrientationLock(currentOrientationLock);
     }
 
     uinputif->closeUinputDevice();
@@ -151,7 +149,7 @@ Tohkbd::~Tohkbd()
         connection.unregisterService(SERVICE);
 
         printf("tohkbd2: unregistered from dbus systemBus\n");
-        tohkbd2user->call(QDBus::AutoDetect, "quit");
+        tohkbd2user->quit();
     }
 }
 
@@ -490,13 +488,13 @@ void Tohkbd::handleKeyPressed(QList< QPair<int, int> > keyCode)
             {
                 /* show taskswitcher and advance one app */
                 taskSwitcherVisible = true;
-                tohkbd2user->call(QDBus::AutoDetect, "nextAppTaskSwitcher");
-                tohkbd2user->call(QDBus::AutoDetect, "showTaskSwitcher");
+                tohkbd2user->nextAppTaskSwitcher();
+                tohkbd2user->showTaskSwitcher();
             }
             else
             {
                 /* Toggle to next app */
-                tohkbd2user->call(QDBus::AutoDetect, "nextAppTaskSwitcher");
+                tohkbd2user->nextAppTaskSwitcher();
             }
             /* Don't process further */
             keyIsPressed = true;
@@ -511,7 +509,7 @@ void Tohkbd::handleKeyPressed(QList< QPair<int, int> > keyCode)
             {
                 /* Sym-Int takes a screenshot */
                 case KEY_TOH_SCREENSHOT:
-                    tohkbd2user->call(QDBus::AutoDetect, "takeScreenShot");
+                    tohkbd2user->takeScreenShot();
                     break;
 
                 /* Sym-Del toggles "selfie" led */
@@ -554,9 +552,7 @@ void Tohkbd::handleKeyPressed(QList< QPair<int, int> > keyCode)
             {
                 printf("Requesting user daemon to start %s\n", qPrintable(cmd));
 
-                QList<QVariant> args;
-                args.append(cmd);
-                tohkbd2user->callWithArgumentList(QDBus::AutoDetect, "launchApplication", args);
+                tohkbd2user->launchApplication(cmd);
 
                 /* Don't process further */
                 keyIsPressed = true;
@@ -570,9 +566,7 @@ void Tohkbd::handleKeyPressed(QList< QPair<int, int> > keyCode)
         {
             printf("Requesting user daemon to reboot with remorse.\n");
 
-            QList<QVariant> args;
-            args.append(QString(ACTION_REBOOT_REMORSE));
-            tohkbd2user->callWithArgumentList(QDBus::AutoDetect, "actionWithRemorse", args);
+            tohkbd2user->actionWithRemorse(ACTION_REBOOT_REMORSE);
 
             keyIsPressed = true;
             return;
@@ -584,9 +578,7 @@ void Tohkbd::handleKeyPressed(QList< QPair<int, int> > keyCode)
         {
             printf("Requesting user daemon to restart lipstick with remorse.\n");
 
-            QList<QVariant> args;
-            args.append(QString(ACTION_RESTART_LIPSTICK_REMORSE));
-            tohkbd2user->callWithArgumentList(QDBus::AutoDetect, "actionWithRemorse", args);
+            tohkbd2user->actionWithRemorse(ACTION_RESTART_LIPSTICK_REMORSE);
 
             keyIsPressed = true;
             return;
@@ -718,7 +710,7 @@ void Tohkbd::handleAltChanged()
     {
         /* hide taskswitcher when alt is released
          * this will also activate selected application */
-        tohkbd2user->call(QDBus::AutoDetect, "hideTaskSwitcher");
+        tohkbd2user->hideTaskSwitcher();
         taskSwitcherVisible = false;
     }
 }
@@ -830,7 +822,7 @@ void Tohkbd::backlightTimerTimeout()
  */
 void Tohkbd::changeActiveLayout(bool justGetIt)
 {
-    QString __currentActiveLayout = tohkbd2user->call(QDBus::AutoDetect, "getActiveLayout").arguments().at(0).toString();
+    QString __currentActiveLayout = tohkbd2user->getActiveLayout();
 
     printf("Current layout is %s\n", qPrintable(__currentActiveLayout));
 
@@ -856,16 +848,12 @@ void Tohkbd::changeActiveLayout(bool justGetIt)
     if (vkbLayoutIsTohkbd)
     {
         printf("Changing to tohkbd\n");
-        QList<QVariant> args;
-        args.append("harbour-tohkbd2.qml");
-        tohkbd2user->callWithArgumentList(QDBus::AutoDetect, "setActiveLayout", args);
+        tohkbd2user->setActiveLayout("harbour-tohkbd2.qml");
     }
     else if (currentActiveLayout.contains("qml"))
     {
         printf("Changing to %s\n", qPrintable(currentActiveLayout));
-        QList<QVariant> args;
-        args.append(currentActiveLayout);
-        tohkbd2user->callWithArgumentList(QDBus::AutoDetect, "setActiveLayout", args);
+        tohkbd2user->setActiveLayout(currentActiveLayout);
     }
 }
 
@@ -888,16 +876,12 @@ void Tohkbd::changeOrientationLock(bool justGetIt)
     if (keypadIsPresent)
     {
         /* Force to landscape if keypad is present */
-        QList<QVariant> args;
-        args.append("landscape");
-        tohkbd2user->callWithArgumentList(QDBus::AutoDetect, "setOrientationLock", args);
+        tohkbd2user->setOrientationLock("landscape");
     }
     else if (!currentOrientationLock.isEmpty())
     {
         /* Or return the previous value, if we have one */
-        QList<QVariant> args;
-        args.append(currentOrientationLock);
-        tohkbd2user->callWithArgumentList(QDBus::AutoDetect, "setOrientationLock", args);
+        tohkbd2user->setOrientationLock(currentOrientationLock);
     }
 }
 
@@ -1140,15 +1124,11 @@ void Tohkbd::setSettingInt(const QString &key, const int &value)
 
         if (value == 0 && !currentOrientationLock.isEmpty())
         {
-            QList<QVariant> args;
-            args.append(currentOrientationLock);
-            tohkbd2user->callWithArgumentList(QDBus::AutoDetect, "setOrientationLock", args);
+            tohkbd2user->setOrientationLock(currentOrientationLock);
         }
         else if (value == 1 && keypadIsPresent)
         {
-            QList<QVariant> args;
-            args.append("landscape");
-            tohkbd2user->callWithArgumentList(QDBus::AutoDetect, "setOrientationLock", args);
+            tohkbd2user->setOrientationLock("landscape");
         }
     }
     else if (key == "stickyShiftEnabled" && (value == 0 || value == 1))
@@ -1229,9 +1209,7 @@ void Tohkbd::setSettingString(const QString &key, const QString &value)
 /* Tell user daemon to show notification */
 void Tohkbd::keyboardConnectedNotification(bool connected)
 {
-    QList<QVariant> args;
-    args.append(connected);
-    tohkbd2user->callWithArgumentList(QDBus::AutoDetect, "showKeyboardConnectionNotification", args);
+    tohkbd2user->showKeyboardConnectionNotification(connected);
 }
 
 /** DBUS Test methods */

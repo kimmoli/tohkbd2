@@ -13,7 +13,7 @@
 #include <sys/types.h>
 #include "tohkeyboard.h"
 #include "toh.h"
-#include "adaptor.h"
+#include "daemonAdaptor.h"
 
 #include <QtCore/QCoreApplication>
 #include <QDBusConnection>

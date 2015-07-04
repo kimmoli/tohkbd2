@@ -20,7 +20,7 @@
 #include <sailfishapp.h>
 
 #include "userdaemon.h"
-#include "adaptor.h"
+#include "userAdaptor.h"
 #include "viewhelper.h"
 #include "applauncher.h"
 #include "screenshot.h"

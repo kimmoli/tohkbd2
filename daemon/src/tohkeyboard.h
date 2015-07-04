@@ -21,6 +21,7 @@
 
 #include "tca8424driver.h"
 #include "keymapping.h"
+#include "../user-daemon/src/userInterface.h"
 
 #define SERVICE_NAME "com.kimmoli.tohkbd2"
 #define EVDEV_OFFSET (8)
@@ -136,7 +137,7 @@ private:
     bool selfieLedOn;
     bool capsLock;
 
-    QDBusInterface *tohkbd2user;
+    ComKimmoliTohkbd2userInterface *tohkbd2user;
 
     QByteArray FKEYS;
 

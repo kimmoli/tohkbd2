@@ -1,4 +1,8 @@
 *~
 *.pro.user
-adaptor.*
+*.pro.user.*
 *.qm
+userAdaptor.*
+userInterface.*
+daemonAdaptor.*
+daemonInterface.*

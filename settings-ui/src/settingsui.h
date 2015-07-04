@@ -7,6 +7,9 @@
 #include <QObject>
 #include <QVariantList>
 
+#include "../daemon/src/daemonInterface.h"
+#include "../user-daemon/src/userInterface.h"
+
 class SettingsUi : public QObject
 {
     Q_OBJECT
@@ -34,8 +37,10 @@ signals:
     void shortcutsChanged();
     void settingsChanged();
 
-    //private:
+private:
 
+    ComKimmoliTohkbd2Interface *tohkbd2daemon;
+    ComKimmoliTohkbd2userInterface *tohkbd2user;
 };
 
 
