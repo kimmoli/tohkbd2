@@ -126,7 +126,7 @@ QVariantList SettingsUi::getCurrentShortcuts()
 
     for (int i = KEY_1 ; i<=KEY_EQUAL ; i++)
     {
-        QString appPath = settings.value(QString("KEY_F%1").arg((i-KEY_1)+1), "none" ).toString();
+        QString appPath = settings.value(QString("KEY_F%1").arg((i-KEY_1)+1), "" ).toString();
         map.clear();
         map.insert("key", QString("F%1").arg((i-KEY_1)+1));
         map.insert("filePath", appPath);
@@ -134,18 +134,26 @@ QVariantList SettingsUi::getCurrentShortcuts()
         MDesktopEntry app(appPath);
 
         if (app.isValid())
+        {
             map.insert("name", app.name());
-        else
-            map.insert("name", "Not configured");
 
-        if (app.icon().startsWith("icon-launcher-") || app.icon().startsWith("icon-l-") || app.icon().startsWith("icons-Applications"))
-            map.insert("iconId", QString("image://theme/%1").arg(app.icon()));
-        else if (app.icon().startsWith("/"))
-            map.insert("iconId", QString("%1").arg(app.icon()));
-        else
-            map.insert("iconId", QString("/usr/share/icons/hicolor/86x86/apps/%1.png").arg(app.icon()));
+            if (app.icon().startsWith("icon-launcher-") || app.icon().startsWith("icon-l-") || app.icon().startsWith("icons-Applications"))
+                map.insert("iconId", QString("image://theme/%1").arg(app.icon()));
+            else if (app.icon().startsWith("/"))
+                map.insert("iconId", QString("%1").arg(app.icon()));
+            else
+                map.insert("iconId", QString("/usr/share/icons/hicolor/86x86/apps/%1.png").arg(app.icon()));
 
-        map.insert("isAndroid", app.exec().contains("apkd-launcher"));
+            map.insert("isAndroid", app.exec().contains("apkd-launcher"));
+        }
+        else
+        {
+            //: Label shown instead of application name if Fn is not configured
+            //% "Not configured"
+            map.insert("name", qtTrId("shortcut-not-configured"));
+            map.insert("iconId", QString());
+            map.insert("isAndroid", false);
+        }
 
         tmp.append(map);
     }
@@ -161,6 +169,8 @@ void SettingsUi::setShortcut(QString key, QString appPath)
 
     tohkbd2daemon->setShortcut(key, appPath);
 
+    QThread::msleep(200);
+
     emit shortcutsChanged();
 }
 
@@ -169,6 +179,8 @@ void SettingsUi::setSettingInt(QString key, int value)
     qDebug() << "setting" << key << "to" << value;
 
     tohkbd2daemon->setSettingInt(key, value);
+
+    QThread::msleep(200);
 
     emit settingsChanged();
 }
@@ -179,6 +191,8 @@ void SettingsUi::setSettingString(QString key, QString value)
 
     tohkbd2daemon->setSettingString(key, value);
 
+    QThread::msleep(200);
+
     emit settingsChanged();
 }
 
@@ -187,6 +201,8 @@ void SettingsUi::setShortcutsToDefault()
     qDebug() << "setting all shortcuts to default";
 
     tohkbd2daemon->setShortcutsToDefault();
+
+    QThread::msleep(200);
 
     emit shortcutsChanged();
 }
@@ -208,6 +224,8 @@ void SettingsUi::setSettingsToDefault()
     setSettingInt("lockingCtrlEnabled", LOCKING_CTRL_ENABLED ? 1 : 0);
     setSettingInt("lockingAltEnabled", LOCKING_ALT_ENABLED ? 1 : 0);
     setSettingInt("lockingSymEnabled", LOCKING_SYM_ENABLED ? 1 : 0);
+
+    QThread::msleep(200);
 
     emit settingsChanged();
 }

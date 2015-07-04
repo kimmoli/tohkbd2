@@ -74,6 +74,8 @@ Page
                     id: shortcutItem
                     highlighted: down || kbdif.upDownSelection === index
 
+                    height: Theme.itemSizeLarge
+
                     Image
                     {
                         id: keyFrame
@@ -141,8 +143,6 @@ Page
                         truncationMode: TruncationMode.Fade
                         text: name
                     }
-
-                    height: Theme.itemSizeLarge
 
                     onClicked:
                     {

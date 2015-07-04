@@ -29,6 +29,21 @@ Page
             }
         }
 
+        PullDownMenu
+        {
+            MenuItem
+            {
+                //: Pulldown menu option clear shortcut. Allows using Fn as Fn
+                //% "Nothing, use as %1"
+                text: qsTrId("shortcut-nothing").arg(keyId)
+                onClicked:
+                {
+                    selected(keyId, "")
+                    pageStack.pop()
+                }
+            }
+        }
+
         model: applicationsModel
 
         delegate: Rectangle

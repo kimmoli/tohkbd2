@@ -241,5 +241,15 @@
         <extracomment>Main menu selection for layout selection</extracomment>
         <translation type="unfinished"></translation>
     </message>
+    <message id="shortcut-not-configured">
+        <source>Not configured</source>
+        <extracomment>Label shown instead of application name if Fn is not configured</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message id="shortcut-nothing">
+        <source>Nothing, use as %1</source>
+        <extracomment>Pulldown menu option clear shortcut. Allows using Fn as Fn</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 </TS>

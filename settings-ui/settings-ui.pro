@@ -12,7 +12,7 @@ PKGCONFIG += mlite5 sailfishapp
 
 DEFINES += "APPVERSION=\\\"$${SPECVERSION}\\\""
 
-#system(lupdate qml -no-obsolete -ts $$PWD/i18n/engineering_en.ts)
+#system(lupdate src qml -no-obsolete -ts $$PWD/i18n/engineering_en.ts)
 system(lrelease -idbased $$PWD/i18n/*.ts)
 
 translations.path = /usr/share/$${TARGET}/i18n
