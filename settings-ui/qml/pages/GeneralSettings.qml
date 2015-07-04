@@ -66,7 +66,13 @@ Page
                 description: qsTrId("bg-always-on-desc")
                 onCheckedChanged: settingsui.setSettingInt("forceBacklightOn", checked ? 1 : 0)
                 width: parent.width - 2*Theme.paddingLarge
-                Component.onCompleted: checked = settings["forceBacklightOn"]
+                Component.onCompleted:
+                {
+                    checked = settings["forceBacklightOn"]
+                    /* Update to restore if overridden with key-combo Sym+Home */
+                    if (!checked)
+                        settingsui.setSettingInt("forceBacklightOn", 0)
+                }
             }
             TextSwitch
             {
