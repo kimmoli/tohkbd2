@@ -97,7 +97,7 @@ void modifierHandler::set(bool state, bool alone)
 
 void modifierHandler::clear(bool force)
 {
-    /* If tere is something to clear, clear */
+    /* If there is something to clear, clear */
     if ((pressed && !down && !locked) || force)
     {
         locked = false;
