@@ -1027,9 +1027,9 @@ void Tohkbd::saveOrientation()
  */
 void Tohkbd::setShortcut(const QString &key, const QString &appPath)
 {
-    printf("shortcut %s = %s\n", qPrintable(key), qPrintable(appPath));
+    printf("shortcut %s = \"%s\"\n", qPrintable(key), qPrintable(appPath));
 
-    if (key.startsWith("F") && appPath.contains(".desktop"))
+    if (key.startsWith("F") && (appPath.contains(".desktop") || appPath.isEmpty()))
     {
         QSettings settings(QSettings::SystemScope, "harbour-tohkbd2", "tohkbd2");
 
