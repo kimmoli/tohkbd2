@@ -64,7 +64,7 @@ int UinputIf::openUinputDevice()
     struct uinput_user_dev uidev;
 
 
-    fd = open("/dev/uinput", O_WRONLY | O_NONBLOCK);
+    fd = open("/dev/uinput", O_RDWR | O_NONBLOCK);
     if (fd < 0)
     {
         printf("uinput: error: open\n");

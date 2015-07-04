@@ -39,7 +39,8 @@ SOURCES += \
     src/daemonAdaptor.cpp \
     src/eepromdriver.cpp \
     src/modifierhandler.cpp \
-    ../user-daemon/src/userInterface.cpp
+    ../user-daemon/src/userInterface.cpp \
+    src/uinputevpoll.cpp
 
 HEADERS += \
     src/toh.h \
@@ -54,7 +55,8 @@ HEADERS += \
     src/eepromdriver.h \
     src/keymapping_lut.h \
     src/modifierhandler.h \
-    ../user-daemon/src/userInterface.h
+    ../user-daemon/src/userInterface.h \
+    src/uinputevpoll.h
 
 OTHER_FILES += \
     config/$${TARGET}.service \

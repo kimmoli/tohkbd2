@@ -20,6 +20,8 @@ public:
     int sendUinputKeyPress(unsigned int code, int val);
     int sendUinputSwitch(unsigned int code, int val);
 
+    int getFd() { return fd; }
+
 signals:
 
 public slots:

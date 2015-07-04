@@ -83,6 +83,19 @@ Tohkbd::Tohkbd(QObject *parent) :
     uinputif = new UinputIf();
     uinputif->openUinputDevice();
 
+    uinputevpoll = new UinputEvPoll();
+    evpollThread = new QThread();
+
+    uinputevpoll->moveToThread(evpollThread);
+    connect(uinputevpoll, SIGNAL(capsLockLedChanged(bool)), this, SLOT(capsLockLedState(bool)));
+    connect(uinputevpoll, SIGNAL(pollingRequested()), evpollThread, SLOT(start()));
+    connect(evpollThread, SIGNAL(started()), uinputevpoll, SLOT(doPoll()));
+    connect(uinputevpoll, SIGNAL(finished()), evpollThread, SLOT(quit()), Qt::DirectConnection);
+
+    uinputevpoll->requestPolling(uinputif->getFd());
+
+    printf("uinputevpoll->requestPolling(uinputif->getFd());\n");
+
     tca8424 = new tca8424driver(0x3b);
     keymap = new keymapping();
 
@@ -726,26 +739,15 @@ void Tohkbd::handleSymChanged()
     checkDoWeNeedBacklight();
 }
 
-
+/* Press caps-lock key once, toggles it state
+ * led state is controlled by system through EV_LED
+ */
 void Tohkbd::toggleCapsLock()
 {
     uinputif->sendUinputKeyPress(KEY_CAPSLOCK, 1);
     QThread::msleep(KEYREPEAT_RATE);
     uinputif->sendUinputKeyPress(KEY_CAPSLOCK, 0);
     uinputif->synUinputDevice();
-
-    capsLock = !capsLock;
-
-    if (capsLock)
-    {
-        tca8424->setLeds(LED_CAPSLOCK_ON);
-        printf("CapsLock on\n");
-    }
-    else
-    {
-        tca8424->setLeds(LED_CAPSLOCK_OFF);
-        printf("CapsLock off\n");
-    }
 }
 
 
@@ -1325,5 +1327,26 @@ bool Tohkbd::checkSailfishVersion(QString versionToCompare)
     {
         printf("Sailfish version check failed!\n");
         return false;
+    }
+}
+
+/* UinputEvPoll will emit signal if caps lock led state is seen in evdev
+ */
+void Tohkbd::capsLockLedState(bool state)
+{
+    if (state != capsLock)
+    {
+        printf("caps lock led state changed to %s\n", state ? "on" : "off");
+
+        capsLock = state;
+
+        if (capsLock)
+        {
+            tca8424->setLeds(LED_CAPSLOCK_ON);
+        }
+        else
+        {
+            tca8424->setLeds(LED_CAPSLOCK_OFF);
+        }
     }
 }

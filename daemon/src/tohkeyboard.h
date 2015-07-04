@@ -18,6 +18,7 @@
 #include <QHash>
 
 #include "uinputif.h"
+#include "uinputevpoll.h"
 
 #include "tca8424driver.h"
 #include "keymapping.h"
@@ -53,6 +54,7 @@ public slots:
     void handleKeyReleased();
 
     void toggleCapsLock();
+    void capsLockLedState(bool state);
 
     /* timer timeouts */
     void backlightTimerTimeout();
@@ -100,6 +102,8 @@ private:
     QThread *thread;
     Worker *worker;
     UinputIf *uinputif;
+    UinputEvPoll *uinputevpoll;
+    QThread *evpollThread;
     tca8424driver *tca8424;
     keymapping *keymap;
 
