@@ -242,7 +242,7 @@ static const int lut_sym[] =
     0xCC, KEY_RIGHTBRACE, 0,            /* L ] */
     0xCD, KEY_9, FORCE_SHIFT,           /* Ö ( */
     0xCE, KEY_0, FORCE_SHIFT,           /* Ä ) */
-    //0xD1, KEY_HOME, 0,
+    0xD1, KEY_TOH_BACKLIGHT, 0,         /* Home */
     0xD2, KEY_PAGEDOWN, 0,              /* Down */
     //0xD3, KEY_END, 0,
     0xD4, KEY_SEMICOLON, FORCE_SHIFT,   /* Z : */

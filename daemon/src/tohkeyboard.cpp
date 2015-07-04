@@ -518,6 +518,11 @@ void Tohkbd::handleKeyPressed(QList< QPair<int, int> > keyCode)
                     tca8424->setLeds(selfieLedOn ? LED_SELFIE_ON : LED_SELFIE_OFF);
                     break;
 
+                case KEY_TOH_BACKLIGHT:
+                    forceBacklightOn = !forceBacklightOn;
+                    checkDoWeNeedBacklight();
+                    break;
+
                 case KEY_TOH_NEWEMAIL:
                     {
                     QDBusMessage m = QDBusMessage::createMethodCall("com.jolla.email.ui",

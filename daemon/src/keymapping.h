@@ -18,6 +18,7 @@
 #define KEY_TOH_SCREENSHOT (KEY_MAX+1)
 #define KEY_TOH_SELFIE     (KEY_MAX+2)
 #define KEY_TOH_NEWEMAIL   (KEY_MAX+3)
+#define KEY_TOH_BACKLIGHT  (KEY_MAX+4)
 
 class keymapping : public QObject
 {
