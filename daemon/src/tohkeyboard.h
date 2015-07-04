@@ -79,14 +79,12 @@ private:
     QString readOneLineFromFile(const QString &fileName);
     void checkDoWeNeedBacklight();
     QList<unsigned int> readEepromConfig();
-    void changeActiveLayout(bool justGetIt = false);
     void changeOrientationLock(bool justGetIt = false);
     bool setVddState(bool state);
     bool setInterruptEnable(bool);
     void emitKeypadSlideEvent(bool openKeypad);
-    bool checkKeypadPresence();
+    bool checkKeypadPresence(bool firstRun = false);
     void reloadSettings();
-    void saveActiveLayout();
     void saveOrientation();
     void keyboardConnectedNotification(bool connected);
     void checkEEPROM();
@@ -113,7 +111,6 @@ private:
     QTimer *presenceTimer;
     QTimer *repeatTimer;
 
-    QString currentActiveLayout;
     QString currentOrientationLock;
     QString actualSailfishVersion;
 
@@ -121,7 +118,6 @@ private:
     QHash<int, QString> applicationShortcuts;
 
     bool keypadIsPresent;
-    bool vkbLayoutIsTohkbd;
     bool dbusRegistered;
     bool stickyCtrl;
     bool displayIsOn;

@@ -1,12 +1,6 @@
 <!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
 <node>
     <interface name="com.kimmoli.tohkbd2user">
-        <method name="getActiveLayout">
-            <arg name="value" type="s" direction="out" />
-        </method>
-        <method name="setActiveLayout">
-            <arg name="value" type="s" direction="in" />
-        </method>
         <method name="getOrientationLock">
             <arg name="value" type="s" direction="out" />
         </method>

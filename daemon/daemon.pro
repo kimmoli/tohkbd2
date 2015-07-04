@@ -18,10 +18,7 @@ udevrule.files = config/95-$${TARGET}.rules
 dbusconf.path = /etc/dbus-1/system.d/
 dbusconf.files = config/$${TARGET}.conf
 
-vkblayout.path = /usr/share/maliit/plugins/com/jolla/layouts/
-vkblayout.files = config/layouts/$${TARGET}.conf config/layouts/$${TARGET}.qml
-
-INSTALLS += target systemd udevrule dbusconf vkblayout
+INSTALLS += target systemd udevrule dbusconf
 
 message($${DEFINES})
 
@@ -55,8 +52,6 @@ HEADERS += \
 OTHER_FILES += \
     config/$${TARGET}.service \
     config/$${TARGET}.conf \
-    config/layouts/$${TARGET}.conf \
-    config/layouts/$${TARGET}.qml \
     config/com.kimmoli.tohkbd2.xml \
     config/icon-system-keyboard.png
 

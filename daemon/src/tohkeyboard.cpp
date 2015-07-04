@@ -34,8 +34,6 @@ Tohkbd::Tohkbd(QObject *parent) :
     dbusRegistered = false;
     interruptsEnabled = false;
     vddEnabled = false;
-    vkbLayoutIsTohkbd = false;
-    currentActiveLayout = QString();
     currentOrientationLock = QString();
     keypadIsPresent = false;
     gpio_fd = -1;
@@ -104,16 +102,13 @@ Tohkbd::Tohkbd(QObject *parent) :
 
     keymap->setLayout(masterLayout);
 
-    if (currentActiveLayout.isEmpty())
-        changeActiveLayout(true);
-
     if (currentOrientationLock.isEmpty())
     {
         changeOrientationLock(true);
         saveOrientation();
     }
 
-    checkKeypadPresence();
+    checkKeypadPresence(true);
 
     connect(keymap, SIGNAL(shiftChanged()), this, SLOT(handleShiftChanged()));
     connect(keymap, SIGNAL(ctrlChanged()), this, SLOT(handleCtrlChanged()));
@@ -286,7 +281,7 @@ void Tohkbd::handleDisplayStatus(const QDBusMessage& msg)
 /* Check is keypad present
  */
 
-bool Tohkbd::checkKeypadPresence()
+bool Tohkbd::checkKeypadPresence(bool firstRun)
 {
     bool __prev_keypadPresence = keypadIsPresent;
 
@@ -337,13 +332,11 @@ bool Tohkbd::checkKeypadPresence()
         keypadIsPresent = true;
     }
 
-    if (__prev_keypadPresence != keypadIsPresent)
+    if ((__prev_keypadPresence != keypadIsPresent) || firstRun)
     {
         emit keyboardConnectedChanged(keypadIsPresent);
         emitKeypadSlideEvent(keypadIsPresent);
 
-        vkbLayoutIsTohkbd = keypadIsPresent;
-        changeActiveLayout();
         if (forceLandscapeOrientation)
             changeOrientationLock();
     }
@@ -823,52 +816,6 @@ void Tohkbd::backlightTimerTimeout()
         tca8424->setLeds(LED_BACKLIGHT_OFF);
 }
 
-/* Change virtual keyboard active layout,
- * uses private: vkbLayoutIsTohkbd
- * true = change to harbour-tohkbd2.qml
- * false = change to last non-tohkbd layout
- */
-void Tohkbd::changeActiveLayout(bool justGetIt)
-{
-    QString __currentActiveLayout = tohkbd2user->call(QDBus::AutoDetect, "getActiveLayout").arguments().at(0).toString();
-
-    printf("Current layout is %s\n", qPrintable(__currentActiveLayout));
-
-    if (__currentActiveLayout.contains("harbour-tohkbd2.qml") && vkbLayoutIsTohkbd)
-    {
-        return;
-    }
-    else if (!__currentActiveLayout.contains("harbour-tohkbd2.qml"))
-    {
-        if (__currentActiveLayout.contains("qml"))
-        {
-            if (__currentActiveLayout != currentActiveLayout)
-            {
-                currentActiveLayout = __currentActiveLayout;
-                saveActiveLayout();
-            }
-        }
-    }
-
-    if (justGetIt)
-        return;
-
-    if (vkbLayoutIsTohkbd)
-    {
-        printf("Changing to tohkbd\n");
-        QList<QVariant> args;
-        args.append("harbour-tohkbd2.qml");
-        tohkbd2user->callWithArgumentList(QDBus::AutoDetect, "setActiveLayout", args);
-    }
-    else if (currentActiveLayout.contains("qml"))
-    {
-        printf("Changing to %s\n", qPrintable(currentActiveLayout));
-        QList<QVariant> args;
-        args.append(currentActiveLayout);
-        tohkbd2user->callWithArgumentList(QDBus::AutoDetect, "setActiveLayout", args);
-    }
-}
-
 /* Orientation lock control
  * If enabled in settings, landscape mode is forced when tohkbd is slided out
  */
@@ -936,10 +883,6 @@ void Tohkbd::presenceTimerTimeout()
 void Tohkbd::reloadSettings()
 {
     QSettings settings(QSettings::SystemScope, "harbour-tohkbd2", "tohkbd2");
-
-    settings.beginGroup("vkb");
-    currentActiveLayout = settings.value("activeLayout", "").toString();
-    settings.endGroup();
 
     settings.beginGroup("applicationshortcuts");
 
@@ -1009,16 +952,6 @@ void Tohkbd::reloadSettings()
 
     forceLandscapeOrientation = settings.value("forceLandscapeOrientation", FORCE_LANDSCAPE_ORIENTATION).toBool();
     forceBacklightOn = settings.value("forceBacklightOn", FORCE_BACKLIGHT_ON).toBool();
-    settings.endGroup();
-}
-
-/* Save activeLayout to settings
- */
-void Tohkbd::saveActiveLayout()
-{
-    QSettings settings(QSettings::SystemScope, "harbour-tohkbd2", "tohkbd2");
-    settings.beginGroup("vkb");
-    settings.setValue("activeLayout", currentActiveLayout);
     settings.endGroup();
 }
 
