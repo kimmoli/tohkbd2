@@ -46,11 +46,11 @@ int main(int argc, char **argv)
     view->setClearBeforeRendering(true);
 
     QTranslator engineeringTranslator;
-    engineeringTranslator.load("engineering_en", "/usr/share/harbour-tohkbd2-user/i18n");
+    engineeringTranslator.load("engineering_en", SailfishApp::pathTo("i18n").toLocalFile());
     app->installTranslator(&engineeringTranslator);
 
     QTranslator translator;
-    translator.load(QLocale::system().name(), "/usr/share/harbour-tohkbd2-user/i18n");
+    translator.load(QLocale::system().name(), SailfishApp::pathTo("i18n").toLocalFile());
     app->installTranslator(&translator);
 
     view->setSource(SailfishApp::pathTo("qml/taskswitcher.qml"));

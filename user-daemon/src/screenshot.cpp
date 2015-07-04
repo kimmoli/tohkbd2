@@ -11,7 +11,7 @@ ScreenShot::ScreenShot(QObject *parent) :
 void ScreenShot::takeScreenShot()
 {
     QString ssFilename = QString("%1/ss%2.png")
-                            .arg("/home/nemo/Pictures")
+                            .arg(QStandardPaths::writableLocation(QStandardPaths::PicturesLocation))
                             .arg(QDateTime::currentDateTime().toString("yyyyMMdd-hhmmss-zzz"));
 
     QDBusMessage m = QDBusMessage::createMethodCall("org.nemomobile.lipstick",
