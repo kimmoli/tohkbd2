@@ -252,8 +252,8 @@ static const int lut_sym[] =
     0xD8, KEY_BACKSLASH, FORCE_SHIFT,   /* B | */
     0xD9, KEY_BACKSLASH, 0,             /* N \ */
     //0xDA, KEY_M, 0,                   /* M µ */
-    //0xDB, KEY_0, FORCE_SHIFT,         /* ? */
-    //0xDC, KEY_1, FORCE_SHIFT,         /* ! */
+    0xDB, KEY_SLASH, FORCE_SHIFT,       /* ? */
+    0xDC, KEY_1, FORCE_SHIFT,           /* ! */
     0xDD, KEY_102ND, 0,                 /* , < */
     0xDE, KEY_102ND, FORCE_SHIFT,       /* . > */
     0xEC, KEY_TOH_NEWEMAIL, 0,          /* @ */
