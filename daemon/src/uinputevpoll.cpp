@@ -46,6 +46,8 @@ void UinputEvPoll::doPoll()
     if (epfd < 0)
     {
         printf("failed to create epoll instance\n");
+
+        emit finished();
         return;
     }
 
@@ -58,6 +60,8 @@ void UinputEvPoll::doPoll()
     {
         printf("Couldn't add to epoll\n");
         close(epfd);
+
+        emit finished();
         return;
     }
 
