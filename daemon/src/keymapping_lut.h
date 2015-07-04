@@ -35,7 +35,7 @@ static const int lut_plain_scandic[] =
     0xBB, KEY_I, 0,
     0xBC, KEY_O, 0,
     0xBD, KEY_P, 0,
-    0xBE, KEY_KPPLUS, 0,
+    0xBE, KEY_LEFTBRACE, 0,
     0xC1, KEY_LEFT, 0,
     0xC3, KEY_RIGHT, 0,
     0xC4, KEY_A, 0,
