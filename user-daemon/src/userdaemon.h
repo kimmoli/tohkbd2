@@ -27,6 +27,7 @@ signals:
     void _lauchApplication(const QString &desktoFilename);
     void _requestActionWithRemorse(const QString &action);
     void _takeScreenShot();
+    void physicalLayoutChanged(QString layout);
 
 public slots:
     QString getActiveLayout();
@@ -41,15 +42,18 @@ public slots:
     void hideTaskSwitcher() { emit  _hideTaskSwitcher(); }
     void actionWithRemorse(const QString &action);
     void takeScreenShot() { emit _takeScreenShot(); }
+    QString getActivePhysicalLayout();
     void quit();
 
     void launchSuccess(const QString &appName);
     void launchFailed();
+    void handlePhysicalLayout();
 
 private:
     void showNotification(const QString &text);
     bool m_dbusRegistered;
     bool m_launchPending;
+    MGConfItem *physicalLayout;
 };
 
 #endif // UserDaemon_H

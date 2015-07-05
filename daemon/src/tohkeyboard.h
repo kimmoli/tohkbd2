@@ -52,7 +52,7 @@ public slots:
     void handleSymChanged();
     void handleKeyPressed(QList< QPair<int, int> > keyCode);
     void handleKeyReleased();
-
+    void handlePhysicalLayout(const QString &layout);
     void toggleCapsLock();
     void capsLockLedState(bool state);
 

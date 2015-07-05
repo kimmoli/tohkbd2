@@ -54,6 +54,8 @@ Tohkbd::Tohkbd(QObject *parent) :
     tohkbd2user = new ComKimmoliTohkbd2userInterface("com.kimmoli.tohkbd2user", "/", QDBusConnection::sessionBus(), this);
     tohkbd2user->setTimeout(2000);
 
+    connect(tohkbd2user, SIGNAL(physicalLayoutChanged(QString)), this, SLOT(handlePhysicalLayout(QString)));
+
     thread = new QThread();
     worker = new Worker();
 
@@ -136,6 +138,8 @@ Tohkbd::Tohkbd(QObject *parent) :
     connect(keymap, SIGNAL(keyPressed(QList< QPair<int, int> >)), this, SLOT(handleKeyPressed(QList< QPair<int, int> >)));
     connect(keymap, SIGNAL(keyReleased()), this, SLOT(handleKeyReleased()));
     connect(keymap, SIGNAL(bogusDetected()), tca8424, SLOT(reset()));
+
+    printf("physical layout is %s\n", qPrintable(tohkbd2user->getActivePhysicalLayout()));
 }
 
 /* Remove uinput device, stop threads and unregister from dbus
@@ -1349,4 +1353,11 @@ void Tohkbd::capsLockLedState(bool state)
             tca8424->setLeds(LED_CAPSLOCK_OFF);
         }
     }
+}
+
+/* Slot connected to userdaemon signal telling physical layout has changed
+ */
+void Tohkbd::handlePhysicalLayout(const QString &layout)
+{
+    printf("physcial layout changed to \"%s\"\n", qPrintable(layout));
 }

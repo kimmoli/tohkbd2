@@ -10,6 +10,9 @@ UserDaemon::UserDaemon(QObject *parent) :
 {
     m_dbusRegistered = false;
     m_launchPending = false;
+
+    physicalLayout = new MGConfItem("/desktop/lipstick-jolla-home/layout");
+    connect(physicalLayout, SIGNAL(valueChanged()), this, SLOT(handlePhysicalLayout()));
 }
 
 UserDaemon::~UserDaemon()
@@ -168,4 +171,14 @@ void UserDaemon::actionWithRemorse(const QString &action)
     printf("tohkbd2-user: requested %s.\n", qPrintable(action));
 
     emit _requestActionWithRemorse(action);
+}
+
+void UserDaemon::handlePhysicalLayout()
+{
+    emit physicalLayoutChanged(getActivePhysicalLayout());
+}
+
+QString UserDaemon::getActivePhysicalLayout()
+{
+    return physicalLayout->value().toString();
 }
