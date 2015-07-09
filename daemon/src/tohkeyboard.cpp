@@ -342,6 +342,8 @@ bool Tohkbd::checkKeypadPresence()
         {
             /* Keyboard power interrupt shortly? refresh leds just in case */
             controlLeds(true);
+            /* ...and release possibly stuck keys */
+            handleKeyReleased();
         }
 
         presenceTimer->start();
@@ -912,8 +914,6 @@ void Tohkbd::presenceTimerTimeout()
 {
     if (checkKeypadPresence())
     {
-        presenceTimer->start();
-
         if (readOneLineFromFile("/sys/class/gpio/gpio" GPIO_INT "/value") == "0")
         {
             printf("checkKeypadPresence: interrupt is active, trying to handle it now.\n");
