@@ -346,6 +346,8 @@ bool Tohkbd::checkKeypadPresence()
         {
             /* Keyboard power interrupt shortly? refresh leds just in case */
             controlLeds(true);
+            /* ...and release possibly stuck keys */
+            handleKeyReleased();
         }
 
         presenceTimer->start();
@@ -613,9 +615,9 @@ void Tohkbd::handleKeyPressed(QList< QPair<int, int> > keyCode)
         {
             bool tweakCapsLock = false;
             if (fix_CapsLock)
-                tweakCapsLock = (capsLock == 3 && ((keyCode.at(i).first >= KEY_Q && keyCode.at(i).first <= KEY_P)
-                                                   || (keyCode.at(i).first >= KEY_A && keyCode.at(i).first <= KEY_L)
-                                                   || (keyCode.at(i).first >= KEY_Z && keyCode.at(i).first <= KEY_M) ));
+                tweakCapsLock = (capsLock && ((keyCode.at(i).first >= KEY_Q && keyCode.at(i).first <= KEY_P)
+                                          || (keyCode.at(i).first >= KEY_A && keyCode.at(i).first <= KEY_L)
+                                          || (keyCode.at(i).first >= KEY_Z && keyCode.at(i).first <= KEY_M) ));
 
             /* Some of the keys require shift pressed to get correct symbol */
             if (keyCode.at(i).second & FORCE_COMPOSE)
@@ -916,8 +918,6 @@ void Tohkbd::presenceTimerTimeout()
 {
     if (checkKeypadPresence())
     {
-        presenceTimer->start();
-
         if (readOneLineFromFile("/sys/class/gpio/gpio" GPIO_INT "/value") == "0")
         {
             printf("checkKeypadPresence: interrupt is active, trying to handle it now.\n");
@@ -1340,17 +1340,20 @@ void Tohkbd::capsLockLedState(bool state)
 {
     if (state != capsLock)
     {
-        printf("caps lock led state changed to %s\n", state ? "on" : "off");
-
         capsLock = state;
 
-        if (capsLock)
+        if (displayIsOn)
         {
-            tca8424->setLeds(LED_CAPSLOCK_ON);
-        }
-        else
-        {
-            tca8424->setLeds(LED_CAPSLOCK_OFF);
+            printf("caps lock led state changed to %s\n", state ? "on" : "off");
+
+            if (capsLock)
+            {
+                tca8424->setLeds(LED_CAPSLOCK_ON);
+            }
+            else
+            {
+                tca8424->setLeds(LED_CAPSLOCK_OFF);
+            }
         }
     }
 }
