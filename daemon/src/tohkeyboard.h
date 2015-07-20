@@ -143,13 +143,12 @@ private:
 
     ComKimmoliTohkbd2userInterface *tohkbd2user;
 
-    QByteArray FKEYS;
+    static QList<int> FKEYS;
 
     int gpioInterruptCounter;
     QTime gpioInterruptFloodDetect;
 
     bool fix_CapsLock;
-    QString masterLayout;
 };
 
 

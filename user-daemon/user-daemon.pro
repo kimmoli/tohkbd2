@@ -25,7 +25,10 @@ translations.files = i18n/*.qm
 icons.path = /usr/share/$${TARGET}
 icons.files = config/icon-system-keyboard.png
 
-INSTALLS +=  dbusService dbusInterface translations icons
+layouts.path = /usr/share/$${TARGET}/layouts
+layouts.files = config/layouts/*.tohkbdmap
+
+INSTALLS +=  dbusService dbusInterface translations icons layouts
 
 message($${DEFINES})
 
@@ -42,7 +45,8 @@ OTHER_FILES += \
     config/com.kimmoli.tohkbd2user.xml \
     config/icon-system-keyboard.png \
     i18n/*.ts \
-    qml/taskswitcher.qml
+    qml/taskswitcher.qml \
+    config/layouts/*.tohkbdmap
 
 HEADERS += \
     src/userAdaptor.h \

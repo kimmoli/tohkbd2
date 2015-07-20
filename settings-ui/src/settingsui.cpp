@@ -109,9 +109,7 @@ QVariantMap SettingsUi::getCurrentSettings()
     map.insert("lockingSymEnabled", settings.value("lockingSymEnabled", LOCKING_SYM_ENABLED).toBool());
     settings.endGroup();
 
-    settings.beginGroup("layoutsettings");
-    map.insert("masterLayout", settings.value("masterLayout", QString(MASTER_LAYOUT)).toString());
-    settings.endGroup();
+    map.insert("physcialLayout", QString(tohkbd2user->getActivePhysicalLayout()));
 
     return map;
 }

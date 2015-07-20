@@ -25,6 +25,9 @@
 static const char *SERVICE = SERVICE_NAME;
 static const char *PATH = "/";
 
+QList<int> Tohkbd::FKEYS = QList<int>() << KEY_F1 << KEY_F2 << KEY_F3 << KEY_F4 << KEY_F5 << KEY_F6
+                                        << KEY_F7 << KEY_F8 << KEY_F9 << KEY_F10 << KEY_F11 << KEY_F12;
+
 
 /* Main
  */
@@ -53,6 +56,8 @@ Tohkbd::Tohkbd(QObject *parent) :
 
     tohkbd2user = new ComKimmoliTohkbd2userInterface("com.kimmoli.tohkbd2user", "/", QDBusConnection::sessionBus(), this);
     tohkbd2user->setTimeout(2000);
+
+    printf("waking up user daemon %s", qPrintable(tohkbd2user->getVersion()));
 
     connect(tohkbd2user, SIGNAL(physicalLayoutChanged(QString)), this, SLOT(handlePhysicalLayout(QString)));
 
@@ -99,25 +104,9 @@ Tohkbd::Tohkbd(QObject *parent) :
     printf("uinputevpoll->requestPolling(uinputif->getFd());\n");
 
     tca8424 = new tca8424driver(0x3b);
-    keymap = new keymapping();
-
-    FKEYS.clear();
-    FKEYS.append(KEY_F1);
-    FKEYS.append(KEY_F2);
-    FKEYS.append(KEY_F3);
-    FKEYS.append(KEY_F4);
-    FKEYS.append(KEY_F5);
-    FKEYS.append(KEY_F6);
-    FKEYS.append(KEY_F7);
-    FKEYS.append(KEY_F8);
-    FKEYS.append(KEY_F9);
-    FKEYS.append(KEY_F10);
-    FKEYS.append(KEY_F11);
-    FKEYS.append(KEY_F12);
+    keymap = new keymapping(QString(tohkbd2user->getPathTo("/layouts")));
 
     reloadSettings();
-
-    keymap->setLayout(masterLayout);
 
     if (currentActiveLayout.isEmpty())
         changeActiveLayout(true);
@@ -139,7 +128,10 @@ Tohkbd::Tohkbd(QObject *parent) :
     connect(keymap, SIGNAL(keyReleased()), this, SLOT(handleKeyReleased()));
     connect(keymap, SIGNAL(bogusDetected()), tca8424, SLOT(reset()));
 
-    printf("physical layout is %s\n", qPrintable(tohkbd2user->getActivePhysicalLayout()));
+    QString currentPhysicalLayout = tohkbd2user->getActivePhysicalLayout();
+
+    printf("physical layout is %s\n", qPrintable(currentPhysicalLayout));
+    keymap->setLayout(currentPhysicalLayout);
 }
 
 /* Remove uinput device, stop threads and unregister from dbus
@@ -963,10 +955,6 @@ void Tohkbd::reloadSettings()
     currentOrientationLock = settings.value("originalOrientation", QString()).toString();
     settings.endGroup();
 
-    settings.beginGroup("layoutSettings");
-    masterLayout = settings.value("masterLayout", QString(MASTER_LAYOUT)).toString();
-    settings.endGroup();
-
     settings.beginGroup("generalsettings");
     backlightTimer->setInterval(settings.value("backlightTimeout", BACKLIGHT_TIMEOUT).toInt());
     backlightLuxThreshold = settings.value("backlightLuxThreshold", BACKLIGHT_LUXTHRESHOLD).toInt();
@@ -1206,15 +1194,9 @@ void Tohkbd::setSettingString(const QString &key, const QString &value)
 {
     QSettings settings(QSettings::SystemScope, "harbour-tohkbd2", "tohkbd2");
 
-    if (key == "masterLayout")
-    {
-        settings.beginGroup("layoutsettings");
-        settings.setValue(key, value);
-        settings.endGroup();
-
-        masterLayout = value;
-        keymap->setLayout(masterLayout);
-    }
+    Q_UNUSED(settings);
+    Q_UNUSED(key);
+    Q_UNUSED(value);
 }
 
 /* Tell user daemon to show notification */
@@ -1363,4 +1345,5 @@ void Tohkbd::capsLockLedState(bool state)
 void Tohkbd::handlePhysicalLayout(const QString &layout)
 {
     printf("physcial layout changed to \"%s\"\n", qPrintable(layout));
+    keymap->setLayout(layout);
 }

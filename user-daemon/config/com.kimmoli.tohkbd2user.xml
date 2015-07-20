@@ -32,6 +32,10 @@
         <method name="getActivePhysicalLayout">
             <arg name="value" type="s" direction="out" />
         </method>
+        <method name="getPathTo">
+            <arg name="file" type="s" direction="in" />
+            <arg name="path" type="s" direction="out" />
+        </method>
         <method name="quit" />
         <signal name="physicalLayoutChanged">
             <arg name="layout" type="s" direction="out" />

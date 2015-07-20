@@ -1,11 +1,33 @@
+#include <QStringList>
+#include <QFile>
+#include <QTextStream>
+
 #include "keymapping.h"
 #include <linux/input.h>
 #include <stdio.h>
 #include "keymapping_lut.h"
 
-keymapping::keymapping(QObject *parent) :
+QStringList keymapping::keyNames = QStringList()
+    << "KEY_RESERVED" << "KEY_ESC" << "KEY_1" << "KEY_2" << "KEY_3" << "KEY_4" << "KEY_5" << "KEY_6" << "KEY_7" << "KEY_8" << "KEY_9"
+    << "KEY_0" << "KEY_MINUS" << "KEY_EQUAL" << "KEY_BACKSPACE" << "KEY_TAB" << "KEY_Q" << "KEY_W" << "KEY_E" << "KEY_R" << "KEY_T"
+    << "KEY_Y" << "KEY_U" << "KEY_I" << "KEY_O" << "KEY_P" << "KEY_LEFTBRACE" << "KEY_RIGHTBRACE" << "KEY_ENTER" << "KEY_LEFTCTRL"
+    << "KEY_A" << "KEY_S" << "KEY_D" << "KEY_F" << "KEY_G" << "KEY_H" << "KEY_J" << "KEY_K" << "KEY_L" << "KEY_SEMICOLON" << "KEY_APOSTROPHE"
+    << "KEY_GRAVE" << "KEY_LEFTSHIFT" << "KEY_BACKSLASH" << "KEY_Z" << "KEY_X" << "KEY_C" << "KEY_V" << "KEY_B" << "KEY_N" << "KEY_M"
+    << "KEY_COMMA" << "KEY_DOT" << "KEY_SLASH" << "KEY_RIGHTSHIFT" << "KEY_KPASTERISK" << "KEY_LEFTALT" << "KEY_SPACE" << "KEY_CAPSLOCK"
+    << "KEY_F1" << "KEY_F2" << "KEY_F3" << "KEY_F4" << "KEY_F5" << "KEY_F6" << "KEY_F7" << "KEY_F8" << "KEY_F9" << "KEY_F10" << "KEY_NUMLOCK"
+    << "KEY_SCROLLLOCK" << "KEY_KP7" << "KEY_KP8" << "KEY_KP9" << "KEY_KPMINUS" << "KEY_KP4" << "KEY_KP5" << "KEY_KP6" << "KEY_KPPLUS"
+    << "KEY_KP1" << "KEY_KP2" << "KEY_KP3" << "KEY_KP0" << "KEY_KPDOT" << "KEY_RESERVED" << "KEY_ZENKAKUHANKAKU" << "KEY_102ND" << "KEY_F11"
+    << "KEY_F12" << "KEY_RO" << "KEY_KATAKANA" << "KEY_HIRAGANA" << "KEY_HENKAN" << "KEY_KATAKANAHIRAGANA" << "KEY_MUHENKAN" << "KEY_KPJPCOMMA"
+    << "KEY_KPENTER" << "KEY_RIGHTCTRL" << "KEY_KPSLASH" << "KEY_SYSRQ" << "KEY_RIGHTALT" << "KEY_LINEFEED" << "KEY_HOME" << "KEY_UP"
+    << "KEY_PAGEUP" << "KEY_LEFT" << "KEY_RIGHT" << "KEY_END" << "KEY_DOWN" << "KEY_PAGEDOWN" << "KEY_INSERT" << "KEY_DELETE" << "KEY_MACRO"
+    << "KEY_MUTE" << "KEY_VOLUMEDOWN" << "KEY_VOLUMEUP" << "KEY_POWER" << "KEY_KPEQUAL" << "KEY_KPPLUSMINUS" << "KEY_PAUSE" << "KEY_SCALE"
+    << "KEY_KPCOMMA" << "KEY_HANGEUL" << "KEY_HANJA" << "KEY_YEN" << "KEY_LEFTMETA" << "KEY_RIGHTMETA" << "KEY_COMPOSE";
+
+keymapping::keymapping(QString pathToLayouts, QObject *parent) :
     QObject(parent)
 {
+    layoutPath = pathToLayouts;
+
     pressedCode = 0;
 
     shift = new modifierHandler("shift");
@@ -179,42 +201,58 @@ void keymapping::setLayout(QString toLayout)
 
     int i = 0;
 
-    if (toLayout == "Scandic")
+    QString filename = layoutPath + "/" + toLayout + ".tohkbdmap";
+
+    printf("keymap: reading file %s\n", qPrintable(filename));
+
+    QFile inputFile( filename );
+
+    if ( inputFile.open( QIODevice::ReadOnly | QIODevice::Text ) )
     {
-        while (lut_plain_scandic[i])
-        {
-            lut_plain[i] = lut_plain_scandic[i];
+       QTextStream in( &inputFile );
+       while (!in.atEnd())
+       {
+            QStringList line = in.readLine().split(QRegExp("\\s+"));
+
+            // Comment starts with #
+            if (line.at(0).startsWith("#"))
+               continue;
+
+            if (line.count() != 5)
+               continue;
+
+            bool ok;
+            lut_plain[i++] = line.at(0).toInt(&ok, 16);
+
+            if (!ok)
+            {
+               printf("keymap: error parsing %s\n", qPrintable(line.at(0)));
+               break;
+            }
+
+            int indexOf = keyNames.indexOf(line.at(1));
+            if (indexOf < 0)
+            {
+               printf("keymap: error parsing %s\n", qPrintable(line.at(1)));
+               break;
+            }
+
+            lut_plain[i++] = indexOf;
+
+            lut_plain[i] = 0;
+
+            if (line.at(2).contains("FORCE_SHIFT"))
+                lut_plain[i] |= FORCE_SHIFT;
+
             i++;
-            lut_plain[i] = lut_plain_scandic[i];
-            i++;
-            lut_plain[i] = lut_plain_scandic[i];
-            i++;
-        }
+       }
     }
-    else if (toLayout == "QWERTZ")
+    else
     {
-        while (lut_plain_qwertz[i])
-        {
-            lut_plain[i] = lut_plain_qwertz[i];
-            i++;
-            lut_plain[i] = lut_plain_qwertz[i];
-            i++;
-            lut_plain[i] = lut_plain_qwertz[i];
-            i++;
-        }
+        printf("keymap: failed to open file\n");
     }
-    else if (toLayout == "AZERTY")
-    {
-        while (lut_plain_azerty[i])
-        {
-            lut_plain[i] = lut_plain_azerty[i];
-            i++;
-            lut_plain[i] = lut_plain_azerty[i];
-            i++;
-            lut_plain[i] = lut_plain_azerty[i];
-            i++;
-        }
-    }
+
+    inputFile.close();
 
     for ( ; i<256 ; i++)
         lut_plain[i] = 0;

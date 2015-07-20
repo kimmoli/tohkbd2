@@ -182,3 +182,8 @@ QString UserDaemon::getActivePhysicalLayout()
 {
     return physicalLayout->value().toString();
 }
+
+QString UserDaemon::getPathTo(QString filename)
+{
+    return SailfishApp::pathTo(filename).toLocalFile();
+}

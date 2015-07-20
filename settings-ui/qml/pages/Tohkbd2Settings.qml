@@ -118,7 +118,7 @@ Page
 
             //: Main menu selection for layout selection
             //% "Layout"
-            settingslist.append({"labelId": qsTrId("layout"),            "iconId":"image://theme/icon-m-keyboard",       "pageId":"KeyboardLayout.qml",  "isEnabled":true})
+            settingslist.append({"labelId": qsTrId("layout") + ":" + settings["physicalLayout"],            "iconId":"image://theme/icon-m-keyboard",       "pageId":"KeyboardLayout.qml",  "isEnabled":false})
 
             //: Main menu selection for general settings
             //% "General settings"

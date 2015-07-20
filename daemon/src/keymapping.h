@@ -24,7 +24,7 @@ class keymapping : public QObject
 {
     Q_OBJECT
 public:
-    explicit keymapping(QObject *parent = 0);
+    explicit keymapping(QString pathToLayouts, QObject *parent = 0);
 
     void process(QByteArray inputReport);
 
@@ -56,8 +56,11 @@ private:
     QByteArray _prevInputReport;
 
     QString layout;
+    QString layoutPath;
 
     int lut_plain[256];
+
+    static QStringList keyNames;
 };
 
 #endif // KEYMAPPING_H

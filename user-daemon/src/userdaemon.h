@@ -43,6 +43,7 @@ public slots:
     void actionWithRemorse(const QString &action);
     void takeScreenShot() { emit _takeScreenShot(); }
     QString getActivePhysicalLayout();
+    QString getPathTo(QString filename);
     void quit();
 
     void launchSuccess(const QString &appName);
