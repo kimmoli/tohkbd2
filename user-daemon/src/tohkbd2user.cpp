@@ -16,6 +16,7 @@
 #include <QQmlContext>
 #include <QScopedPointer>
 #include <QTimer>
+#include <QDir>
 
 #include <sailfishapp.h>
 
@@ -25,10 +26,17 @@
 #include "applauncher.h"
 #include "screenshot.h"
 
+void copyFileFromResources(QString from, QString to);
+
 int main(int argc, char **argv)
 {
     /* To make remorse timer run without steroids */
     setenv("QSG_RENDER_LOOP", "basic", 1);
+
+    /* Install default keymap config files */
+    QDir keymapfolder(QDir::homePath() + KEYMAP_FOLDER);
+    keymapfolder.mkpath(".");
+    copyFileFromResources(":/fi.tohkbdmap", keymapfolder.path() + "/fi.tohkbdmap");
 
     QScopedPointer<QGuiApplication> app(SailfishApp::application(argc, argv));
     QScopedPointer<QQuickView> view(SailfishApp::createView());
@@ -90,3 +98,26 @@ int main(int argc, char **argv)
 
     return app->exec();
 }
+
+void copyFileFromResources(QString from, QString to)
+{
+    QFileInfo toFile(to);
+
+    if(!toFile.exists())
+    {
+        QFile newToFile(toFile.absoluteFilePath());
+        QResource res(from);
+
+        if (newToFile.open(QIODevice::WriteOnly))
+        {
+            newToFile.write( reinterpret_cast<const char*>(res.data()) );
+            newToFile.close();
+            printf("tohkbd2-user: Wrote %s\n", qPrintable(to));
+        }
+        else
+        {
+            printf("tohkbd2-user: Failed to copy default configs from resources!\n");
+        }
+    }
+}
+

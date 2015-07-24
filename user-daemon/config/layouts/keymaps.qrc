@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>config/layouts/fi.tohkbdmap</file>
+    </qresource>
+</RCC>

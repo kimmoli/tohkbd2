@@ -185,5 +185,10 @@ QString UserDaemon::getActivePhysicalLayout()
 
 QString UserDaemon::getPathTo(QString filename)
 {
+    if (filename == "keymaplocation")
+    {
+        return QDir::homePath() + KEYMAP_FOLDER;
+    }
+
     return SailfishApp::pathTo(filename).toLocalFile();
 }

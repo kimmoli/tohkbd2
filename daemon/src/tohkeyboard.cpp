@@ -104,7 +104,7 @@ Tohkbd::Tohkbd(QObject *parent) :
     printf("uinputevpoll->requestPolling(uinputif->getFd());\n");
 
     tca8424 = new tca8424driver(0x3b);
-    keymap = new keymapping(QString(tohkbd2user->getPathTo("/layouts")));
+    keymap = new keymapping(QString(tohkbd2user->getPathTo("keymaplocation")));
 
     reloadSettings();
 

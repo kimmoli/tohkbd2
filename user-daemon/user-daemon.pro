@@ -25,10 +25,7 @@ translations.files = i18n/*.qm
 icons.path = /usr/share/$${TARGET}
 icons.files = config/icon-system-keyboard.png
 
-layouts.path = /usr/share/$${TARGET}/layouts
-layouts.files = config/layouts/*.tohkbdmap
-
-INSTALLS +=  dbusService dbusInterface translations icons layouts
+INSTALLS +=  dbusService dbusInterface translations icons
 
 message($${DEFINES})
 
@@ -54,3 +51,6 @@ HEADERS += \
     src/viewhelper.h \
     src/applauncher.h \
     src/screenshot.h
+
+RESOURCES += \
+    config/layouts/keymaps.qrc
