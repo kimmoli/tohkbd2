@@ -5,7 +5,6 @@
 #include "keymapping.h"
 #include <linux/input.h>
 #include <stdio.h>
-#include "keymapping_lut.h"
 
 QStringList keymapping::keyNames = QStringList()
     << "KEY_RESERVED" << "KEY_ESC" << "KEY_1" << "KEY_2" << "KEY_3" << "KEY_4" << "KEY_5" << "KEY_6" << "KEY_7" << "KEY_8" << "KEY_9"
@@ -21,7 +20,9 @@ QStringList keymapping::keyNames = QStringList()
     << "KEY_KPENTER" << "KEY_RIGHTCTRL" << "KEY_KPSLASH" << "KEY_SYSRQ" << "KEY_RIGHTALT" << "KEY_LINEFEED" << "KEY_HOME" << "KEY_UP"
     << "KEY_PAGEUP" << "KEY_LEFT" << "KEY_RIGHT" << "KEY_END" << "KEY_DOWN" << "KEY_PAGEDOWN" << "KEY_INSERT" << "KEY_DELETE" << "KEY_MACRO"
     << "KEY_MUTE" << "KEY_VOLUMEDOWN" << "KEY_VOLUMEUP" << "KEY_POWER" << "KEY_KPEQUAL" << "KEY_KPPLUSMINUS" << "KEY_PAUSE" << "KEY_SCALE"
-    << "KEY_KPCOMMA" << "KEY_HANGEUL" << "KEY_HANJA" << "KEY_YEN" << "KEY_LEFTMETA" << "KEY_RIGHTMETA" << "KEY_COMPOSE";
+    << "KEY_KPCOMMA" << "KEY_HANGEUL" << "KEY_HANJA" << "KEY_YEN" << "KEY_LEFTMETA" << "KEY_RIGHTMETA" << "KEY_COMPOSE"
+    << "KEY_TOH_TABLE_DELIMITER" /* Keys after this are custom keys */
+    << "KEY_TOH_SCREENSHOT" << "KEY_TOH_SELFIE" << "KEY_TOH_NEWEMAIL" << "KEY_TOH_BACKLIGHT";
 
 keymapping::keymapping(QString pathToLayouts, QObject *parent) :
     QObject(parent)
@@ -221,14 +222,23 @@ void keymapping::setLayout(QString toLayout)
             if (line.count() != 5)
                continue;
 
+            /*
+             * CODE PlainKey PlainModifier SymKey SymModifier
+             */
+
             bool ok;
-            lut_plain[i++] = line.at(0).toInt(&ok, 16);
+            int code = line.at(0).toInt(&ok, 16);
 
             if (!ok)
             {
                printf("keymap: error parsing %s\n", qPrintable(line.at(0)));
                break;
             }
+
+            lut_plain[i] = code;
+            lut_sym[i] = code;
+
+            i++;
 
             int indexOf = keyNames.indexOf(line.at(1));
             if (indexOf < 0)
@@ -237,12 +247,34 @@ void keymapping::setLayout(QString toLayout)
                break;
             }
 
-            lut_plain[i++] = indexOf;
+            /* Custom keys */
+            if (line.at(1).startsWith("KEY_TOH_"))
+                indexOf = indexOf - keyNames.indexOf("KEY_TOH_TABLE_DELIMITER") + KEY_MAX;
+
+            lut_plain[i] = indexOf;
+
+            indexOf = keyNames.indexOf(line.at(3));
+            if (indexOf < 0)
+            {
+               printf("keymap: error parsing %s\n", qPrintable(line.at(3)));
+               break;
+            }
+
+            if (line.at(3).startsWith("KEY_TOH_"))
+                indexOf = indexOf - keyNames.indexOf("KEY_TOH_TABLE_DELIMITER") + KEY_MAX;
+
+            lut_sym[i] = indexOf;
+
+            i++;
 
             lut_plain[i] = 0;
+            lut_sym[i] = 0;
 
             if (line.at(2).contains("FORCE_SHIFT"))
                 lut_plain[i] |= FORCE_SHIFT;
+
+            if (line.at(4).contains("FORCE_SHIFT"))
+                lut_sym[i] |= FORCE_SHIFT;
 
             i++;
        }
@@ -255,7 +287,10 @@ void keymapping::setLayout(QString toLayout)
     inputFile.close();
 
     for ( ; i<256 ; i++)
+    {
         lut_plain[i] = 0;
+        lut_sym[i] = 0;
+    }
 
     layout = toLayout;
 

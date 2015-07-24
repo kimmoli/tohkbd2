@@ -59,6 +59,7 @@ private:
     QString layoutPath;
 
     int lut_plain[256];
+    int lut_sym[256];
 
     static QStringList keyNames;
 };

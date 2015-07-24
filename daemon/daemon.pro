@@ -53,7 +53,6 @@ HEADERS += \
     src/daemonAdaptor.h \
     src/defaultSettings.h \
     src/eepromdriver.h \
-    src/keymapping_lut.h \
     src/modifierhandler.h \
     ../user-daemon/src/userInterface.h \
     src/uinputevpoll.h
