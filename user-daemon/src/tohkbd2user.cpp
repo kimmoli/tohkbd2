@@ -26,17 +26,43 @@
 #include "applauncher.h"
 #include "screenshot.h"
 
-void copyFileFromResources(QString from, QString to);
-
 int main(int argc, char **argv)
 {
     /* To make remorse timer run without steroids */
     setenv("QSG_RENDER_LOOP", "basic", 1);
 
-    /* Install default keymap config files */
+    /* Install default keymap config files under user home .config */
     QDir keymapfolder(QDir::homePath() + KEYMAP_FOLDER);
     keymapfolder.mkpath(".");
-    copyFileFromResources(":/fi.tohkbdmap", keymapfolder.path() + "/fi.tohkbdmap");
+
+    QDir keymapRes(":/");
+    QFileInfoList list = keymapRes.entryInfoList(QStringList() << "*.tohkbdmap");
+
+    int i;
+    for (i=0 ; i < list.size() ; i++)
+    {
+        QString from = list.at(i).absoluteFilePath();
+        QString to = keymapfolder.path() + from.mid(1);
+
+        QResource res(from);
+        QFileInfo toFile(to);
+
+        if(!toFile.exists())
+        {
+            QFile newToFile(toFile.absoluteFilePath());
+
+            if (newToFile.open(QIODevice::WriteOnly))
+            {
+                newToFile.write( reinterpret_cast<const char*>(res.data()) );
+                newToFile.close();
+                printf("tohkbd2-user: Wrote %s\n", qPrintable(to));
+            }
+            else
+            {
+                printf("tohkbd2-user: Failed to write %s\n", qPrintable(to));
+            }
+        }
+    }
 
     QScopedPointer<QGuiApplication> app(SailfishApp::application(argc, argv));
     QScopedPointer<QQuickView> view(SailfishApp::createView());
@@ -98,26 +124,3 @@ int main(int argc, char **argv)
 
     return app->exec();
 }
-
-void copyFileFromResources(QString from, QString to)
-{
-    QFileInfo toFile(to);
-
-    if(!toFile.exists())
-    {
-        QFile newToFile(toFile.absoluteFilePath());
-        QResource res(from);
-
-        if (newToFile.open(QIODevice::WriteOnly))
-        {
-            newToFile.write( reinterpret_cast<const char*>(res.data()) );
-            newToFile.close();
-            printf("tohkbd2-user: Wrote %s\n", qPrintable(to));
-        }
-        else
-        {
-            printf("tohkbd2-user: Failed to copy default configs from resources!\n");
-        }
-    }
-}
-
