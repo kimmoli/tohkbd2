@@ -36,6 +36,7 @@
             <arg name="file" type="s" direction="in" />
             <arg name="path" type="s" direction="out" />
         </method>
+        <method name="showUnsupportedLayoutNotification" />
         <method name="quit" />
         <signal name="physicalLayoutChanged">
             <arg name="layout" type="s" direction="out" />

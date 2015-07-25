@@ -33,5 +33,11 @@
         <extracomment>Remorse timer text, &quot;Restarting Lipstick&quot; in 5 seconds</extracomment>
         <translation type="unfinished"></translation>
     </message>
+    <message id="layout-unsupported">
+        <source>The selected physical layout is not supported by TOHKBD2</source>
+        <oldsource>Selected physical layout not supported by TOHKBD</oldsource>
+        <extracomment>Notification shown when a physical layout is not supported or the config file has an error</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 </TS>

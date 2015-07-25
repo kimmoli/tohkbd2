@@ -35,7 +35,7 @@ public:
     modifierHandler *alt;
     modifierHandler *sym;
 
-    void setLayout(QString toLayout);
+    bool setLayout(QString toLayout);
 
 signals:
     void shiftChanged();

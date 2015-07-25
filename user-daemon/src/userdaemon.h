@@ -45,6 +45,7 @@ public slots:
     void takeScreenShot() { emit _takeScreenShot(); }
     QString getActivePhysicalLayout();
     QString getPathTo(QString filename);
+    void showUnsupportedLayoutNotification();
     void quit();
 
     void launchSuccess(const QString &appName);

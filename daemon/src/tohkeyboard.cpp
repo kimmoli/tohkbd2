@@ -1345,5 +1345,10 @@ void Tohkbd::capsLockLedState(bool state)
 void Tohkbd::handlePhysicalLayout(const QString &layout)
 {
     printf("physcial layout changed to \"%s\"\n", qPrintable(layout));
-    keymap->setLayout(layout);
+
+    if (!keymap->setLayout(layout))
+    {
+        /* Inform the user that selected layout is not supported... */
+        tohkbd2user->showUnsupportedLayoutNotification();
+    }
 }

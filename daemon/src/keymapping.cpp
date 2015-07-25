@@ -195,10 +195,12 @@ void keymapping::releaseStickyModifiers(bool force)
     sym->clear(force);
 }
 
-void keymapping::setLayout(QString toLayout)
+bool keymapping::setLayout(QString toLayout)
 {
+    bool ret = true;
+
     if (toLayout == layout)
-        return;
+        return true;
 
     int i = 0;
 
@@ -232,6 +234,7 @@ void keymapping::setLayout(QString toLayout)
             if (!ok)
             {
                printf("keymap: error parsing %s\n", qPrintable(line.at(0)));
+               ret = false;
                break;
             }
 
@@ -244,6 +247,7 @@ void keymapping::setLayout(QString toLayout)
             if (indexOf < 0)
             {
                printf("keymap: error parsing %s\n", qPrintable(line.at(1)));
+               ret = false;
                break;
             }
 
@@ -257,6 +261,7 @@ void keymapping::setLayout(QString toLayout)
             if (indexOf < 0)
             {
                printf("keymap: error parsing %s\n", qPrintable(line.at(3)));
+               ret = false;
                break;
             }
 
@@ -282,6 +287,7 @@ void keymapping::setLayout(QString toLayout)
     else
     {
         printf("keymap: failed to open file\n");
+        ret = false;
     }
 
     inputFile.close();
@@ -292,7 +298,16 @@ void keymapping::setLayout(QString toLayout)
         lut_sym[i] = 0;
     }
 
-    layout = toLayout;
+    if (ret)
+    {
+        layout = toLayout;
 
-    printf("keymap: layout set to %s\n", qPrintable(layout));
+        printf("keymap: layout set to %s\n", qPrintable(layout));
+    }
+    else
+    {
+        printf("keymap: failed to set layout to %s\n", qPrintable(toLayout));
+    }
+
+    return ret;
 }

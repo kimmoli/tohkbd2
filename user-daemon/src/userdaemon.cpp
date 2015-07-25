@@ -192,3 +192,10 @@ QString UserDaemon::getPathTo(QString filename)
 
     return SailfishApp::pathTo(filename).toLocalFile();
 }
+
+void UserDaemon::showUnsupportedLayoutNotification()
+{
+    //: Notification shown when a physical layout is not supported or the config file has an error
+    //% "The selected physical layout is not supported by TOHKBD2"
+    showNotification(qtTrId("layout-unsupported"));
+}
