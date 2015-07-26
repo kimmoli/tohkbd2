@@ -277,9 +277,25 @@ bool keymapping::setLayout(QString toLayout)
 
             if (line.at(2).contains("SHIFT"))
                 lut_plain[i] |= FORCE_SHIFT;
+            if (line.at(2).contains("RALT"))
+                lut_plain[i] |= FORCE_RIGHTALT;
+            if (line.at(2).contains("LALT"))
+                lut_plain[i] |= FORCE_ALT;
+            if (line.at(2).contains("CTRL"))
+                lut_plain[i] |= FORCE_CTRL;
+            if (line.at(2).contains("COMP"))
+                lut_plain[i] |= FORCE_COMPOSE;
 
             if (line.at(4).contains("SHIFT"))
                 lut_sym[i] |= FORCE_SHIFT;
+            if (line.at(4).contains("RALT"))
+                lut_sym[i] |= FORCE_RIGHTALT;
+            if (line.at(4).contains("LALT"))
+                lut_sym[i] |= FORCE_ALT;
+            if (line.at(4).contains("CTRL"))
+                lut_sym[i] |= FORCE_CTRL;
+            if (line.at(4).contains("COMP"))
+                lut_sym[i] |= FORCE_COMPOSE;
 
             i++;
        }
