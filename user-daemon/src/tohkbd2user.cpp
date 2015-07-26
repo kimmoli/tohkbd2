@@ -17,6 +17,8 @@
 #include <QScopedPointer>
 #include <QTimer>
 #include <QDir>
+#include <QFile>
+#include <QResource>
 
 #include <sailfishapp.h>
 
@@ -26,43 +28,12 @@
 #include "applauncher.h"
 #include "screenshot.h"
 
+void installConfigs();
+
 int main(int argc, char **argv)
 {
     /* To make remorse timer run without steroids */
     setenv("QSG_RENDER_LOOP", "basic", 1);
-
-    /* Install default keymap config files under user home .config */
-    QDir keymapfolder(QDir::homePath() + KEYMAP_FOLDER);
-    keymapfolder.mkpath(".");
-
-    QDir keymapRes(":/");
-    QFileInfoList list = keymapRes.entryInfoList(QStringList() << "*.tohkbdmap");
-
-    int i;
-    for (i=0 ; i < list.size() ; i++)
-    {
-        QString from = list.at(i).absoluteFilePath();
-        QString to = keymapfolder.path() + from.mid(1);
-
-        QResource res(from);
-        QFileInfo toFile(to);
-
-        if(!toFile.exists())
-        {
-            QFile newToFile(toFile.absoluteFilePath());
-
-            if (newToFile.open(QIODevice::WriteOnly))
-            {
-                newToFile.write( reinterpret_cast<const char*>(res.data()) );
-                newToFile.close();
-                printf("tohkbd2-user: Wrote %s\n", qPrintable(to));
-            }
-            else
-            {
-                printf("tohkbd2-user: Failed to write %s\n", qPrintable(to));
-            }
-        }
-    }
 
     QScopedPointer<QGuiApplication> app(SailfishApp::application(argc, argv));
     QScopedPointer<QQuickView> view(SailfishApp::createView());
@@ -98,6 +69,9 @@ int main(int argc, char **argv)
 
     printf("tohkbd2-user: Locale is %s\n", qPrintable(QLocale::system().name()));
 
+    /* Install default keymap config files under user home .config */
+    installConfigs();
+
     UserDaemon rw;
     new Tohkbd2userAdaptor(&rw);
 
@@ -123,4 +97,44 @@ int main(int argc, char **argv)
                                             &ss, SLOT(handleNotificationActionInvoked(const QDBusMessage&)));
 
     return app->exec();
+}
+
+void installConfigs()
+{
+    QDir keymapfolder(QDir::homePath() + KEYMAP_FOLDER);
+    keymapfolder.mkpath(".");
+
+    QDir keymapRes(":/layouts/");
+    QFileInfoList list = keymapRes.entryInfoList();
+
+    int i;
+    for (i=0 ; i < list.size() ; i++)
+    {
+        QString from = list.at(i).absoluteFilePath();
+        QString to = keymapfolder.path() + "/" + from.split("/").last();
+
+        QFileInfo toFile(to);
+
+        if(!toFile.exists())
+        {
+            QFile newToFile(to);
+            QResource res(from);
+
+            if (newToFile.open(QIODevice::WriteOnly) && res.isValid())
+            {
+                qint64 ws;
+                if (res.isCompressed())
+                    ws = newToFile.write( qUncompress(res.data(), res.size()));
+                else
+                    ws = newToFile.write( (char *)res.data());
+
+                newToFile.close();
+                printf("tohkbd2-user: Wrote %s (%lld bytes) to %s\n", qPrintable(from), ws, qPrintable(to));
+            }
+            else
+            {
+                printf("tohkbd2-user: Failed to write %s\n", qPrintable(to));
+            }
+        }
+    }
 }

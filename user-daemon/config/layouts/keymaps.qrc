@@ -1,6 +1,0 @@
-<RCC>
-    <qresource prefix="/">
-        <file>fi.tohkbdmap</file>
-        <file>us.tohkbdmap</file>
-    </qresource>
-</RCC>

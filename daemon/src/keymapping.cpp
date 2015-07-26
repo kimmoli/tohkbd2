@@ -275,10 +275,10 @@ bool keymapping::setLayout(QString toLayout)
             lut_plain[i] = 0;
             lut_sym[i] = 0;
 
-            if (line.at(2).contains("FORCE_SHIFT"))
+            if (line.at(2).contains("SHIFT"))
                 lut_plain[i] |= FORCE_SHIFT;
 
-            if (line.at(4).contains("FORCE_SHIFT"))
+            if (line.at(4).contains("SHIFT"))
                 lut_sym[i] |= FORCE_SHIFT;
 
             i++;
@@ -287,6 +287,12 @@ bool keymapping::setLayout(QString toLayout)
     else
     {
         printf("keymap: failed to open file\n");
+        ret = false;
+    }
+
+    /* Fail if not a single key was defined */
+    if (i < 3)
+    {
         ret = false;
     }
 
