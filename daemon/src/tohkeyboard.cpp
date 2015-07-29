@@ -1078,7 +1078,7 @@ void Tohkbd::setSettingInt(const QString &key, const int &value)
 {
     QSettings settings(QSettings::SystemScope, "harbour-tohkbd2", "tohkbd2");
 
-    if (key == "backlightTimeout" && value >= 100 && value <= 5000)
+    if (key == "backlightTimeout" && value >= 100 && value <= 30000)
     {
         settings.beginGroup("generalsettings");
         settings.setValue("backlightTimeout", value);

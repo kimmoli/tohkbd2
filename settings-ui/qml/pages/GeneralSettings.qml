@@ -96,9 +96,9 @@ Page
                 //% "Backlight timeout"
                 label: qsTrId("bg-timeout-slider")
                 minimumValue: 100
-                maximumValue: 5000
+                maximumValue: 30000
                 value: settings["backlightTimeout"]
-                valueText: value + " ms"
+                valueText: Number(value/1000).toFixed(1) + " s"
                 stepSize: 100
                 enabled: !alwaysOn.checked && automatic.checked
                 opacity: enabled ? 1.0 : 0.4
