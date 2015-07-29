@@ -12,7 +12,7 @@ PKGCONFIG += mlite5 sailfishapp
 
 DEFINES += "APPVERSION=\\\"$${SPECVERSION}\\\""
 
-#system(lupdate src qml -no-obsolete -ts $$PWD/i18n/engineering_en.ts)
+system(lupdate src qml -no-obsolete -ts $$PWD/i18n/engineering_en.ts)
 system(lrelease -idbased $$PWD/i18n/*.ts)
 
 translations.path = /usr/share/$${TARGET}/i18n
@@ -38,7 +38,6 @@ OTHER_FILES += qml/tohkbd2-settingsui.qml \
     qml/pages/AboutPage.qml \
     qml/pages/ApplicationSelectionPage.qml \
     qml/pages/Shortcuts.qml \
-    qml/pages/KeyboardLayout.qml \
     qml/pages/BugReporter.qml \
     qml/pages/GeneralSettings.qml \
     qml/icons/icon-m-test.png \
@@ -49,13 +48,5 @@ OTHER_FILES += qml/tohkbd2-settingsui.qml \
     qml/icons/kimmoli.png \
     qml/icons/wazd.png \
     qml/icons/dirkvl.png \
-    qml/components/Key.qml \
-    qml/pages/CustomizeKey.qml \
-    qml/images/image-keyboard-azerty.png \
-    qml/images/image-keyboard-cyrillic.png \
-    qml/images/image-keyboard-qwerty.png \
-    qml/images/image-keyboard-qwertz.png \
-    qml/images/image-keyboard-scandic.png \
-    qml/images/image-keyboard-stealth.png \
     qml/components/KeyboardHandler.qml
 

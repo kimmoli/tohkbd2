@@ -103,6 +103,44 @@ Page
                     onDownChanged: kbdif.upDownSelection = index
                 }
             }
+
+            Item
+            {
+                height: Theme.itemSizeSmall
+                width: 1
+            }
+
+            Row
+            {
+                x: Theme.paddingLarge
+                spacing: Theme.paddingLarge
+
+                Image
+                {
+                    x: Theme.paddingLarge
+                    source: "image://theme/icon-m-keyboard"
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+                Label
+                {
+                    //: Prefix for showing current layout
+                    //% "Current layout is %1"
+                    text: qsTrId("kbd-layout").arg(settings["physicalLayout"])
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+            }
+
+            Label
+            {
+                //: Description text for sticky and locking modifier keys
+                //% "To change keyboard layout, go to Jolla Settings > System settings > Text input and change hardware keyboard active layout"
+                text: qsTrId("layout-desc")
+                x: Theme.paddingLarge
+                wrapMode: Text.Wrap
+                font.pixelSize: Theme.fontSizeExtraSmall
+                color: Theme.secondaryColor
+                width: parent.width - 2*Theme.paddingLarge
+            }
         }
     }
 
@@ -115,10 +153,6 @@ Page
             //: Main menu selection for shortcuts configurations
             //% "Shortcuts"
             settingslist.append({"labelId": qsTrId("shortcuts"),         "iconId":"image://theme/icon-m-shortcut",       "pageId":"Shortcuts.qml",       "isEnabled":(daemonVersion !== "N/A")})
-
-            //: Main menu selection for layout selection
-            //% "Layout"
-            settingslist.append({"labelId": qsTrId("layout") + ":" + settings["physicalLayout"],            "iconId":"image://theme/icon-m-keyboard",       "pageId":"KeyboardLayout.qml",  "isEnabled":false})
 
             //: Main menu selection for general settings
             //% "General settings"

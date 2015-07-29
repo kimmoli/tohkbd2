@@ -68,31 +68,6 @@
         <extracomment>Description above report issue -button</extracomment>
         <translation type="unfinished"></translation>
     </message>
-    <message id="customize-key-header">
-        <source>Customize %1 -key</source>
-        <extracomment>page header for key customizer, shows label of the key</extracomment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message id="customize-key-warning">
-        <source>You are about to change behaviour of this key</source>
-        <extracomment>warning text shown on customizer page</extracomment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message id="plain-key">
-        <source>Plain key</source>
-        <extracomment>Text shon above the key without any modifiers, e.g. A</extracomment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message id="with-sym-key">
-        <source>Key with Sym</source>
-        <extracomment>Text shon above the key wit sym modifier, e.g. ;</extracomment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message id="none-key">
-        <source>None</source>
-        <extracomment>This text is shown instead of key label (e.g. A) if there is nothing assigned to this key</extracomment>
-        <translation type="unfinished"></translation>
-    </message>
     <message id="general-settings">
         <source>General settings</source>
         <extracomment>Main menu selection for general settings</extracomment>
@@ -211,16 +186,6 @@
         <source>Locking Sym</source>
         <translation type="unfinished"></translation>
     </message>
-    <message id="active-layout">
-        <source>Active</source>
-        <extracomment>label showing this layout is currently selected</extracomment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message id="select-layout">
-        <source>Select</source>
-        <extracomment>Button text for button to select this as active LayoutItem</extracomment>
-        <translation type="unfinished"></translation>
-    </message>
     <message id="reset-to-defaults">
         <source>Reset all to defaults</source>
         <extracomment>Pulldown menu optiion to reset default values</extracomment>
@@ -236,11 +201,6 @@
         <extracomment>Main page header</extracomment>
         <translation type="unfinished"></translation>
     </message>
-    <message id="layout">
-        <source>Layout</source>
-        <extracomment>Main menu selection for layout selection</extracomment>
-        <translation type="unfinished"></translation>
-    </message>
     <message id="shortcut-not-configured">
         <source>Not configured</source>
         <extracomment>Label shown instead of application name if Fn is not configured</extracomment>
@@ -249,6 +209,17 @@
     <message id="shortcut-nothing">
         <source>Nothing, use as %1</source>
         <extracomment>Pulldown menu option clear shortcut. Allows using Fn as Fn</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message id="kbd-layout">
+        <source>Current layout is %1</source>
+        <oldsource>Current layout is: %1</oldsource>
+        <extracomment>Prefix for showing current layout</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message id="layout-desc">
+        <source>To change keyboard layout, go to Jolla Settings &gt; System settings &gt; Text input and change hardware keyboard active layout</source>
+        <extracomment>Description text for sticky and locking modifier keys</extracomment>
         <translation type="unfinished"></translation>
     </message>
 </context>

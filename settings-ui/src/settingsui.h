@@ -37,6 +37,9 @@ signals:
     void shortcutsChanged();
     void settingsChanged();
 
+private slots:
+    void handlePhysicalLayoutChange(QString layout);
+
 private:
 
     ComKimmoliTohkbd2Interface *tohkbd2daemon;

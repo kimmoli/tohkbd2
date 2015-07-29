@@ -26,6 +26,8 @@ SettingsUi::SettingsUi(QObject *parent) :
     tohkbd2user = new ComKimmoliTohkbd2userInterface("com.kimmoli.tohkbd2user", "/", QDBusConnection::sessionBus(), this);
     tohkbd2user->setTimeout(2000);
 
+    connect(tohkbd2user, SIGNAL(physicalLayoutChanged(QString)), this, SLOT(handlePhysicalLayoutChange(QString)));
+
     emit versionChanged();
 }
 
@@ -109,7 +111,10 @@ QVariantMap SettingsUi::getCurrentSettings()
     map.insert("lockingSymEnabled", settings.value("lockingSymEnabled", LOCKING_SYM_ENABLED).toBool());
     settings.endGroup();
 
-    map.insert("physcialLayout", QString(tohkbd2user->getActivePhysicalLayout()));
+
+    QString layout = QString(tohkbd2user->getActivePhysicalLayout()).toUpper();
+
+    map.insert("physicalLayout", layout);
 
     return map;
 }
@@ -286,4 +291,11 @@ QString SettingsUi::readSailfishVersion()
     qDebug() << "Sailfish version is" << version;
 
     return version;
+}
+
+void SettingsUi::handlePhysicalLayoutChange(QString layout)
+{
+    Q_UNUSED(layout);
+
+    emit settingsChanged();
 }
