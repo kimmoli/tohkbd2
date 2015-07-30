@@ -65,7 +65,6 @@ Page
                 width: 1
             }
 
-
             Repeater
             {
                 model: settingslist
@@ -128,7 +127,7 @@ Page
                 {
 
                     //: Prefix for showing current layout
-                    //% "Current layout is %1"
+                    //% "Keyboard layout: %1"
                     text: qsTrId("kbd-layout").arg(settings["physicalLayout"])
                     anchors.left: kimg.right
                     anchors.leftMargin: Theme.paddingLarge
@@ -142,6 +141,13 @@ Page
                 id: kcm
                 MenuItem
                 {
+                    //: Context menu entry for opening jolla-settings application
+                    //% "Start Jolla Settings..."
+                    text: qsTrId("start-jolla-settings")
+                    onClicked: settingsui.startJollaSettings()
+                }
+                MenuItem
+                {
                     //: Context menu entry for reloading keyboard mapping file for tohkbd
                     //% "Reload keyboard mapping"
                     text: qsTrId("force-reload")
@@ -152,7 +158,7 @@ Page
             Label
             {
                 //: Description text for sticky and locking modifier keys
-                //% "To change keyboard layout, go to Jolla Settings > System settings > Text input and change hardware keyboard active layout"
+                //% "To change keyboard layout, start Jolla Settings > System settings > Text input and change hardware keyboard active layout. Note that all layouts are not supported."
                 text: qsTrId("layout-desc")
                 x: Theme.paddingLarge
                 wrapMode: Text.Wrap

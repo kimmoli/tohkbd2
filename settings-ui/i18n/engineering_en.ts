@@ -212,19 +212,26 @@
         <translation type="unfinished"></translation>
     </message>
     <message id="kbd-layout">
-        <source>Current layout is %1</source>
-        <oldsource>Current layout is: %1</oldsource>
+        <source>Keyboard layout: %1</source>
+        <oldsource>Current layout is %1</oldsource>
         <extracomment>Prefix for showing current layout</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message id="layout-desc">
-        <source>To change keyboard layout, go to Jolla Settings &gt; System settings &gt; Text input and change hardware keyboard active layout</source>
+        <source>To change keyboard layout, start Jolla Settings &gt; System settings &gt; Text input and change hardware keyboard active layout. Note that all layouts are not supported.</source>
+        <oldsource>To change keyboard layout, go to Jolla Settings &gt; System settings &gt; Text input and change hardware keyboard active layout</oldsource>
         <extracomment>Description text for sticky and locking modifier keys</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message id="force-reload">
         <source>Reload keyboard mapping</source>
         <extracomment>Context menu entry for reloading keyboard mapping file for tohkbd</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message id="start-jolla-settings">
+        <source>Start Jolla Settings...</source>
+        <oldsource>Start Jolla Settings</oldsource>
+        <extracomment>Context menu entry for opening jolla-settings application</extracomment>
         <translation type="unfinished"></translation>
     </message>
 </context>
