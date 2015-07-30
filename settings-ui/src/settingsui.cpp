@@ -299,3 +299,8 @@ void SettingsUi::handlePhysicalLayoutChange(QString layout)
 
     emit settingsChanged();
 }
+
+void SettingsUi::forceKeymapReload()
+{
+    tohkbd2daemon->forceKeymapReload(QString());
+}

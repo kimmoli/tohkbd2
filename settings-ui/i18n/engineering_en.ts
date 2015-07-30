@@ -222,5 +222,10 @@
         <extracomment>Description text for sticky and locking modifier keys</extracomment>
         <translation type="unfinished"></translation>
     </message>
+    <message id="force-reload">
+        <source>Reload keyboard mapping</source>
+        <extracomment>Context menu entry for reloading keyboard mapping file for tohkbd</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 </TS>

@@ -110,23 +110,42 @@ Page
                 width: 1
             }
 
-            Row
+            ListItem
             {
-                x: Theme.paddingLarge
-                spacing: Theme.paddingLarge
+                id: kr
+                width: parent.width
+                height: Theme.itemSizeSmall + kcm.height
+                menu: kcm
 
                 Image
                 {
+                    id: kimg
                     x: Theme.paddingLarge
-                    source: "image://theme/icon-m-keyboard"
+                    source: kr.down ? "image://theme/icon-m-keyboard?" + Theme.highlightColor : "image://theme/icon-m-keyboard"
                     anchors.verticalCenter: parent.verticalCenter
                 }
                 Label
                 {
+
                     //: Prefix for showing current layout
                     //% "Current layout is %1"
                     text: qsTrId("kbd-layout").arg(settings["physicalLayout"])
+                    anchors.left: kimg.right
+                    anchors.leftMargin: Theme.paddingLarge
                     anchors.verticalCenter: parent.verticalCenter
+                    color: kr.down ? Theme.highlightColor : Theme.primaryColor
+                }
+            }
+
+            ContextMenu
+            {
+                id: kcm
+                MenuItem
+                {
+                    //: Context menu entry for reloading keyboard mapping file for tohkbd
+                    //% "Reload keyboard mapping"
+                    text: qsTrId("force-reload")
+                    onClicked: settingsui.forceKeymapReload()
                 }
             }
 

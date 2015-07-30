@@ -195,12 +195,15 @@ void keymapping::releaseStickyModifiers(bool force)
     sym->clear(force);
 }
 
-bool keymapping::setLayout(QString toLayout)
+bool keymapping::setLayout(QString toLayout, bool forceReload)
 {
     bool ret = true;
 
-    if (toLayout == layout)
+    if ((toLayout == layout) && !forceReload)
         return true;
+
+    if (forceReload && toLayout.isEmpty())
+        toLayout = layout;
 
     int i = 0;
 

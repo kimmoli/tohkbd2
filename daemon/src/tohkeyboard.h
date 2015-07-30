@@ -72,6 +72,7 @@ public slots:
     Q_NOREPLY void setShortcutsToDefault();
     Q_NOREPLY void setSettingInt(const QString &key, const int &value);
     Q_NOREPLY void setSettingString(const QString &key, const QString &value);
+    Q_NOREPLY void forceKeymapReload(const QString &layout);
 
 signals:
 

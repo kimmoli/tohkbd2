@@ -34,9 +34,9 @@
         <translation type="unfinished"></translation>
     </message>
     <message id="layout-unsupported">
-        <source>The selected physical layout is not supported by TOHKBD2</source>
-        <oldsource>Selected physical layout not supported by TOHKBD</oldsource>
-        <extracomment>Notification shown when a physical layout is not supported or the config file has an error</extracomment>
+        <source>The selected physical layout is not supported by TOHKBD2. Config file can also be invalid or missing.</source>
+        <oldsource>The selected physical layout is not supported by TOHKBD2</oldsource>
+        <extracomment>Notification shown when a physical layout is not supported or the config file has an error. Notification text will scroll.</extracomment>
         <translation type="unfinished"></translation>
     </message>
 </context>

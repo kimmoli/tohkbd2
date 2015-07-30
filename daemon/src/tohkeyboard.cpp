@@ -1352,3 +1352,18 @@ void Tohkbd::handlePhysicalLayout(const QString &layout)
         tohkbd2user->showUnsupportedLayoutNotification();
     }
 }
+
+/* DBUS method for forcing the keymap loading
+ * if "layout" is empty, get current layout from dconf and try to reload it
+ */
+void Tohkbd::forceKeymapReload(const QString &layout)
+{
+    QString toLayout = layout.isEmpty() ? QString(tohkbd2user->getActivePhysicalLayout()) : layout;
+
+    printf("forced keymap reload \"%s\"\n", qPrintable(toLayout));
+
+    if (!keymap->setLayout(toLayout, true))
+    {
+        tohkbd2user->showUnsupportedLayoutNotification();
+    }
+}

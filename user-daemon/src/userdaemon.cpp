@@ -195,7 +195,7 @@ QString UserDaemon::getPathTo(QString filename)
 
 void UserDaemon::showUnsupportedLayoutNotification()
 {
-    //: Notification shown when a physical layout is not supported or the config file has an error
-    //% "The selected physical layout is not supported by TOHKBD2"
+    //: Notification shown when a physical layout is not supported or the config file has an error. Notification text will scroll.
+    //% "The selected physical layout is not supported by TOHKBD2. Config file can also be invalid or missing."
     showNotification(qtTrId("layout-unsupported"));
 }

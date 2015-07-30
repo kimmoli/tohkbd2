@@ -31,6 +31,7 @@ public:
     Q_INVOKABLE void setSettingsToDefault();
     Q_INVOKABLE void setSettingInt(QString key, int value);
     Q_INVOKABLE void setSettingString(QString key, QString value);
+    Q_INVOKABLE void forceKeymapReload();
 
 signals:
     void versionChanged();
