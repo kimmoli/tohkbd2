@@ -111,10 +111,28 @@ QVariantMap SettingsUi::getCurrentSettings()
     map.insert("lockingSymEnabled", settings.value("lockingSymEnabled", LOCKING_SYM_ENABLED).toBool());
     settings.endGroup();
 
+    QString layout = QString(tohkbd2user->getActivePhysicalLayout());
 
-    QString layout = QString(tohkbd2user->getActivePhysicalLayout()).toUpper();
+    QMap<QString, QString> layoutToLanguage;
+    layoutToLanguage.insert("cz" ,"Čeština");
+    layoutToLanguage.insert("dk" ,"Dansk");
+    layoutToLanguage.insert("de" ,"Deutsch");
+    layoutToLanguage.insert("ee" ,"Eesti");
+    layoutToLanguage.insert("us" ,"English");
+    layoutToLanguage.insert("es" ,"Español");
+    layoutToLanguage.insert("fr" ,"Français");
+    layoutToLanguage.insert("it" ,"Italiano");
+    layoutToLanguage.insert("nl" ,"Nederlands");
+    layoutToLanguage.insert("no" ,"Norsk");
+    layoutToLanguage.insert("pl" ,"Polski");
+    layoutToLanguage.insert("pt" ,"Português");
+    layoutToLanguage.insert("fi" ,"Suomi");
+    layoutToLanguage.insert("se" ,"Svenska");
+    layoutToLanguage.insert("tr" ,"Türkçe");
+    layoutToLanguage.insert("kz" ,"Қазақ");
+    layoutToLanguage.insert("ru" ,"Русский");
 
-    map.insert("physicalLayout", layout);
+    map.insert("physicalLayout", layoutToLanguage.value(layout));
 
     return map;
 }
