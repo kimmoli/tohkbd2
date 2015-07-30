@@ -30,7 +30,7 @@ BA    KEY_U           0              KEY_BACKSLASH      SHIFT
 BB    KEY_I           0              KEY_7              RALT
 BC    KEY_O           0              KEY_0              RALT
 BD    KEY_P           0              KEY_SLASH          SHIFT
-BE    KEY_LEFTBRACE   0              KEY_MINUS          SHIFT
+BE    KEY_LEFTBRACE   0              KEY_MINUS          0
 C1    KEY_LEFT        0              KEY_VOLUMEDOWN     0
 C3    KEY_RIGHT       0              KEY_VOLUMEUP       0
 C4    KEY_A           0              KEY_COMMA          SHIFT
