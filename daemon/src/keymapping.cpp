@@ -140,31 +140,12 @@ void keymapping::process(QByteArray inputReport)
 
     if (sym->pressed && irCode) /* With SYM modifier */
     {
-        int i = 0;
-        while (lut_sym[i])
-        {
-            if (irCode == lut_sym[i])
-            {
-                retKey.append(qMakePair(lut_sym[i+1], lut_sym[i+2]));
-                break;
-            }
-            i += 3;
-        }
+        retKey.append(lut_sym.value(irCode));
     }
-    else if (irCode) /* Without SYM modifier */
+    else if (irCode) /* Plain key */
     {
-        int i = 0;
-        while (lut_plain[i])
-        {
-            if (irCode == lut_plain[i])
-            {
-                retKey.append(qMakePair(lut_plain[i+1], lut_plain[i+2]));
-                break;
-            }
-            i += 3;
-        }
+        retKey.append(lut_plain.value(irCode));
     }
-
 
     /* If key is changed on the fly without break... emit released */
     if (pressedCode)
@@ -215,9 +196,12 @@ bool keymapping::setLayout(QString toLayout, bool forceReload)
 
     if ( inputFile.open( QIODevice::ReadOnly | QIODevice::Text ) )
     {
-       QTextStream in( &inputFile );
-       while (!in.atEnd())
-       {
+        lut_plain.clear();
+        lut_sym.clear();
+
+        QTextStream in( &inputFile );
+        while (!in.atEnd())
+        {
             QStringList line = in.readLine().split(QRegExp("\\s+"));
 
             // Comment starts with #
@@ -233,6 +217,10 @@ bool keymapping::setLayout(QString toLayout, bool forceReload)
 
             bool ok;
             int code = line.at(0).toInt(&ok, 16);
+            int plainKeyIndex = keyNames.indexOf(line.at(1));
+            int symKeyIndex = keyNames.indexOf(line.at(3));
+            int plainModifier = 0;
+            int symModifier = 0;
 
             if (!ok)
             {
@@ -241,13 +229,7 @@ bool keymapping::setLayout(QString toLayout, bool forceReload)
                break;
             }
 
-            lut_plain[i] = code;
-            lut_sym[i] = code;
-
-            i++;
-
-            int indexOf = keyNames.indexOf(line.at(1));
-            if (indexOf < 0)
+            if (plainKeyIndex < 0)
             {
                printf("keymap: error parsing %s\n", qPrintable(line.at(1)));
                ret = false;
@@ -256,12 +238,9 @@ bool keymapping::setLayout(QString toLayout, bool forceReload)
 
             /* Custom keys */
             if (line.at(1).startsWith("KEY_TOH_"))
-                indexOf = indexOf - keyNames.indexOf("KEY_TOH_TABLE_DELIMITER") + KEY_MAX;
+                plainKeyIndex = plainKeyIndex - keyNames.indexOf("KEY_TOH_TABLE_DELIMITER") + KEY_MAX;
 
-            lut_plain[i] = indexOf;
-
-            indexOf = keyNames.indexOf(line.at(3));
-            if (indexOf < 0)
+            if (symKeyIndex < 0)
             {
                printf("keymap: error parsing %s\n", qPrintable(line.at(3)));
                ret = false;
@@ -269,36 +248,32 @@ bool keymapping::setLayout(QString toLayout, bool forceReload)
             }
 
             if (line.at(3).startsWith("KEY_TOH_"))
-                indexOf = indexOf - keyNames.indexOf("KEY_TOH_TABLE_DELIMITER") + KEY_MAX;
-
-            lut_sym[i] = indexOf;
-
-            i++;
-
-            lut_plain[i] = 0;
-            lut_sym[i] = 0;
+                symKeyIndex = symKeyIndex - keyNames.indexOf("KEY_TOH_TABLE_DELIMITER") + KEY_MAX;
 
             if (line.at(2).contains("SHIFT"))
-                lut_plain[i] |= FORCE_SHIFT;
+                plainModifier |= FORCE_SHIFT;
             if (line.at(2).contains("RALT"))
-                lut_plain[i] |= FORCE_RIGHTALT;
+                plainModifier |= FORCE_RIGHTALT;
             if (line.at(2).contains("LALT"))
-                lut_plain[i] |= FORCE_ALT;
+                plainModifier |= FORCE_ALT;
             if (line.at(2).contains("CTRL"))
-                lut_plain[i] |= FORCE_CTRL;
+                plainModifier |= FORCE_CTRL;
             if (line.at(2).contains("COMP"))
-                lut_plain[i] |= FORCE_COMPOSE;
+                plainModifier |= FORCE_COMPOSE;
 
             if (line.at(4).contains("SHIFT"))
-                lut_sym[i] |= FORCE_SHIFT;
+                symModifier |= FORCE_SHIFT;
             if (line.at(4).contains("RALT"))
-                lut_sym[i] |= FORCE_RIGHTALT;
+                symModifier |= FORCE_RIGHTALT;
             if (line.at(4).contains("LALT"))
-                lut_sym[i] |= FORCE_ALT;
+                symModifier |= FORCE_ALT;
             if (line.at(4).contains("CTRL"))
-                lut_sym[i] |= FORCE_CTRL;
+                symModifier |= FORCE_CTRL;
             if (line.at(4).contains("COMP"))
-                lut_sym[i] |= FORCE_COMPOSE;
+                symModifier |= FORCE_COMPOSE;
+
+            lut_plain.insert(code, qMakePair(plainKeyIndex, plainModifier));
+            lut_sym.insert(code, qMakePair(symKeyIndex, symModifier));
 
             i++;
        }
@@ -310,24 +285,18 @@ bool keymapping::setLayout(QString toLayout, bool forceReload)
     }
 
     /* Fail if not a single key was defined */
-    if (i < 3)
+    if (i == 0)
     {
         ret = false;
     }
 
     inputFile.close();
 
-    for ( ; i<256 ; i++)
-    {
-        lut_plain[i] = 0;
-        lut_sym[i] = 0;
-    }
-
     if (ret)
     {
         layout = toLayout;
 
-        printf("keymap: layout set to %s\n", qPrintable(layout));
+        printf("keymap: processed %d keys. layout set to %s\n", i, qPrintable(layout));
     }
     else
     {

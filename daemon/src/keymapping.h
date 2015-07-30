@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QList>
 #include <QPair>
+#include <QMap>
 #include <linux/input.h>
 #include "modifierhandler.h"
 
@@ -58,8 +59,8 @@ private:
     QString layout;
     QString layoutPath;
 
-    int lut_plain[256];
-    int lut_sym[256];
+    QMap< int, QPair<int, int> > lut_plain;
+    QMap< int, QPair<int, int> > lut_sym;
 
     static QStringList keyNames;
 };
