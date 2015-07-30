@@ -3,5 +3,6 @@
         <file>layouts/fi.tohkbdmap</file>
         <file>layouts/us.tohkbdmap</file>
         <file>layouts/de.tohkbdmap</file>
+        <file>layouts/README</file>
     </qresource>
 </RCC>

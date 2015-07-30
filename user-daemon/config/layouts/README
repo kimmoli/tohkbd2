@@ -1,0 +1,57 @@
+TOHKBD2 Keyboard mapping files
+------------------------------
+
+Scancodes: (scandic qwerty keyboard shown)
+
+    +-------------+------+----+----+----+----+----+----+----+----+----+----+----+-----------+
+    | ESC         | 1    | 2  | 3  | 4  | 5  | 6  | 7  | 8  | 9  | 0  | -  | =  | Backspace |
+    | A1          | A3   | A4 | A5 | A6 | A7 | A8 | A9 | AA | AB | AC | AD | AE | AF        |
+    +------+------+------+----+----+----+----+----+----+----+----+----+----+----+-----------+
+    | Del  | Up   | Ins  | q  | w  | e  | r  | t  | y  | u  | i  | o  | p  | å  | Ctrl      |
+    | B1   | B2   | B3   | B4 | B5 | B6 | B7 | B8 | B9 | BA | BB | BC | BD | BE |           |
+    +------+------+------+----+----+----+----+----+----+----+----+----+----+----+-----------+
+    | Left |      | Right| a  | s  | d  | f  | g  | h  | j  | k  | l  | ö  | ä  | Alt       |
+    | C1   |      | C3   | C4 | C5 | C6 | C7 | C8 | C9 | CA | CB | CC | CD | CE |           |
+    +------+------+------+----+----+----+----+----+----+----+----+----+----+----+-----------+
+    | Home | Down | End  | z  | x  | c  | v  | b  | n  | m  | ?  | !  | ,  | .  |           |
+    | D1   | D2   | D3   | D4 | D5 | D6 | D7 | D8 | D9 | DA | DB | DC | DD | DE |           |
+    +------+------+------+----+----+----+----+----+----+----+----+----+----+----+ Return    |
+    | Sym         | Ctrl | Shift   | Space             | Shift   | @  | Sym     | EF        |
+    |             |      |         | E9                |         | EC |         |           |
+    +-------------+------+---------+-------------------+---------+----+---------+-----------+
+
+Ctrl, Alt, Shift or Sym keys can not be remapped.
+
+Mapping file format is one scancode for each row, followed by key names and modifiers for plain and sym separated with space(s):
+
+Scancode PlainKeyName PlainKeyModifier SymKeyname SymKeyModifier
+C6       KEY_D        0                KEY_3      RALT
+
+Supported KeyNames are from linux/input.h + few custom ones:
+
+KEY_ESC, KEY_1, KEY_2, KEY_3, KEY_4, KEY_5, KEY_6, KEY_7, KEY_8, KEY_9,
+KEY_0, KEY_MINUS, KEY_EQUAL, KEY_BACKSPACE, KEY_TAB, KEY_Q, KEY_W, KEY_E, KEY_R, KEY_T,
+KEY_Y, KEY_U, KEY_I, KEY_O, KEY_P, KEY_LEFTBRACE, KEY_RIGHTBRACE, KEY_ENTER, KEY_LEFTCTRL,
+KEY_A, KEY_S, KEY_D, KEY_F, KEY_G, KEY_H, KEY_J, KEY_K, KEY_L, KEY_SEMICOLON, KEY_APOSTROPHE,
+KEY_GRAVE, KEY_LEFTSHIFT, KEY_BACKSLASH, KEY_Z, KEY_X, KEY_C, KEY_V, KEY_B, KEY_N, KEY_M,
+KEY_COMMA, KEY_DOT, KEY_SLASH, KEY_RIGHTSHIFT, KEY_KPASTERISK, KEY_LEFTALT, KEY_SPACE, KEY_CAPSLOCK,
+KEY_F1, KEY_F2, KEY_F3, KEY_F4, KEY_F5, KEY_F6, KEY_F7, KEY_F8, KEY_F9, KEY_F10, KEY_NUMLOCK,
+KEY_SCROLLLOCK, KEY_KP7, KEY_KP8, KEY_KP9, KEY_KPMINUS, KEY_KP4, KEY_KP5, KEY_KP6, KEY_KPPLUS,
+KEY_KP1, KEY_KP2, KEY_KP3, KEY_KP0, KEY_KPDOT, KEY_RESERVED, KEY_ZENKAKUHANKAKU, KEY_102ND, KEY_F11,
+KEY_F12, KEY_RO, KEY_KATAKANA, KEY_HIRAGANA, KEY_HENKAN, KEY_KATAKANAHIRAGANA, KEY_MUHENKAN, KEY_KPJPCOMMA,
+KEY_KPENTER, KEY_RIGHTCTRL, KEY_KPSLASH, KEY_SYSRQ, KEY_RIGHTALT, KEY_LINEFEED, KEY_HOME, KEY_UP,
+KEY_PAGEUP, KEY_LEFT, KEY_RIGHT, KEY_END, KEY_DOWN, KEY_PAGEDOWN, KEY_INSERT, KEY_DELETE, KEY_MACRO,
+KEY_MUTE, KEY_VOLUMEDOWN, KEY_VOLUMEUP, KEY_POWER, KEY_KPEQUAL, KEY_KPPLUSMINUS, KEY_PAUSE, KEY_SCALE,
+KEY_KPCOMMA, KEY_HANGEUL, KEY_HANJA, KEY_YEN, KEY_LEFTMETA, KEY_RIGHTMETA, KEY_COMPOSE,
+KEY_TOH_SCREENSHOT, KEY_TOH_SELFIE, KEY_TOH_NEWEMAIL, KEY_TOH_BACKLIGHT
+
+Supported modifiers:
+
+0 = No modifier
+SHIFT = Shift
+RALI = Right Alt or AltGr
+LALT = Left alt
+CTRL = Ctrl
+
+If combination needed, just write them together, or separate with | e.g. RALT|SHIFT
+
