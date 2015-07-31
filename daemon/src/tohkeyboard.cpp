@@ -611,9 +611,14 @@ void Tohkbd::handleKeyPressed(QList< QPair<int, int> > keyCode)
                                           || (keyCode.at(i).first >= KEY_A && keyCode.at(i).first <= KEY_L)
                                           || (keyCode.at(i).first >= KEY_Z && keyCode.at(i).first <= KEY_M) ));
 
-            /* Some of the keys require shift pressed to get correct symbol */
             if (keyCode.at(i).second & FORCE_COMPOSE)
+            {
                 uinputif->sendUinputKeyPress(KEY_COMPOSE, 1);
+                QThread::msleep(KEYREPEAT_RATE);
+                uinputif->sendUinputKeyPress(KEY_COMPOSE, 0);
+                uinputif->synUinputDevice();
+            }
+
             if ((keyCode.at(i).second & FORCE_RIGHTALT))
                 uinputif->sendUinputKeyPress(KEY_RIGHTALT, 1);
             if ((keyCode.at(i).second & FORCE_SHIFT) || tweakCapsLock)
@@ -636,8 +641,6 @@ void Tohkbd::handleKeyPressed(QList< QPair<int, int> > keyCode)
                 uinputif->sendUinputKeyPress(KEY_LEFTSHIFT, 0);
             if ((keyCode.at(i).second & FORCE_RIGHTALT))
                 uinputif->sendUinputKeyPress(KEY_RIGHTALT, 0);
-            if (keyCode.at(i).second & FORCE_COMPOSE)
-                uinputif->sendUinputKeyPress(KEY_COMPOSE, 0);
         }
     }
 
