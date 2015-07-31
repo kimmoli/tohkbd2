@@ -199,6 +199,10 @@ Page
             //: Main menu selection for FAQ and reporting an issue, page header for bug reporter page. button text for triggering email app.
             //% "Report a bug"
             settingslist.append({"labelId": qsTrId("report-a-bug"),      "iconId":"image://theme/icon-m-crash-reporter", "pageId":"BugReporter.qml",     "isEnabled":true})
+
+            //: Main menu selection for Help page with keyboard shortcuts etc.
+            //% "Help"
+            settingslist.append({"labelId": qsTrId("help"),              "iconId":"image://theme/icon-m-question",       "pageId":"Help.qml",            "isEnabled":true})
         }
     }
 

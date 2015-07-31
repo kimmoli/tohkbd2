@@ -48,5 +48,6 @@ OTHER_FILES += qml/tohkbd2-settingsui.qml \
     qml/icons/kimmoli.png \
     qml/icons/wazd.png \
     qml/icons/dirkvl.png \
-    qml/components/KeyboardHandler.qml
+    qml/components/KeyboardHandler.qml \
+    qml/pages/Help.qml
 

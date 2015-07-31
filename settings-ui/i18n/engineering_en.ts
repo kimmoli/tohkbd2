@@ -239,5 +239,111 @@
         <extracomment>Context menu entry for overwrite keyboard mapping files with original ones</extracomment>
         <translation type="unfinished"></translation>
     </message>
+    <message id="help">
+        <source>Help</source>
+        <extracomment>Main menu selection for Help page with keyboard shortcuts etc.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message id="key-combinations">
+        <source>Key combinations</source>
+        <extracomment>Section header for list of key-combos</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message id="more-desc">
+        <source>This list is most propably not complete as the operating system/Qt can offer more key combinations.</source>
+        <extracomment>Description text saying there can be more combinations by the OS</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message id="help-switch-app">
+        <source>Switch apps</source>
+        <oldsource>Switch app</oldsource>
+        <extracomment>Help page text (keep short)</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message id="help-screeshot">
+        <source>Screenshot</source>
+        <extracomment>Help page text (keep short)</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message id="help-selfie-led">
+        <source>Selfie LED</source>
+        <extracomment>Help page text (keep short)</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message id="help-toggle-backlight">
+        <source>Toggle backlight</source>
+        <extracomment>Help page text (keep short)</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message id="help-dec-volume">
+        <source>Decrease volume</source>
+        <extracomment>Help page text (keep short)</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message id="help-inc-volume">
+        <source>Increase volume</source>
+        <extracomment>Help page text (keep short)</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message id="help-new-email">
+        <source>New Email</source>
+        <extracomment>Help page text (keep short)</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message id="help-capslock">
+        <source>Toggle CapsLock</source>
+        <extracomment>Help page text (keep short)</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message id="help-select">
+        <source>Select text</source>
+        <extracomment>Help page text (keep short)</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message id="help-select-all">
+        <source>Select all</source>
+        <extracomment>Help page text (keep short)</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message id="help-copy">
+        <source>Copy</source>
+        <extracomment>Help page text (keep short)</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message id="help-cut">
+        <source>Cut</source>
+        <extracomment>Help page text (keep short)</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message id="help-paste">
+        <source>Paste</source>
+        <extracomment>Help page text (keep short)</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message id="help-undo">
+        <source>Undo</source>
+        <extracomment>Help page text (keep short)</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message id="help-redo">
+        <source>Redo</source>
+        <extracomment>Help page text (keep short)</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message id="help-delete-word">
+        <source>Delete word</source>
+        <extracomment>Help page text (keep short)</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message id="help-reboot-phone">
+        <source>Reboot phone</source>
+        <extracomment>Help page text (keep short)</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message id="help-restart-lipstick">
+        <source>Restart lipstick</source>
+        <extracomment>Help page text (keep short)</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 </TS>
