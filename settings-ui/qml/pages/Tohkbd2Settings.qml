@@ -13,13 +13,51 @@ Page
     KeyboardHandler
     {
         id: kbdif
-        upDownItemCount: settingslist.count
+        upDownItemCount: kr.menuOpen ? kr.menu.children.length : settingslist.count + 1
+
+        onUpDownSelectionChanged:
+        {
+            if (kr.menuOpen)
+            {
+                if (kr.menu.children[upDownSelection])
+                    kr.menu._setHighlightedItem(kr.menu.children[upDownSelection])
+            }
+            else
+            {
+                if (upDownSelection === (upDownItemCount - 1))
+                    flick.scrollToBottom()
+            }
+        }
+
         onKeyEnterPressed:
         {
-            if (settingslist.get(upDownSelection).isEnabled)
+            if (kr.menuOpen)
             {
-                pageStack.push(Qt.resolvedUrl(settingslist.get(upDownSelection).pageId))
+                if (kr.menu.children[upDownSelection])
+                    kr.menu._activatedMenuItem(kr.menu.children[upDownSelection])
+                upDownSelection = -1
             }
+            else if (upDownSelection === (upDownItemCount - 1))
+            {
+                if (!kr.menuOpen)
+                {
+                    kr.showMenu()
+                    upDownSelection = 0
+                }
+            }
+            else
+            {
+                if (settingslist.get(upDownSelection).isEnabled && !kr.menuOpen)
+                {
+                    pageStack.push(Qt.resolvedUrl(settingslist.get(upDownSelection).pageId))
+                }
+            }
+        }
+
+        onKeyBackspacePressed:
+        {
+            if (kr.menuOpen) kr.hideMenu()
+            upDownSelection = -1
         }
     }
 
@@ -72,6 +110,7 @@ Page
 
             Repeater
             {
+                id: repeater
                 model: settingslist
 
                 ListItem
@@ -80,7 +119,7 @@ Page
                     height: Theme.itemSizeSmall
                     enabled: isEnabled
                     opacity: enabled ? 1.0 : 0.4
-                    highlighted: down || kbdif.upDownSelection === index
+                    highlighted: (down || kbdif.upDownSelection === index) && !kr.menuOpen
 
                     Image
                     {
@@ -108,36 +147,36 @@ Page
                 }
             }
 
-            Item
-            {
-                height: Theme.itemSizeSmall
-                width: 1
-            }
-
             ListItem
             {
                 id: kr
                 width: parent.width
                 height: Theme.itemSizeSmall + kcm.height
+                highlighted: down || menuOpen || kbdif.upDownSelection === (kbdif.upDownItemCount - 1)
                 menu: kcm
+                showMenuOnPressAndHold: false
+                onClicked:
+                {
+                    kbdif.upDownSelection = (kbdif.upDownItemCount - 1)
+                    showMenu()
+                }
 
                 Image
                 {
                     id: kimg
                     x: Theme.paddingLarge
-                    source: kr.down ? "image://theme/icon-m-keyboard?" + Theme.highlightColor : "image://theme/icon-m-keyboard"
+                    source: kr.highlighted ? "image://theme/icon-m-keyboard?" + Theme.highlightColor : "image://theme/icon-m-keyboard"
                     anchors.verticalCenter: parent.verticalCenter
                 }
                 Label
                 {
-
                     //: Prefix for showing current layout
                     //% "Keyboard layout: %1"
                     text: qsTrId("kbd-layout").arg(settings["physicalLayout"])
                     anchors.left: kimg.right
                     anchors.leftMargin: Theme.paddingLarge
                     anchors.verticalCenter: parent.verticalCenter
-                    color: kr.down ? Theme.highlightColor : Theme.primaryColor
+                    color: kr.highlighted ? Theme.highlightColor : Theme.primaryColor
                 }
             }
 

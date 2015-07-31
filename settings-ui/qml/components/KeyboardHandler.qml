@@ -23,8 +23,10 @@ Item
     {
         if (event.key === Qt.Key_Down)
         {
-            if (++upDownSelection >= upDownItemCount)
+            if (upDownSelection+1 >= upDownItemCount)
                 upDownSelection = 0
+            else
+                upDownSelection++
             keyUpPressed()
             event.accepted = true
         }
@@ -38,8 +40,10 @@ Item
         }
         else if (event.key === Qt.Key_Right)
         {
-            if (++leftRightSelection >= leftRightItemCount)
+            if (leftRightSelection+1 >= leftRightItemCount)
                 leftRightSelection = 0
+            else
+                leftRightSelection++
             keyRightPressed()
             event.accepted = true
         }
