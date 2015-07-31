@@ -327,3 +327,8 @@ void SettingsUi::startJollaSettings()
 {
     tohkbd2user->launchApplication("/usr/share/applications/jolla-settings.desktop");
 }
+
+void SettingsUi::restoreOriginalKeymaps()
+{
+    tohkbd2user->installKeymaps(true);
+}

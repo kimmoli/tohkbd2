@@ -23,6 +23,11 @@ Page
         }
     }
 
+    RemorsePopup
+    {
+        id: remorse
+    }
+
     SilicaFlickable
     {
         id: flick
@@ -152,6 +157,14 @@ Page
                     //% "Reload keyboard mapping"
                     text: qsTrId("force-reload")
                     onClicked: settingsui.forceKeymapReload()
+                }
+                MenuItem
+                {
+                    //: Context menu entry for overwrite keyboard mapping files with original ones
+                    //% "Reset keyboard mapping"
+                    text: qsTrId("reset-keymaps")
+                    onClicked: remorse.execute(qsTrId("reset-keymaps"),
+                                               function() { settingsui.restoreOriginalKeymaps() } )
                 }
             }
 

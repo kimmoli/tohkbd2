@@ -234,5 +234,10 @@
         <extracomment>Context menu entry for opening jolla-settings application</extracomment>
         <translation type="unfinished"></translation>
     </message>
+    <message id="reset-keymaps">
+        <source>Reset keyboard mapping</source>
+        <extracomment>Context menu entry for overwrite keyboard mapping files with original ones</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 </TS>

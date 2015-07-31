@@ -37,6 +37,9 @@
             <arg name="path" type="s" direction="out" />
         </method>
         <method name="showUnsupportedLayoutNotification" />
+        <method name="installKeymaps">
+            <arg name="overwrite" type="b" direction="in" />
+        </method>
         <method name="quit" />
         <signal name="physicalLayoutChanged">
             <arg name="layout" type="s" direction="out" />

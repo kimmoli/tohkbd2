@@ -33,6 +33,7 @@ public:
     Q_INVOKABLE void setSettingString(QString key, QString value);
     Q_INVOKABLE void forceKeymapReload();
     Q_INVOKABLE void startJollaSettings();
+    Q_INVOKABLE void restoreOriginalKeymaps();
 
 signals:
     void versionChanged();
