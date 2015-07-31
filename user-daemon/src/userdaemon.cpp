@@ -11,6 +11,8 @@ UserDaemon::UserDaemon(QObject *parent) :
     m_dbusRegistered = false;
     m_launchPending = false;
 
+    installKeymaps(false);
+
     physicalLayout = new MGConfItem("/desktop/lipstick-jolla-home/layout");
     connect(physicalLayout, SIGNAL(valueChanged()), this, SLOT(handlePhysicalLayout()));
 }
@@ -183,7 +185,7 @@ QString UserDaemon::getActivePhysicalLayout()
     return physicalLayout->value().toString();
 }
 
-QString UserDaemon::getPathTo(QString filename)
+QString UserDaemon::getPathTo(const QString &filename)
 {
     if (filename == "keymaplocation")
     {
@@ -198,4 +200,44 @@ void UserDaemon::showUnsupportedLayoutNotification()
     //: Notification shown when a physical layout is not supported or the config file has an error. Notification text will scroll.
     //% "The selected physical layout is not supported by TOHKBD2. Config file can also be invalid or missing."
     showNotification(qtTrId("layout-unsupported"));
+}
+
+void UserDaemon::installKeymaps(const bool &overwrite)
+{
+    QDir keymapfolder(QDir::homePath() + KEYMAP_FOLDER);
+    keymapfolder.mkpath(".");
+
+    QDir keymapRes(":/layouts/");
+    QFileInfoList list = keymapRes.entryInfoList();
+
+    int i;
+    for (i=0 ; i < list.size() ; i++)
+    {
+        QString from = list.at(i).absoluteFilePath();
+        QString to = keymapfolder.path() + "/" + from.split("/").last();
+
+        QFileInfo toFile(to);
+
+        if(!toFile.exists() || overwrite)
+        {
+            QFile newToFile(to);
+            QResource res(from);
+
+            if (newToFile.open(QIODevice::WriteOnly) && res.isValid())
+            {
+                qint64 ws;
+                if (res.isCompressed())
+                    ws = newToFile.write( qUncompress(res.data(), res.size()));
+                else
+                    ws = newToFile.write( (char *)res.data());
+
+                newToFile.close();
+                printf("tohkbd2-user: Wrote %s (%lld bytes) to %s\n", qPrintable(from), ws, qPrintable(to));
+            }
+            else
+            {
+                printf("tohkbd2-user: Failed to write %s\n", qPrintable(to));
+            }
+        }
+    }
 }

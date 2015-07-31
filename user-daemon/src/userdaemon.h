@@ -44,8 +44,9 @@ public slots:
     void actionWithRemorse(const QString &action);
     void takeScreenShot() { emit _takeScreenShot(); }
     QString getActivePhysicalLayout();
-    QString getPathTo(QString filename);
+    QString getPathTo(const QString &filename);
     void showUnsupportedLayoutNotification();
+    void installKeymaps(const bool &overwrite);
     void quit();
 
     void launchSuccess(const QString &appName);
