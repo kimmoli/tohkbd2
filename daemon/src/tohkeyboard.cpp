@@ -61,6 +61,9 @@ Tohkbd::Tohkbd(QObject *parent) :
 
     connect(tohkbd2user, SIGNAL(physicalLayoutChanged(QString)), this, SLOT(handlePhysicalLayout(QString)));
 
+    tohkbd2settingsui = new ComKimmoliTohkbd2settingsuiInterface("com.kimmoli.tohkbd2settingsui", "/", QDBusConnection::sessionBus(), this);
+    tohkbd2settingsui->setTimeout(2000);
+
     thread = new QThread();
     worker = new Worker();
 
@@ -562,6 +565,15 @@ void Tohkbd::handleKeyPressed(QList< QPair<int, int> > keyCode)
 
         if (FKEYS.contains(keyCode.at(0).first))
         {
+            /* Ctrl-Sym-F1 is Help */
+            if (keyCode.at(0).first == KEY_F1 && keymap->ctrl->pressed)
+            {
+                tohkbd2settingsui->showHelp();
+
+                keyIsPressed = true;
+                return;
+            }
+
             QString cmd = applicationShortcuts[keyCode.at(0).first];
 
             if (!cmd.isEmpty())

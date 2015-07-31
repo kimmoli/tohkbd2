@@ -18,6 +18,9 @@ Page
         onKeyBackspacePressed: pageStack.pop()
     }
 
+    Component.onCompleted: helpPageOpen = true
+    Component.onDestruction: helpPageOpen = false
+
     SilicaFlickable
     {
         id: flick

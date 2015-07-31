@@ -38,8 +38,20 @@ int main(int argc, char *argv[])
     QQmlEngine *engine = view->engine();
     engine->addImageProvider(QLatin1String("tohkbd2"), new IconProvider);
 
+    QString viewMode;
+
+    if (argc > 1)
+        viewMode = QString(argv[1]);
+
+    if (!viewMode.startsWith("--"))
+        viewMode = QString();
+
+    view->rootContext()->setContextProperty("viewMode", viewMode);
+
     view->setSource(SailfishApp::pathTo("qml/tohkbd2-settingsui.qml"));
     view->show();
+
+    QObject::connect(engine, SIGNAL(quit()), app.data(), SLOT(quit()));
 
     return app->exec();
 }

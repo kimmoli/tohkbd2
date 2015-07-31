@@ -40,6 +40,7 @@ SOURCES += \
     src/eepromdriver.cpp \
     src/modifierhandler.cpp \
     ../user-daemon/src/userInterface.cpp \
+    ../settings-ui/src/settingsuiInterface.cpp \
     src/uinputevpoll.cpp
 
 HEADERS += \
@@ -55,6 +56,7 @@ HEADERS += \
     src/eepromdriver.h \
     src/modifierhandler.h \
     ../user-daemon/src/userInterface.h \
+    ../settings-ui/src/settingsuiInterface.h \
     src/uinputevpoll.h
 
 OTHER_FILES += \

@@ -23,6 +23,7 @@
 #include "tca8424driver.h"
 #include "keymapping.h"
 #include "../user-daemon/src/userInterface.h"
+#include "../settings-ui/src/settingsuiInterface.h"
 
 #define SERVICE_NAME "com.kimmoli.tohkbd2"
 #define EVDEV_OFFSET (8)
@@ -143,6 +144,7 @@ private:
     bool capsLock;
 
     ComKimmoliTohkbd2userInterface *tohkbd2user;
+    ComKimmoliTohkbd2settingsuiInterface *tohkbd2settingsui;
 
     static QList<int> FKEYS;
 

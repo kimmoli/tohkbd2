@@ -6,3 +6,5 @@ userAdaptor.*
 userInterface.*
 daemonAdaptor.*
 daemonInterface.*
+settingsuiAdaptor.*
+settingsuiInterface.*

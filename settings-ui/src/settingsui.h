@@ -10,14 +10,19 @@
 #include "../daemon/src/daemonInterface.h"
 #include "../user-daemon/src/userInterface.h"
 
+#define SERVICE_NAME "com.kimmoli.tohkbd2settingsui"
+
+class QDBusInterface;
 class SettingsUi : public QObject
 {
     Q_OBJECT
+    Q_CLASSINFO("D-Bus Interface", SERVICE_NAME)
     Q_PROPERTY(QString version READ readVersion NOTIFY versionChanged())
 
 public:
     explicit SettingsUi(QObject *parent = 0);
     ~SettingsUi();
+    void registerDBus();
 
     QString readVersion();
     Q_INVOKABLE QVariantList getApplications();
@@ -35,10 +40,14 @@ public:
     Q_INVOKABLE void startJollaSettings();
     Q_INVOKABLE void restoreOriginalKeymaps();
 
+public slots:
+    void showHelp() { emit showHelpPage(); }
+
 signals:
     void versionChanged();
     void shortcutsChanged();
     void settingsChanged();
+    void showHelpPage();
 
 private slots:
     void handlePhysicalLayoutChange(QString layout);
@@ -47,6 +56,8 @@ private:
 
     ComKimmoliTohkbd2Interface *tohkbd2daemon;
     ComKimmoliTohkbd2userInterface *tohkbd2user;
+
+    bool m_dbusRegistered;
 };
 
 

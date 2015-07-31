@@ -14,6 +14,9 @@ ApplicationWindow
 
     onApplicationActiveChanged:
     {
+        if (!applicationActive && viewMode === "--showhelp")
+            Qt.quit()
+
         if (!applicationActive && bugReportPageOpen)
         {
             bugReportPageOpen = false
@@ -34,10 +37,18 @@ ApplicationWindow
 
     property bool bugReportPageOpen: false
     property bool aboutPageOpen: false
+    property bool helpPageOpen: false
 
     property var settings
 
-    initialPage: Qt.resolvedUrl("pages/Tohkbd2Settings.qml")
+    initialPage:
+    {
+        if (viewMode === "--showhelp")
+            return Qt.resolvedUrl("pages/Help.qml")
+        else
+            return Qt.resolvedUrl("pages/Tohkbd2Settings.qml")
+    }
+
     cover: Qt.resolvedUrl("cover/CoverPage.qml")
 
     function coverActionLeft()
@@ -74,6 +85,9 @@ ApplicationWindow
         {
             settings = settingsui.getCurrentSettings()
         }
+
+        onShowHelpPage: if (viewMode !== "--showhelp" && !helpPageOpen)
+                            pageStack.push(Qt.resolvedUrl("pages/Help.qml"))
     }
 
     ListModel

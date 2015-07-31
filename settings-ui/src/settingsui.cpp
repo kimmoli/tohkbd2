@@ -11,16 +11,24 @@
 #include <QDebug>
 #include <QtDBus/QtDBus>
 #include <algorithm>
-
-#include "../../daemon/src/defaultSettings.h"
-
 #include <mlite5/MDesktopEntry>
-
 #include <linux/input.h>
+#include "../../daemon/src/defaultSettings.h"
+#include "settingsuiAdaptor.h"
+
+static const char *SERVICE = SERVICE_NAME;
+static const char *PATH = "/";
+
 
 SettingsUi::SettingsUi(QObject *parent) :
     QObject(parent)
 {
+    m_dbusRegistered = false;
+
+    new Tohkbd2settingsuiAdaptor(this);
+
+    registerDBus();
+
     tohkbd2daemon = new ComKimmoliTohkbd2Interface("com.kimmoli.tohkbd2", "/", QDBusConnection::systemBus(), this);
     tohkbd2daemon->setTimeout(2000);
     tohkbd2user = new ComKimmoliTohkbd2userInterface("com.kimmoli.tohkbd2user", "/", QDBusConnection::sessionBus(), this);
@@ -33,7 +41,39 @@ SettingsUi::SettingsUi(QObject *parent) :
 
 SettingsUi::~SettingsUi()
 {
+    if (m_dbusRegistered)
+    {
+        QDBusConnection connection = QDBusConnection::sessionBus();
+        connection.unregisterObject(PATH);
+        connection.unregisterService(SERVICE);
+
+        printf("tohkbd2-settingsui: unregistered from dbus sessionBus\n");
+    }
 }
+
+void SettingsUi::registerDBus()
+{
+    if (!m_dbusRegistered)
+    {
+        // DBus
+        QDBusConnection connection = QDBusConnection::sessionBus();
+        if (!connection.registerService(SERVICE))
+        {
+            QCoreApplication::quit();
+            return;
+        }
+
+        if (!connection.registerObject(PATH, this))
+        {
+            QCoreApplication::quit();
+            return;
+        }
+        m_dbusRegistered = true;
+
+        printf("tohkbd2-settingsui: succesfully registered to dbus sessionBus \"%s\"\n", SERVICE);
+    }
+}
+
 
 QString SettingsUi::readVersion()
 {
