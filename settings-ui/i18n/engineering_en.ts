@@ -245,8 +245,9 @@
         <translation type="unfinished"></translation>
     </message>
     <message id="key-combinations">
-        <source>Key combinations</source>
-        <extracomment>Section header for list of key-combos</extracomment>
+        <source>TOHKBD-only commands</source>
+        <oldsource>TOHKBD key combinations</oldsource>
+        <extracomment>Section header for list of TOHKBD daemon provided key combinations</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message id="more-desc">
@@ -256,7 +257,7 @@
     </message>
     <message id="help-switch-app">
         <source>Switch apps</source>
-        <oldsource>Switch app</oldsource>
+        <oldsource>Switch between apps</oldsource>
         <extracomment>Help page text (keep short)</extracomment>
         <translation type="unfinished"></translation>
     </message>
@@ -342,6 +343,17 @@
     </message>
     <message id="help-restart-lipstick">
         <source>Restart lipstick</source>
+        <extracomment>Help page text (keep short)</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message id="sys-key-combinations">
+        <source>Text edit key combinations</source>
+        <oldsource>System key combinations</oldsource>
+        <extracomment>Section header for list of key combinations provided by os (text edits mostly)</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message id="help-this-help">
+        <source>Show this help</source>
         <extracomment>Help page text (keep short)</extracomment>
         <translation type="unfinished"></translation>
     </message>

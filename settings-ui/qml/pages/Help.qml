@@ -39,73 +39,82 @@ Page
                 title: qsTrId("help")
             }
 
-            SectionHeader
+            Repeater
             {
-                //: Section header for list of key-combos
-                //% "Key combinations"
-                text: qsTrId("key-combinations")
-            }
+                id: r
+                model: keycomboTopModel
 
-            Grid
-            {
-                id: keycomboGrid
-                columns: (page.orientation === Orientation.Landscape || page.orientation === Orientation.InvertedLandscape) ? 2 : 1
-
-                Repeater
+                Column
                 {
-                    id: kcRepeater
-                    model: keycomboModel
-
-                    ListItem
+                    SectionHeader
                     {
-                        id: kcItem
-                        width: page.width / keycomboGrid.columns
-                        height: Theme.itemSizeSmall
-                        enabled: false
+                        text: name
+                    }
 
-                        Label
-                        {
-                            id: key1Name
-                            anchors.left: parent.left
-                            anchors.leftMargin: Theme.paddingSmall
-                            anchors.verticalCenter: parent.verticalCenter
-                            font.pixelSize: Theme.fontSizeSmall
-                            font.bold: true
-                            text: key1
-                            color: Theme.primaryColor
-                        }
+                    Grid
+                    {
+                        id: keycomboGrid
+                        columns: (page.orientation === Orientation.Landscape || page.orientation === Orientation.LandscapeInverted) ? 2 : 1
+                        width: page.width - Theme.paddingLarge
+                        x: Theme.paddingLarge
 
-                        Label
+                        Repeater
                         {
-                            id: key2Name
-                            anchors.left: key1Name.right
-                            anchors.verticalCenter: parent.verticalCenter
-                            font.pixelSize: Theme.fontSizeSmall
-                            font.bold: true
-                            text: "+" + key2
-                            color: Theme.primaryColor
-                        }
+                            id: kcRepeater
+                            model: keycomboModel
 
-                        Label
-                        {
-                            id: key3Name
-                            anchors.left: key2Name.right
-                            anchors.verticalCenter: parent.verticalCenter
-                            font.pixelSize: Theme.fontSizeSmall
-                            font.bold: true
-                            text: "+" + key3
-                            color: Theme.primaryColor
-                            visible: key3.length > 0
-                        }
+                            ListItem
+                            {
+                                id: kcItem
+                                width: keycomboGrid.width / keycomboGrid.columns
+                                height: Theme.itemSizeExtraSmall
+                                enabled: false
 
-                        Label
-                        {
-                            anchors.verticalCenter: parent.verticalCenter
-                            x: kcItem.width/2
-                            color: Theme.primaryColor
-                            font.pixelSize: Theme.fontSizeMedium
-                            truncationMode: TruncationMode.Fade
-                            text: name
+                                Label
+                                {
+                                    id: key1Name
+                                    anchors.left: parent.left
+                                    //anchors.leftMargin: Theme.paddingSmall
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    font.pixelSize: Theme.fontSizeSmall
+                                    font.bold: true
+                                    text: key1
+                                    color: Theme.primaryColor
+                                }
+
+                                Label
+                                {
+                                    id: key2Name
+                                    anchors.left: key1Name.right
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    font.pixelSize: Theme.fontSizeSmall
+                                    font.bold: true
+                                    text: "+" + key2
+                                    color: Theme.primaryColor
+                                }
+
+                                Label
+                                {
+                                    id: key3Name
+                                    anchors.left: key2Name.right
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    font.pixelSize: Theme.fontSizeSmall
+                                    font.bold: true
+                                    text: "+" + key3
+                                    color: Theme.primaryColor
+                                    visible: key3.length > 0
+                                }
+
+                                Label
+                                {
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    anchors.left: parent.horizontalCenter
+                                    color: Theme.primaryColor
+                                    font.pixelSize: Theme.fontSizeMedium
+                                    truncationMode: TruncationMode.Fade
+                                    text: name
+                                }
+                            }
                         }
                     }
                 }
@@ -131,7 +140,7 @@ Page
             Grid
             {
                 id: shortcutsGrid
-                columns: (page.orientation === Orientation.Landscape || page.orientation === Orientation.InvertedLandscape) ? 2 : 1
+                columns: (page.orientation === Orientation.Landscape || page.orientation === Orientation.LandscapeInverted) ? 2 : 1
 
                 Repeater
                 {
