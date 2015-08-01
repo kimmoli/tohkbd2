@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include "modifierhandler.h"
 
+QStringList modifierHandler::KeyModeNames = QStringList()
+        << "Normal" << "Sticky" << "Lock" << "Cycle";
+
 modifierHandler::modifierHandler(QString name, QObject *parent) :
     QObject(parent)
 {
@@ -29,13 +32,13 @@ void modifierHandler::set(bool state, bool alone)
     else
     {
          /* sticky or lock, but held while another key is being presed */
-        if ((mode == Sticky || mode == Lock) && state && down && !alone)
+        if ((mode == Sticky || mode == Lock || mode == Cycle) && state && down && !alone)
         {
             _wasHeldDown = true;
         }
 
         /* If something was pressed while held, release when released */
-        if ((mode == Sticky || mode == Lock) && !state && _wasHeldDown)
+        if ((mode == Sticky || mode == Lock || mode == Cycle) && !state && _wasHeldDown)
         {
             _wasHeldDown = false;
             _lockCount = 0;
@@ -48,12 +51,12 @@ void modifierHandler::set(bool state, bool alone)
             newPressed = !pressed;
         }
             /* Reset lock count if anything else pressed */
-        else if (mode == Lock && !locked && !alone && _lockCount != 3)
+        else if ((mode == Lock || mode == Cycle) && !locked && !alone && _lockCount != 3)
         {
             _lockCount = 0;
         }
         /* If just modifier key is pressed */
-        else if (mode == Lock && alone)
+        else if ((mode == Lock || mode == Cycle) && alone)
         {
             if (!down && state && (_lockCount == 0))
             {
@@ -62,7 +65,7 @@ void modifierHandler::set(bool state, bool alone)
             }
             else if (down && !state && (_lockCount == 1))
             {
-                newPressed = false;
+                newPressed = (mode == Cycle);
                 _lockCount = 2;
             }
             else if (!down && state && (_lockCount == 2))
@@ -116,5 +119,7 @@ void modifierHandler::setMode(KeyMode newMode)
     {
         mode = newMode;
         clear(true);
+
+        printf("%s mode set to %s\n", qPrintable(_name), qPrintable(KeyModeNames.at(mode)));
     }
 }

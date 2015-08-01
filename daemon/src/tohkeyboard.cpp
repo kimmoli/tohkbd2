@@ -377,20 +377,20 @@ void Tohkbd::controlLeds(bool restore)
         /* If backlight was on, do not turn it off */
         int i = LED_CAPSLOCK_OFF | LED_SYMLOCK_OFF | LED_SELFIE_OFF;
 
-        if (((keymap->shift->mode == modifierHandler::Sticky) && keymap->shift->pressed)
-          || ((keymap->shift->mode == modifierHandler::Lock) && keymap->shift->locked))
+        if (((keymap->shift->mode == modifierHandler::Sticky || keymap->shift->mode == modifierHandler::Cycle) && keymap->shift->pressed)
+          || ((keymap->shift->mode == modifierHandler::Lock || keymap->shift->mode == modifierHandler::Cycle) && keymap->shift->locked))
             i |= LED_SYMLOCK_ON;
 
-        if (((keymap->ctrl->mode == modifierHandler::Sticky) && keymap->ctrl->pressed)
-          || ((keymap->ctrl->mode == modifierHandler::Lock) && keymap->ctrl->locked))
+        if (((keymap->ctrl->mode == modifierHandler::Sticky || keymap->ctrl->mode == modifierHandler::Cycle) && keymap->ctrl->pressed)
+          || ((keymap->ctrl->mode == modifierHandler::Lock || keymap->ctrl->mode == modifierHandler::Cycle) && keymap->ctrl->locked))
             i |= LED_SYMLOCK_ON;
 
-        if (((keymap->alt->mode == modifierHandler::Sticky) && keymap->alt->pressed)
-          || ((keymap->alt->mode == modifierHandler::Lock) && keymap->alt->locked))
+        if (((keymap->alt->mode == modifierHandler::Sticky || keymap->alt->mode == modifierHandler::Cycle) && keymap->alt->pressed)
+          || ((keymap->alt->mode == modifierHandler::Lock || keymap->alt->mode == modifierHandler::Cycle) && keymap->alt->locked))
             i |= LED_SYMLOCK_ON;
 
-        if (((keymap->sym->mode == modifierHandler::Sticky) && keymap->sym->pressed)
-          || ((keymap->sym->mode == modifierHandler::Lock) && keymap->sym->locked))
+        if (((keymap->sym->mode == modifierHandler::Sticky || keymap->sym->mode == modifierHandler::Cycle) && keymap->sym->pressed)
+          || ((keymap->sym->mode == modifierHandler::Lock || keymap->sym->mode == modifierHandler::Cycle) && keymap->sym->locked))
             i |= LED_SYMLOCK_ON;
 
         if (capsLock)
@@ -977,28 +977,40 @@ void Tohkbd::reloadSettings()
     keyRepeatDelay = settings.value("keyRepeatDelay", KEYREPEAT_DELAY).toInt();
     keyRepeatRate = settings.value("keyRepeatRate", KEYREPEAT_RATE).toInt();
 
-    if (settings.value("stickyShiftEnabled", STICKY_SHIFT_ENABLED).toBool())
+    if (settings.value("stickyShiftEnabled", STICKY_SHIFT_ENABLED).toBool() &&
+            settings.value("lockingShiftEnabled", LOCKING_SHIFT_ENABLED).toBool())
+        keymap->shift->setMode(modifierHandler::Cycle);
+    else if (settings.value("stickyShiftEnabled", STICKY_SHIFT_ENABLED).toBool())
         keymap->shift->setMode(modifierHandler::Sticky);
     else if (settings.value("lockingShiftEnabled", LOCKING_SHIFT_ENABLED).toBool())
         keymap->shift->setMode(modifierHandler::Lock);
     else
         keymap->shift->setMode(modifierHandler::Normal);
 
-    if (settings.value("stickyCtrlEnabled", STICKY_CTRL_ENABLED).toBool())
+    if (settings.value("stickyCtrlEnabled", STICKY_CTRL_ENABLED).toBool() &&
+            settings.value("lockingCtrlEnabled", LOCKING_CTRL_ENABLED).toBool())
+        keymap->ctrl->setMode(modifierHandler::Cycle);
+    else if (settings.value("stickyCtrlEnabled", STICKY_CTRL_ENABLED).toBool())
         keymap->ctrl->setMode(modifierHandler::Sticky);
     else if (settings.value("lockingCtrlEnabled", LOCKING_CTRL_ENABLED).toBool())
         keymap->ctrl->setMode(modifierHandler::Lock);
     else
         keymap->ctrl->setMode(modifierHandler::Normal);
 
-    if (settings.value("stickyAltEnabled", STICKY_ALT_ENABLED).toBool())
+    if (settings.value("stickyAltEnabled", STICKY_ALT_ENABLED).toBool() &&
+            settings.value("lockingAltEnabled", LOCKING_ALT_ENABLED).toBool())
+        keymap->alt->setMode(modifierHandler::Cycle);
+    else if (settings.value("stickyAltEnabled", STICKY_ALT_ENABLED).toBool())
         keymap->alt->setMode(modifierHandler::Sticky);
     else if (settings.value("lockingAltEnabled", LOCKING_ALT_ENABLED).toBool())
         keymap->alt->setMode(modifierHandler::Lock);
     else
         keymap->alt->setMode(modifierHandler::Normal);
 
-    if (settings.value("stickySymEnabled", STICKY_SYM_ENABLED).toBool())
+    if (settings.value("stickySymEnabled", STICKY_SYM_ENABLED).toBool() &&
+            settings.value("lockingSymEnabled", LOCKING_SYM_ENABLED).toBool())
+        keymap->sym->setMode(modifierHandler::Cycle);
+    else if (settings.value("stickySymEnabled", STICKY_SYM_ENABLED).toBool())
         keymap->sym->setMode(modifierHandler::Sticky);
     else if (settings.value("lockingSymEnabled", LOCKING_SYM_ENABLED).toBool())
         keymap->sym->setMode(modifierHandler::Lock);
@@ -1153,56 +1165,136 @@ void Tohkbd::setSettingInt(const QString &key, const int &value)
     {
         settings.beginGroup("generalsettings");
         settings.setValue("stickyShiftEnabled", (value == 1));
-        keymap->shift->setMode((value == 1) ? modifierHandler::Sticky : modifierHandler::Normal);
+        if (settings.value("lockingShiftEnabled", LOCKING_SHIFT_ENABLED).toBool())
+        {
+            if (value == 1)
+                keymap->shift->setMode(modifierHandler::Cycle);
+            else
+                keymap->shift->setMode(modifierHandler::Lock);
+        }
+        else
+        {
+            keymap->shift->setMode((value == 1) ? modifierHandler::Sticky : modifierHandler::Normal);
+        }
         settings.endGroup();
     }
     else if (key == "stickyCtrlEnabled" && (value == 0 || value == 1))
     {
         settings.beginGroup("generalsettings");
         settings.setValue("stickyCtrlEnabled", (value == 1));
-        keymap->ctrl->setMode((value == 1) ? modifierHandler::Sticky : modifierHandler::Normal);
+        if (settings.value("lockingCtrlEnabled", LOCKING_CTRL_ENABLED).toBool())
+        {
+            if (value == 1)
+                keymap->ctrl->setMode(modifierHandler::Cycle);
+            else
+                keymap->ctrl->setMode(modifierHandler::Lock);
+        }
+        else
+        {
+            keymap->ctrl->setMode((value == 1) ? modifierHandler::Sticky : modifierHandler::Normal);
+        }
         settings.endGroup();
     }
     else if (key == "stickyAltEnabled" && (value == 0 || value == 1))
     {
         settings.beginGroup("generalsettings");
         settings.setValue("stickyAltEnabled", (value == 1));
-        keymap->alt->setMode((value == 1) ? modifierHandler::Sticky : modifierHandler::Normal);
+        if (settings.value("lockingAltEnabled", LOCKING_ALT_ENABLED).toBool())
+        {
+            if (value == 1)
+                keymap->alt->setMode(modifierHandler::Cycle);
+            else
+                keymap->alt->setMode(modifierHandler::Lock);
+        }
+        else
+        {
+            keymap->alt->setMode((value == 1) ? modifierHandler::Sticky : modifierHandler::Normal);
+        }
         settings.endGroup();
     }
     else if (key == "stickySymEnabled" && (value == 0 || value == 1))
     {
         settings.beginGroup("generalsettings");
         settings.setValue("stickySymEnabled", (value == 1));
-        keymap->sym->setMode((value == 1) ? modifierHandler::Sticky : modifierHandler::Normal);
+        if (settings.value("lockingSymEnabled", LOCKING_SYM_ENABLED).toBool())
+        {
+            if (value == 1)
+                keymap->sym->setMode(modifierHandler::Cycle);
+            else
+                keymap->sym->setMode(modifierHandler::Lock);
+        }
+        else
+        {
+            keymap->sym->setMode((value == 1) ? modifierHandler::Sticky : modifierHandler::Normal);
+        }
         settings.endGroup();
     }
     else if (key == "lockingShiftEnabled" && (value == 0 || value == 1))
     {
         settings.beginGroup("generalsettings");
         settings.setValue("lockingShiftEnabled", (value == 1));
-        keymap->shift->setMode((value == 1) ? modifierHandler::Lock : modifierHandler::Normal);
+        if (settings.value("stickyShiftEnabled", STICKY_SHIFT_ENABLED).toBool())
+        {
+            if (value == 1)
+                keymap->shift->setMode(modifierHandler::Cycle);
+            else
+                keymap->shift->setMode(modifierHandler::Sticky);
+        }
+        else
+        {
+            keymap->shift->setMode((value == 1) ? modifierHandler::Lock : modifierHandler::Normal);
+        }
         settings.endGroup();
     }
     else if (key == "lockingCtrlEnabled" && (value == 0 || value == 1))
     {
         settings.beginGroup("generalsettings");
         settings.setValue("lockingCtrlEnabled", (value == 1));
-        keymap->ctrl->setMode((value == 1) ? modifierHandler::Lock : modifierHandler::Normal);
+        if (settings.value("stickyCtrlEnabled", STICKY_CTRL_ENABLED).toBool())
+        {
+            if (value == 1)
+                keymap->ctrl->setMode(modifierHandler::Cycle);
+            else
+                keymap->ctrl->setMode(modifierHandler::Sticky);
+        }
+        else
+        {
+            keymap->ctrl->setMode((value == 1) ? modifierHandler::Lock : modifierHandler::Normal);
+        }
         settings.endGroup();
     }
     else if (key == "lockingAltEnabled" && (value == 0 || value == 1))
     {
         settings.beginGroup("generalsettings");
         settings.setValue("lockingAltEnabled", (value == 1));
-        keymap->alt->setMode((value == 1) ? modifierHandler::Lock : modifierHandler::Normal);
+        if (settings.value("stickyAltEnabled", STICKY_ALT_ENABLED).toBool())
+        {
+            if (value == 1)
+                keymap->alt->setMode(modifierHandler::Cycle);
+            else
+                keymap->alt->setMode(modifierHandler::Sticky);
+        }
+        else
+        {
+            keymap->alt->setMode((value == 1) ? modifierHandler::Lock : modifierHandler::Normal);
+        }
         settings.endGroup();
     }
     else if (key == "lockingSymEnabled" && (value == 0 || value == 1))
     {
         settings.beginGroup("generalsettings");
         settings.setValue("lockingSymEnabled", (value == 1));
-        keymap->sym->setMode((value == 1) ? modifierHandler::Lock : modifierHandler::Normal);
+        if (settings.value("stickySymEnabled", STICKY_SYM_ENABLED).toBool())
+        {
+            if (value == 1)
+                keymap->sym->setMode(modifierHandler::Cycle);
+            else
+                keymap->sym->setMode(modifierHandler::Sticky);
+        }
+        else
+        {
+            keymap->sym->setMode((value == 1) ? modifierHandler::Lock : modifierHandler::Normal);
+        }
         settings.endGroup();
     }
     else if (key == "verboseMode"  && (value == 0 || value == 1))

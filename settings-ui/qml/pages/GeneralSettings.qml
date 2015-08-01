@@ -255,12 +255,7 @@ Page
                     id: stickyShift
                     //% "Sticky Shift"
                     text: qsTrId("sticky-shift")
-                    onCheckedChanged:
-                    {
-                        if (checked)
-                            lockingShift.checked = false
-                        settingsui.setSettingInt("stickyShiftEnabled", checked ? 1 : 0)
-                    }
+                    onCheckedChanged: settingsui.setSettingInt("stickyShiftEnabled", checked ? 1 : 0)
                     width: parent.width/2
                     Component.onCompleted: checked = settings["stickyShiftEnabled"]
                 }
@@ -269,12 +264,7 @@ Page
                     id: lockingShift
                     //% "Locking Shift"
                     text: qsTrId("locking-shift")
-                    onCheckedChanged:
-                    {
-                        if (checked)
-                            stickyShift.checked = false
-                        settingsui.setSettingInt("lockingShiftEnabled", checked ? 1 : 0)
-                    }
+                    onCheckedChanged: settingsui.setSettingInt("lockingShiftEnabled", checked ? 1 : 0)
                     width: parent.width/2
                     Component.onCompleted: checked = settings["lockingShiftEnabled"]
                 }
@@ -287,12 +277,7 @@ Page
                     id: stickyCtrl
                     //% "Sticky Ctrl"
                     text: qsTrId("sticky-ctrl")
-                    onCheckedChanged:
-                    {
-                        if (checked)
-                            lockingCtrl.checked = false
-                        settingsui.setSettingInt("stickyCtrlEnabled", checked ? 1 : 0)
-                    }
+                    onCheckedChanged: settingsui.setSettingInt("stickyCtrlEnabled", checked ? 1 : 0)
                     width: parent.width/2
                     Component.onCompleted: checked = settings["stickyCtrlEnabled"]
                 }
@@ -301,12 +286,7 @@ Page
                     id: lockingCtrl
                     //% "Locking Ctrl"
                     text: qsTrId("locking-ctrl")
-                    onCheckedChanged:
-                    {
-                        if (checked)
-                            stickyCtrl.checked = false
-                        settingsui.setSettingInt("lockingCtrlEnabled", checked ? 1 : 0)
-                    }
+                    onCheckedChanged: settingsui.setSettingInt("lockingCtrlEnabled", checked ? 1 : 0)
                     width: parent.width/2
                     Component.onCompleted: checked = settings["lockingCtrlEnabled"]
                 }
@@ -319,12 +299,7 @@ Page
                     id: stickyAlt
                     //% "Sticky Alt"
                     text: qsTrId("sticky-alt")
-                    onCheckedChanged:
-                    {
-                        if (checked)
-                            lockingAlt.checked = false
-                        settingsui.setSettingInt("stickyAltEnabled", checked ? 1 : 0)
-                    }
+                    onCheckedChanged: settingsui.setSettingInt("stickyAltEnabled", checked ? 1 : 0)
                     width: parent.width/2
                     Component.onCompleted: checked = settings["stickyAltEnabled"]
                 }
@@ -333,12 +308,7 @@ Page
                     id: lockingAlt
                     //% "Locking Alt"
                     text: qsTrId("locking-alt")
-                    onCheckedChanged:
-                    {
-                        if (checked)
-                            stickyAlt.checked = false;
-                        settingsui.setSettingInt("lockingAltEnabled", checked ? 1 : 0)
-                    }
+                    onCheckedChanged: settingsui.setSettingInt("lockingAltEnabled", checked ? 1 : 0)
                     width: parent.width/2
                     Component.onCompleted: checked = settings["lockingAltEnabled"]
                 }
@@ -351,12 +321,7 @@ Page
                     id: stickySym
                     //% "Sticky Sym"
                     text: qsTrId("sticky-sym")
-                    onCheckedChanged:
-                    {
-                        if (checked)
-                            lockingSym.checked = false
-                        settingsui.setSettingInt("stickySymEnabled", checked ? 1 : 0)
-                    }
+                    onCheckedChanged: settingsui.setSettingInt("stickySymEnabled", checked ? 1 : 0)
                     width: parent.width/2
                     Component.onCompleted: checked = settings["stickySymEnabled"]
                 }
@@ -365,12 +330,7 @@ Page
                     id: lockingSym
                     //% "Locking Sym"
                     text: qsTrId("locking-sym")
-                    onCheckedChanged:
-                    {
-                        if (checked)
-                            stickySym.checked = false
-                        settingsui.setSettingInt("lockingSymEnabled", checked ? 1 : 0)
-                    }
+                    onCheckedChanged: settingsui.setSettingInt("lockingSymEnabled", checked ? 1 : 0)
                     width: parent.width/2
                     Component.onCompleted: checked = settings["lockingSymEnabled"]
                 }

@@ -2,6 +2,7 @@
 #define MODIFIERHANDLER_H
 
 #include <QObject>
+#include <QStringList>
 
 class modifierHandler : public QObject
 {
@@ -13,7 +14,8 @@ public:
     {
         Normal = 0,
         Sticky,
-        Lock
+        Lock,
+        Cycle
     } KeyMode;
 
     void set(bool state, bool alone);
@@ -36,7 +38,7 @@ private:
     QString _name;
     bool _wasHeldDown;
     int _lockCount;
-
+    static QStringList KeyModeNames;
 };
 
 #endif // MODIFIERHANDLER_H
