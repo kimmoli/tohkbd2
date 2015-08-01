@@ -24,7 +24,7 @@ Page
             }
             else
             {
-                if (upDownSelection === (upDownItemCount - 1))
+                if ((upDownSelection === (upDownItemCount - 1)) && (flick.contentHeight > flick.height))
                     flick.scrollToBottom()
             }
         }
