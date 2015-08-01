@@ -29,6 +29,8 @@ public:
     bool down;
     bool locked;
 
+    bool verboseMode;
+
 signals:
     void changed();
 

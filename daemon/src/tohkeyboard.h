@@ -98,6 +98,7 @@ private:
     bool tohcoreBind(bool bind);
     void controlLeds(bool restore);
     bool checkSailfishVersion(QString versionToCompare);
+    void setVerboseMode(bool verbose);
 
     int gpio_fd;
 
@@ -142,6 +143,7 @@ private:
     bool taskSwitcherVisible;
     bool selfieLedOn;
     bool capsLock;
+    bool verboseMode;
 
     ComKimmoliTohkbd2userInterface *tohkbd2user;
     ComKimmoliTohkbd2settingsuiInterface *tohkbd2settingsui;

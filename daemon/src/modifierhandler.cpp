@@ -17,6 +17,8 @@ modifierHandler::modifierHandler(QString name, QObject *parent) :
     _wasHeldDown = false;
     _lockCount = 0;
 
+    verboseMode = false;
+
     printf("modifierHandler for \"%s\"\n", qPrintable(_name));
 }
 
@@ -93,7 +95,10 @@ void modifierHandler::set(bool state, bool alone)
     if (newPressed != pressed)
     {
         pressed = newPressed;
-        printf("%s changed to %s\n", qPrintable(_name), pressed ? "down" : "up");
+
+        if (verboseMode)
+            printf("%s changed to %s\n", qPrintable(_name), pressed ? "down" : "up");
+
         emit changed();
     }
 }
@@ -120,6 +125,7 @@ void modifierHandler::setMode(KeyMode newMode)
         mode = newMode;
         clear(true);
 
-        printf("%s mode set to %s\n", qPrintable(_name), qPrintable(KeyModeNames.at(mode)));
+        if (verboseMode)
+            printf("%s mode set to %s\n", qPrintable(_name), qPrintable(KeyModeNames.at(mode)));
     }
 }
