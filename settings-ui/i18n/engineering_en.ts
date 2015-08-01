@@ -357,5 +357,20 @@
         <extracomment>Help page text (keep short)</extracomment>
         <translation type="unfinished"></translation>
     </message>
+    <message id="debug-sect-header">
+        <source>Debug</source>
+        <extracomment>Section header for Debug settings</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message id="verbose-mode-sw">
+        <source>Verbose mode</source>
+        <extracomment>Enable verbose mode to print more stuff on journal</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message id="verbose-mode-desc">
+        <source>Print more information in Journal logs. Use \&quot;devel-su journalctl -fa | grep toh\&quot; to see output.</source>
+        <extracomment>Verbose mode switch description</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 </TS>

@@ -1008,6 +1008,10 @@ void Tohkbd::reloadSettings()
     forceLandscapeOrientation = settings.value("forceLandscapeOrientation", FORCE_LANDSCAPE_ORIENTATION).toBool();
     forceBacklightOn = settings.value("forceBacklightOn", FORCE_BACKLIGHT_ON).toBool();
     settings.endGroup();
+
+    settings.beginGroup("debug");
+    keymap->verboseMode = settings.value("verboseMode", VERBOSE_MODE_ENABLED).toBool();
+    settings.endGroup();
 }
 
 /* Save activeLayout to settings
@@ -1199,6 +1203,13 @@ void Tohkbd::setSettingInt(const QString &key, const int &value)
         settings.beginGroup("generalsettings");
         settings.setValue("lockingSymEnabled", (value == 1));
         keymap->sym->setMode((value == 1) ? modifierHandler::Lock : modifierHandler::Normal);
+        settings.endGroup();
+    }
+    else if (key == "verboseMode"  && (value == 0 || value == 1))
+    {
+        settings.beginGroup("debug");
+        settings.setValue("verboseMode", (value == 1));
+        keymap->verboseMode = (value == 1);
         settings.endGroup();
     }
 

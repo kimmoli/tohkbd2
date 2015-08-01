@@ -38,6 +38,8 @@ public:
 
     bool setLayout(QString toLayout, bool forceReload = false);
 
+    bool verboseMode;
+
 signals:
     void shiftChanged();
     void ctrlChanged();

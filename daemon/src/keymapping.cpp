@@ -30,6 +30,7 @@ keymapping::keymapping(QString pathToLayouts, QObject *parent) :
     layoutPath = pathToLayouts;
 
     pressedCode = 0;
+    verboseMode = false;
 
     shift = new modifierHandler("shift");
     ctrl = new modifierHandler("ctrl");
@@ -67,10 +68,13 @@ void keymapping::process(QByteArray inputReport)
     bool altDown = false;
     bool symDown = false;
 
-    printf("Processing report: ");
-    for (n=0 ; n<inputReport.count() ; n++)
-        printf("%02x ", inputReport.at(n));
-    printf("\n");
+    if (verboseMode)
+    {
+        printf("Processing report: ");
+        for (n=0 ; n<inputReport.count() ; n++)
+            printf("%02x ", inputReport.at(n));
+        printf("\n");
+    }
 
     QByteArray ir = inputReport.mid(5, 6);
 

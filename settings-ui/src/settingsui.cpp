@@ -151,6 +151,10 @@ QVariantMap SettingsUi::getCurrentSettings()
     map.insert("lockingSymEnabled", settings.value("lockingSymEnabled", LOCKING_SYM_ENABLED).toBool());
     settings.endGroup();
 
+    settings.beginGroup("debug");
+    map.insert("verboseMode", settings.value("verboseMode", VERBOSE_MODE_ENABLED).toBool());
+    settings.endGroup();
+
     QString layout = QString(tohkbd2user->getActivePhysicalLayout());
 
     QMap<QString, QString> layoutToLanguage;
@@ -285,6 +289,7 @@ void SettingsUi::setSettingsToDefault()
     setSettingInt("lockingCtrlEnabled", LOCKING_CTRL_ENABLED ? 1 : 0);
     setSettingInt("lockingAltEnabled", LOCKING_ALT_ENABLED ? 1 : 0);
     setSettingInt("lockingSymEnabled", LOCKING_SYM_ENABLED ? 1 : 0);
+    setSettingInt("verboseMode", VERBOSE_MODE_ENABLED ? 1 : 0);
 
     QThread::msleep(200);
 

@@ -375,6 +375,25 @@ Page
                     Component.onCompleted: checked = settings["lockingSymEnabled"]
                 }
             }
+
+            SectionHeader
+            {
+                //: Section header for Debug settings
+                //% "Debug"
+                text: qsTrId("debug-sect-header")
+            }
+            TextSwitch
+            {
+                //: Enable verbose mode to print more stuff on journal
+                //% "Verbose mode"
+                text: qsTrId("verbose-mode-sw")
+                //: Verbose mode switch description
+                //% "Print more information in Journal logs. Use \"devel-su journalctl -fa | grep toh\" to see output."
+                description: qsTrId("verbose-mode-desc")
+                onCheckedChanged: settingsui.setSettingInt("verboseMode", checked ? 1 : 0)
+                width: parent.width - 2*Theme.paddingLarge
+                Component.onCompleted: checked = settings["verboseMode"]
+            }
         }
     }
 }
