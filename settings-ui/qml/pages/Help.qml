@@ -127,7 +127,7 @@ Page
                 text: qsTrId("more-desc")
                 x: Theme.paddingLarge
                 wrapMode: Text.Wrap
-                font.pixelSize: Theme.fontSizeExtraSmall
+                font.pixelSize: Theme.fontSizeSmall
                 color: Theme.secondaryColor
                 width: parent.width - 2*Theme.paddingLarge
             }

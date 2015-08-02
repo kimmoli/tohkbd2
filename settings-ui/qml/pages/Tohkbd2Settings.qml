@@ -210,11 +210,11 @@ Page
             Label
             {
                 //: Description text for sticky and locking modifier keys
-                //% "To change keyboard layout, start Jolla Settings > System settings > Text input and change hardware keyboard active layout. Note that all layouts are not supported."
+                //% "To change keyboard layout, start Jolla Settings, go to System settings, Text input and change hardware keyboard active layout. Note that all layouts are not supported."
                 text: qsTrId("layout-desc")
                 x: Theme.paddingLarge
                 wrapMode: Text.Wrap
-                font.pixelSize: Theme.fontSizeExtraSmall
+                font.pixelSize: Theme.fontSizeSmall
                 color: Theme.secondaryColor
                 width: parent.width - 2*Theme.paddingLarge
             }

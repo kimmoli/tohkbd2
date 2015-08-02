@@ -141,14 +141,10 @@ QVariantMap SettingsUi::getCurrentSettings()
     map.insert("backlightEnabled", settings.value("backlightEnabled", BACKLIGHT_ENABLED).toBool());
     map.insert("forceLandscapeOrientation", settings.value("forceLandscapeOrientation", FORCE_LANDSCAPE_ORIENTATION).toBool());
     map.insert("forceBacklightOn", settings.value("forceBacklightOn", FORCE_BACKLIGHT_ON).toBool());
-    map.insert("stickyShiftEnabled", settings.value("stickyShiftEnabled", STICKY_SHIFT_ENABLED).toBool());
-    map.insert("stickyCtrlEnabled", settings.value("stickyCtrlEnabled", STICKY_CTRL_ENABLED).toBool());
-    map.insert("stickyAltEnabled", settings.value("stickyAltEnabled", STICKY_ALT_ENABLED).toBool());
-    map.insert("stickySymEnabled", settings.value("stickySymEnabled", STICKY_SYM_ENABLED).toBool());
-    map.insert("lockingShiftEnabled", settings.value("lockingShiftEnabled", LOCKING_SHIFT_ENABLED).toBool());
-    map.insert("lockingCtrlEnabled", settings.value("lockingCtrlEnabled", LOCKING_CTRL_ENABLED).toBool());
-    map.insert("lockingAltEnabled", settings.value("lockingAltEnabled", LOCKING_ALT_ENABLED).toBool());
-    map.insert("lockingSymEnabled", settings.value("lockingSymEnabled", LOCKING_SYM_ENABLED).toBool());
+    map.insert("modifierShiftMode", settings.value("modifierShiftMode", MODIFIER_SHIFT_MODE).toString());
+    map.insert("modifierCtrlMode", settings.value("modifierCtrlMode", MODIFIER_CTRL_MODE).toString());
+    map.insert("modifierAltMode", settings.value("modifierAltMode", MODIFIER_ALT_MODE).toString());
+    map.insert("modifierSymMode", settings.value("modifierSymMode", MODIFIER_SYM_MODE).toString());
     settings.endGroup();
 
     settings.beginGroup("debug");
@@ -281,14 +277,10 @@ void SettingsUi::setSettingsToDefault()
     setSettingInt("backlightEnabled", BACKLIGHT_ENABLED ? 1 : 0);
     setSettingInt("forceLandscapeOrientation", FORCE_LANDSCAPE_ORIENTATION ? 1 : 0);
     setSettingInt("forceBacklightOn", FORCE_BACKLIGHT_ON ? 1 : 0);
-    setSettingInt("stickyShiftEnabled", STICKY_SHIFT_ENABLED ? 1 : 0);
-    setSettingInt("stickyCtrlEnabled", STICKY_CTRL_ENABLED ? 1 : 0);
-    setSettingInt("stickyAltEnabled", STICKY_ALT_ENABLED ? 1 : 0);
-    setSettingInt("stickySymEnabled", STICKY_SYM_ENABLED ? 1 : 0);
-    setSettingInt("lockingShiftEnabled", LOCKING_SHIFT_ENABLED ? 1 : 0);
-    setSettingInt("lockingCtrlEnabled", LOCKING_CTRL_ENABLED ? 1 : 0);
-    setSettingInt("lockingAltEnabled", LOCKING_ALT_ENABLED ? 1 : 0);
-    setSettingInt("lockingSymEnabled", LOCKING_SYM_ENABLED ? 1 : 0);
+    setSettingString("modifierShiftMode", MODIFIER_SHIFT_MODE);
+    setSettingString("modifierCtrlMode", MODIFIER_CTRL_MODE);
+    setSettingString("modifierAltMode", MODIFIER_ALT_MODE);
+    setSettingString("modifierSymMode", MODIFIER_SYM_MODE);
     setSettingInt("verboseMode", VERBOSE_MODE_ENABLED ? 1 : 0);
 
     QThread::msleep(200);

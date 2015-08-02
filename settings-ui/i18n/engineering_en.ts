@@ -73,119 +73,6 @@
         <extracomment>Main menu selection for general settings</extracomment>
         <translation type="unfinished"></translation>
     </message>
-    <message id="backlight-sect-header">
-        <source>Backlight</source>
-        <extracomment>Section header for backlight settings</extracomment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message id="bg-always-on-sw">
-        <source>Always on</source>
-        <extracomment>Backlight always on switch text</extracomment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message id="bg-always-on-desc">
-        <source>Backlight is always on when keyboard attached and phone&apos;s display is on</source>
-        <extracomment>Backlight always on description</extracomment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message id="bg-automatic-sw">
-        <source>Automatic</source>
-        <extracomment>Backlight automatic switch text</extracomment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message id="bg-automatic-desc">
-        <source>Automatic backlight enable or always off</source>
-        <extracomment>Backlight automatic description</extracomment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message id="bg-timeout-slider">
-        <source>Backlight timeout</source>
-        <extracomment>Backlight timeout slider name</extracomment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message id="bg-brightness-slider">
-        <source>Brightness threshold</source>
-        <extracomment>Backlight brightness threshold slider</extracomment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message id="orientation-sect-header">
-        <source>Orientation</source>
-        <extracomment>Section header for orientation settings</extracomment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message id="orientation-force-landscape-sw">
-        <source>Force Landscape</source>
-        <extracomment>Force landsacep switch text</extracomment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message id="orientation-force-landscape-desc">
-        <source>Force landscape orientation when keyboard attached</source>
-        <extracomment>Force landsacep switch description</extracomment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message id="repeat-sect-header">
-        <source>Repeat</source>
-        <extracomment>Section header for repeat settings</extracomment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message id="repeat-delay-slider">
-        <source>Repeat start delay</source>
-        <extracomment>Keyboard repeat start delay slider</extracomment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message id="repeat-rate-slider">
-        <source>Repeat rate</source>
-        <extracomment>Keyboard repeat rate slider</extracomment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message id="test-here">
-        <source>Test here</source>
-        <extracomment>Placeholder text for textfield to test repeat settings</extracomment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message id="sticky-sect-header">
-        <source>Sticky and locking modifier keys</source>
-        <extracomment>Section header for sticky and locking settings</extracomment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message id="sticky-desc">
-        <source>Sticky modifiers will toggle when pressed once and released after pressing any other key. Locking modifier will lock on double-press and released on third. In both modes you can also use them as normal modifier keys.</source>
-        <oldsource>Sticky modifiers will toggle when pressed once and released after pressing any other key. Locking modifier will lock on double-press and released on third. In both modes you can also use them as normal modifier keys</oldsource>
-        <extracomment>Description text for sticky and locking modifier keys</extracomment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message id="sticky-shift">
-        <source>Sticky Shift</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message id="locking-shift">
-        <source>Locking Shift</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message id="sticky-ctrl">
-        <source>Sticky Ctrl</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message id="locking-ctrl">
-        <source>Locking Ctrl</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message id="sticky-alt">
-        <source>Sticky Alt</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message id="locking-alt">
-        <source>Locking Alt</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message id="sticky-sym">
-        <source>Sticky Sym</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message id="locking-sym">
-        <source>Locking Sym</source>
-        <translation type="unfinished"></translation>
-    </message>
     <message id="reset-to-defaults">
         <source>Reset all to defaults</source>
         <extracomment>Pulldown menu optiion to reset default values</extracomment>
@@ -218,8 +105,8 @@
         <translation type="unfinished"></translation>
     </message>
     <message id="layout-desc">
-        <source>To change keyboard layout, start Jolla Settings &gt; System settings &gt; Text input and change hardware keyboard active layout. Note that all layouts are not supported.</source>
-        <oldsource>To change keyboard layout, go to Jolla Settings &gt; System settings &gt; Text input and change hardware keyboard active layout</oldsource>
+        <source>To change keyboard layout, start Jolla Settings, go to System settings, Text input and change hardware keyboard active layout. Note that all layouts are not supported.</source>
+        <oldsource>To change keyboard layout, start Jolla Settings &gt; System settings &gt; Text input and change hardware keyboard active layout. Note that all layouts are not supported.</oldsource>
         <extracomment>Description text for sticky and locking modifier keys</extracomment>
         <translation type="unfinished"></translation>
     </message>
@@ -357,6 +244,122 @@
         <extracomment>Help page text (keep short)</extracomment>
         <translation type="unfinished"></translation>
     </message>
+    <message id="mod-mode-normal">
+        <source>Normal</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message id="mod-mode-sticky">
+        <source>Sticky</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message id="mod-mode-lock">
+        <source>Lock</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message id="mod-mode-cycle">
+        <source>Cycle</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message id="mod-shift-mode">
+        <source>Shift mode</source>
+        <extracomment>Modifier Shift mode selector combo-box label</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message id="mod-ctrl-mode">
+        <source>Ctrl mode</source>
+        <extracomment>Modifier Ctrl mode selector combo-box label</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message id="mod-alt-mode">
+        <source>Alt mode</source>
+        <extracomment>Modifier Alt mode selector combo-box label</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message id="mod-sym-mode">
+        <source>Sym mode</source>
+        <extracomment>Modifier Sym mode selector combo-box label</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message id="backlight-sect-header">
+        <source>Backlight</source>
+        <extracomment>Section header for backlight settings</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message id="bg-always-on-sw">
+        <source>Always on</source>
+        <extracomment>Backlight always on switch text</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message id="bg-always-on-desc">
+        <source>Backlight is always on when keyboard attached and phone&apos;s display is on</source>
+        <extracomment>Backlight always on description</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message id="bg-automatic-sw">
+        <source>Automatic</source>
+        <extracomment>Backlight automatic switch text</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message id="bg-automatic-desc">
+        <source>Automatic backlight enable or always off</source>
+        <extracomment>Backlight automatic description</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message id="bg-timeout-slider">
+        <source>Backlight timeout</source>
+        <extracomment>Backlight timeout slider name</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message id="bg-brightness-slider">
+        <source>Brightness threshold</source>
+        <extracomment>Backlight brightness threshold slider</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message id="orientation-sect-header">
+        <source>Orientation</source>
+        <extracomment>Section header for orientation settings</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message id="orientation-force-landscape-sw">
+        <source>Force Landscape</source>
+        <extracomment>Force landsacep switch text</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message id="orientation-force-landscape-desc">
+        <source>Force landscape orientation when keyboard attached</source>
+        <extracomment>Force landsacep switch description</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message id="repeat-sect-header">
+        <source>Repeat</source>
+        <extracomment>Section header for repeat settings</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message id="repeat-delay-slider">
+        <source>Repeat start delay</source>
+        <extracomment>Keyboard repeat start delay slider</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message id="repeat-rate-slider">
+        <source>Repeat rate</source>
+        <extracomment>Keyboard repeat rate slider</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message id="test-here">
+        <source>Test here</source>
+        <extracomment>Placeholder text for textfield to test repeat settings</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message id="sticky-sect-header">
+        <source>Sticky and locking modifier keys</source>
+        <extracomment>Section header for sticky and locking settings</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message id="sticky-desc">
+        <source>In Sticky mode, modifier key will stay on after pressed once and released after pressing again or any other key. In Lock mode modifier key will lock on double-press and released on third. In Cycle mode Sticky and Lock modes are both active, after first press is Sticky and second press is Lock. In all modes you can also use them as normal modifier keys.</source>
+        <extracomment>Description text for sticky and locking modifier keys</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
     <message id="debug-sect-header">
         <source>Debug</source>
         <extracomment>Section header for Debug settings</extracomment>
@@ -368,7 +371,8 @@
         <translation type="unfinished"></translation>
     </message>
     <message id="verbose-mode-desc">
-        <source>Print more information in Journal logs. Use \&quot;devel-su journalctl -fa | grep toh\&quot; to see output.</source>
+        <source>Print more information in Journal logs. Use &apos;devel-su journalctl -fa | grep toh&apos; to see output.</source>
+        <oldsource>Print more information in Journal logs. Use </oldsource>
         <extracomment>Verbose mode switch description</extracomment>
         <translation type="unfinished"></translation>
     </message>

@@ -80,6 +80,7 @@ ApplicationWindow
             updateShortcutsModel()
             settings = settingsui.getCurrentSettings()
             updateKeycomboModel()
+            updateModifiers()
         }
 
         onShortcutsChanged:
@@ -224,6 +225,44 @@ ApplicationWindow
         //: Section header for list of key combinations provided by os (text edits mostly)
         //% "Text edit key combinations"
         keycomboTopModel.append({"name": qsTrId("sys-key-combinations"), "keycomboModel": keycomboModel2})
+    }
+
+    ListModel
+    {
+        id: modifierModes
+    }
+
+    ListModel
+    {
+        id: modifiers
+    }
+
+    function updateModifiers()
+    {
+        modifierModes.clear()
+        modifiers.clear()
+
+        //% "Normal"
+        modifierModes.append({ "name": qsTrId("mod-mode-normal"), "code": "Normal" })
+        //% "Sticky"
+        modifierModes.append({ "name": qsTrId("mod-mode-sticky"), "code": "Sticky" })
+        //% "Lock"
+        modifierModes.append({ "name": qsTrId("mod-mode-lock"), "code": "Lock" })
+        //% "Cycle"
+        modifierModes.append({ "name": qsTrId("mod-mode-cycle"), "code": "Cycle" })
+
+        //: Modifier Shift mode selector combo-box label
+        //% "Shift mode"
+        modifiers.append({ "combolabel": qsTrId("mod-shift-mode"), "key": "modifierShiftMode" })
+        //: Modifier Ctrl mode selector combo-box label
+        //% "Ctrl mode"
+        modifiers.append({ "combolabel": qsTrId("mod-ctrl-mode"), "key": "modifierCtrlMode" })
+        //: Modifier Alt mode selector combo-box label
+        //% "Alt mode"
+        modifiers.append({ "combolabel": qsTrId("mod-alt-mode"), "key": "modifierAltMode" })
+        //: Modifier Sym mode selector combo-box label
+        //% "Sym mode"
+        modifiers.append({ "combolabel": qsTrId("mod-sym-mode"), "key": "modifierSymMode" })
     }
 }
 

@@ -64,13 +64,13 @@ Page
                 //: Backlight always on description
                 //% "Backlight is always on when keyboard attached and phone's display is on"
                 description: qsTrId("bg-always-on-desc")
-                onCheckedChanged: settingsui.setSettingInt("forceBacklightOn", checked ? 1 : 0)
+                onCheckedChanged: if (checked !== settings["forceBacklightOn"]) settingsui.setSettingInt("forceBacklightOn", checked ? 1 : 0)
                 width: parent.width - 2*Theme.paddingLarge
                 Component.onCompleted:
                 {
                     checked = settings["forceBacklightOn"]
                     /* Update to restore if overridden with key-combo Sym+Home */
-                    if (!checked)
+                    if (!checked && !settings["forceBacklightOn"])
                         settingsui.setSettingInt("forceBacklightOn", 0)
                 }
             }
@@ -83,7 +83,7 @@ Page
                 //: Backlight automatic description
                 //% "Automatic backlight enable or always off"
                 description: qsTrId("bg-automatic-desc")
-                onCheckedChanged: settingsui.setSettingInt("backlightEnabled", checked ? 1 : 0)
+                onCheckedChanged: if (checked !== settings["backlightEnabled"]) settingsui.setSettingInt("backlightEnabled", checked ? 1 : 0)
                 width: parent.width - 2*Theme.paddingLarge
                 Component.onCompleted: checked = settings["backlightEnabled"]
                 enabled: !alwaysOn.checked
@@ -238,7 +238,7 @@ Page
             Label
             {
                 //: Description text for sticky and locking modifier keys
-                //% "Sticky modifiers will toggle when pressed once and released after pressing any other key. Locking modifier will lock on double-press and released on third. In both modes you can also use them as normal modifier keys."
+                //% "In Sticky mode, modifier key will stay on after pressed once and released after pressing again or any other key. In Lock mode modifier key will lock on double-press and released on third. In Cycle mode Sticky and Lock modes are both active, after first press is Sticky and second press is Lock. In all modes you can also use them as normal modifier keys."
                 text: qsTrId("sticky-desc")
                 wrapMode: Text.Wrap
                 font.pixelSize: Theme.fontSizeExtraSmall
@@ -247,92 +247,36 @@ Page
                 anchors.horizontalCenter: parent.horizontalCenter
             }
 
-            Row
+            Repeater
             {
-                width: parent.width - 2*Theme.paddingLarge
-                TextSwitch
+                model: modifiers
+
+                ComboBox
                 {
-                    id: stickyShift
-                    //% "Sticky Shift"
-                    text: qsTrId("sticky-shift")
-                    onCheckedChanged: settingsui.setSettingInt("stickyShiftEnabled", checked ? 1 : 0)
-                    width: parent.width/2
-                    Component.onCompleted: checked = settings["stickyShiftEnabled"]
-                }
-                TextSwitch
-                {
-                    id: lockingShift
-                    //% "Locking Shift"
-                    text: qsTrId("locking-shift")
-                    onCheckedChanged: settingsui.setSettingInt("lockingShiftEnabled", checked ? 1 : 0)
-                    width: parent.width/2
-                    Component.onCompleted: checked = settings["lockingShiftEnabled"]
-                }
-            }
-            Row
-            {
-                width: parent.width - 2*Theme.paddingLarge
-                TextSwitch
-                {
-                    id: stickyCtrl
-                    //% "Sticky Ctrl"
-                    text: qsTrId("sticky-ctrl")
-                    onCheckedChanged: settingsui.setSettingInt("stickyCtrlEnabled", checked ? 1 : 0)
-                    width: parent.width/2
-                    Component.onCompleted: checked = settings["stickyCtrlEnabled"]
-                }
-                TextSwitch
-                {
-                    id: lockingCtrl
-                    //% "Locking Ctrl"
-                    text: qsTrId("locking-ctrl")
-                    onCheckedChanged: settingsui.setSettingInt("lockingCtrlEnabled", checked ? 1 : 0)
-                    width: parent.width/2
-                    Component.onCompleted: checked = settings["lockingCtrlEnabled"]
-                }
-            }
-            Row
-            {
-                width: parent.width - 2*Theme.paddingLarge
-                TextSwitch
-                {
-                    id: stickyAlt
-                    //% "Sticky Alt"
-                    text: qsTrId("sticky-alt")
-                    onCheckedChanged: settingsui.setSettingInt("stickyAltEnabled", checked ? 1 : 0)
-                    width: parent.width/2
-                    Component.onCompleted: checked = settings["stickyAltEnabled"]
-                }
-                TextSwitch
-                {
-                    id: lockingAlt
-                    //% "Locking Alt"
-                    text: qsTrId("locking-alt")
-                    onCheckedChanged: settingsui.setSettingInt("lockingAltEnabled", checked ? 1 : 0)
-                    width: parent.width/2
-                    Component.onCompleted: checked = settings["lockingAltEnabled"]
-                }
-            }
-            Row
-            {
-                width: parent.width - 2*Theme.paddingLarge
-                TextSwitch
-                {
-                    id: stickySym
-                    //% "Sticky Sym"
-                    text: qsTrId("sticky-sym")
-                    onCheckedChanged: settingsui.setSettingInt("stickySymEnabled", checked ? 1 : 0)
-                    width: parent.width/2
-                    Component.onCompleted: checked = settings["stickySymEnabled"]
-                }
-                TextSwitch
-                {
-                    id: lockingSym
-                    //% "Locking Sym"
-                    text: qsTrId("locking-sym")
-                    onCheckedChanged: settingsui.setSettingInt("lockingSymEnabled", checked ? 1 : 0)
-                    width: parent.width/2
-                    Component.onCompleted: checked = settings["lockingSymEnabled"]
+                    width: parent.width
+                    label: "   " + combolabel + " "
+                    menu: ContextMenu
+                    {
+                        id: modifierCBmenu
+                        Repeater
+                        {
+                            model: modifierModes
+                            MenuItem { text: name; onClicked: settingsui.setSettingString(key, code); }
+                        }
+                    }
+                    Component.onCompleted:
+                    {
+                        var i
+                        for (i=0 ; i < modifierModes.count ; i++)
+                        {
+                            var item = modifierModes.get(i)
+                            if (settings[key] === item["code"])
+                            {
+                                currentIndex = i
+                                return
+                            }
+                        }
+                    }
                 }
             }
 
@@ -348,9 +292,9 @@ Page
                 //% "Verbose mode"
                 text: qsTrId("verbose-mode-sw")
                 //: Verbose mode switch description
-                //% "Print more information in Journal logs. Use \"devel-su journalctl -fa | grep toh\" to see output."
+                //% "Print more information in Journal logs. Use 'devel-su journalctl -fa | grep toh' to see output."
                 description: qsTrId("verbose-mode-desc")
-                onCheckedChanged: settingsui.setSettingInt("verboseMode", checked ? 1 : 0)
+                onCheckedChanged: if (checked !== settings["verboseMode"]) settingsui.setSettingInt("verboseMode", checked ? 1 : 0)
                 width: parent.width - 2*Theme.paddingLarge
                 Component.onCompleted: checked = settings["verboseMode"]
             }

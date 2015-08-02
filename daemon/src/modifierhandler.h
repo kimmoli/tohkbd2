@@ -18,12 +18,14 @@ public:
         Cycle
     } KeyMode;
 
-    void set(bool state, bool alone);
-    void clear(bool force = false);
+    static QStringList KeyModeNames;
+    static KeyMode toKeyMode(const QString &modename);
 
     void setMode(KeyMode newMode);
-
     KeyMode mode;
+
+    void set(bool state, bool alone);
+    void clear(bool force = false);
 
     bool pressed;
     bool down;
@@ -40,7 +42,6 @@ private:
     QString _name;
     bool _wasHeldDown;
     int _lockCount;
-    static QStringList KeyModeNames;
 };
 
 #endif // MODIFIERHANDLER_H

@@ -129,3 +129,8 @@ void modifierHandler::setMode(KeyMode newMode)
             printf("%s mode set to %s\n", qPrintable(_name), qPrintable(KeyModeNames.at(mode)));
     }
 }
+
+modifierHandler::KeyMode modifierHandler::toKeyMode(const QString &modename)
+{
+    return (KeyMode)KeyModeNames.indexOf(modename);
+}

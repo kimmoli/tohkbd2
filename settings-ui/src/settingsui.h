@@ -6,6 +6,7 @@
 #define SETTINGSUI_H
 #include <QObject>
 #include <QVariantList>
+#include <QTimer>
 
 #include "../daemon/src/daemonInterface.h"
 #include "../user-daemon/src/userInterface.h"
