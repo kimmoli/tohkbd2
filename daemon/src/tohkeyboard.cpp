@@ -128,6 +128,8 @@ Tohkbd::Tohkbd(QObject *parent) :
     connect(keymap, SIGNAL(keyPressed(QList< QPair<int, int> >)), this, SLOT(handleKeyPressed(QList< QPair<int, int> >)));
     connect(keymap, SIGNAL(keyReleased()), this, SLOT(handleKeyReleased()));
     connect(keymap, SIGNAL(bogusDetected()), tca8424, SLOT(reset()));
+    connect(keymap, SIGNAL(setKeymapLayout(QString)), tohkbd2user, SLOT(setKeymapLayout(QString)));
+    connect(keymap, SIGNAL(setKeymapVariant(QString)), tohkbd2user, SLOT(setKeymapVariant(QString)));
 
     QString currentPhysicalLayout = tohkbd2user->getActivePhysicalLayout();
 

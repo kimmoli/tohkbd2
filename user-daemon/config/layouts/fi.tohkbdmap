@@ -1,6 +1,8 @@
 # TOHKBD2 Key mapping file
 # Finnish (fi)
 #
+variant nodeadkeys
+#
 #Code Plain key       Plain mod      Sym key            Sym mod
 #
 A1    KEY_TAB         0              KEY_ESC            0

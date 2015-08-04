@@ -28,6 +28,8 @@ keymapping::keymapping(QString pathToLayouts, QObject *parent) :
     QObject(parent)
 {
     layoutPath = pathToLayouts;
+    alternativeLayout = QString();
+    originalLayout = QString();
 
     pressedCode = 0;
     verboseMode = false;
@@ -115,6 +117,13 @@ void keymapping::process(QByteArray inputReport)
         return;
     }
 
+    if (altDown && sym->pressed)
+    {
+        releaseStickyModifiers();
+        toggleAlternativeLayout();
+        return;
+    }
+
     shift->set(leftShiftDown || shiftDown, ir.isEmpty());
     ctrl->set(ctrlDown, ir.isEmpty());
     alt->set(altDown, ir.isEmpty());
@@ -183,6 +192,7 @@ void keymapping::releaseStickyModifiers(bool force)
 bool keymapping::setLayout(QString toLayout, bool forceReload)
 {
     bool ret = true;
+    bool alternativeLayoutSet = false;
 
     if ((toLayout == layout) && !forceReload)
         return true;
@@ -211,6 +221,27 @@ bool keymapping::setLayout(QString toLayout, bool forceReload)
             // Comment starts with #
             if (line.at(0).startsWith("#"))
                continue;
+
+            if (line.count() == 2)
+            {
+                if (QString::compare(line.at(0), "variant", Qt::CaseInsensitive) == 0)
+                {
+                    if (QString::compare(line.at(1), "none", Qt::CaseInsensitive) == 0)
+                    {
+                        emit setKeymapVariant("");
+                    }
+                    else
+                    {
+                        emit setKeymapVariant(line.at(1));
+                    }
+                }
+                else if (QString::compare(line.at(0), "alternative", Qt::CaseInsensitive) == 0)
+                {
+                    alternativeLayout = line.at(1);
+                    alternativeLayoutSet = true;
+                    printf("keymap: alternative layout is %s\n", qPrintable(alternativeLayout));
+                }
+            }
 
             if (line.count() != 5)
                continue;
@@ -300,6 +331,16 @@ bool keymapping::setLayout(QString toLayout, bool forceReload)
     {
         layout = toLayout;
 
+        /* If we did toggle to something that was not alternative, and does not have alternative, clear alternative */
+        if (!alternativeLayoutSet && layout != alternativeLayout)
+            alternativeLayout = QString();
+
+        /* Set original if we changed to something else, or this is first time it is set */
+        if ((layout != originalLayout && layout != alternativeLayout) || originalLayout.isEmpty())
+        {
+            originalLayout = layout;
+        }
+
         printf("keymap: processed %d keys. layout set to %s\n", i, qPrintable(layout));
     }
     else
@@ -308,4 +349,21 @@ bool keymapping::setLayout(QString toLayout, bool forceReload)
     }
 
     return ret;
+}
+
+void keymapping::toggleAlternativeLayout()
+{
+    if (alternativeLayout.isEmpty() || originalLayout.isEmpty() || layout.isEmpty())
+        return;
+
+    printf("keymap: toggling layout from %s to %s\n", qPrintable(layout), qPrintable(alternativeLayout));
+
+    if (layout == alternativeLayout)
+    {
+        emit setKeymapLayout(originalLayout);
+    }
+    else if (layout == originalLayout)
+    {
+        emit setKeymapLayout(alternativeLayout);
+    }
 }

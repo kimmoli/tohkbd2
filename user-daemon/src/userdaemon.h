@@ -47,6 +47,8 @@ public slots:
     QString getPathTo(const QString &filename);
     void showUnsupportedLayoutNotification();
     void installKeymaps(const bool &overwrite);
+    void setKeymapLayout(const QString &value);
+    void setKeymapVariant(const QString &value);
     void quit();
 
     void launchSuccess(const QString &appName);

@@ -376,5 +376,16 @@
         <extracomment>Verbose mode switch description</extracomment>
         <translation type="unfinished"></translation>
     </message>
+    <message id="nodeadkeys-sw">
+        <source>No deadkeys</source>
+        <extracomment>Switch to set &apos;nodeadkeys&apos; in keymap variant</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message id="nodeadkeys-desc">
+        <source>Set &apos;nodeadkeys&apos; to keymap variat. Required for some keyboard layouts, e.g. fi, de.</source>
+        <oldsource>Set &apos;nodeadkeys&apos; to keymap variat. Required for some keyboard layouts, e.g. fi</oldsource>
+        <extracomment>No deadkeys switch description</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 </TS>

@@ -49,10 +49,16 @@ signals:
     void keyReleased();
     void toggleCapsLock();
     void bogusDetected();
+    void setKeymapVariant(QString keymapVariant);
+    void setKeymapLayout(QString keymapLayout);
 
 public slots:
 
 private:
+    void toggleAlternativeLayout();
+    QString alternativeLayout;
+    QString originalLayout;
+
     bool keyIsPressed;
 
     char pressedCode;

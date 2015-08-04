@@ -4,6 +4,7 @@
 
 import QtQuick 2.0
 import Sailfish.Silica 1.0
+import org.nemomobile.configuration 1.0
 import "../components"
 
 Page
@@ -298,7 +299,38 @@ Page
                 width: parent.width - 2*Theme.paddingLarge
                 Component.onCompleted: checked = settings["verboseMode"]
             }
+
+            TextSwitch
+            {
+                id: nodeadkeysSwitch
+                //: Switch to set 'nodeadkeys' in keymap variant
+                //% "No deadkeys"
+                text: qsTrId("nodeadkeys-sw")
+                //: No deadkeys switch description
+                //% "Set 'nodeadkeys' to keymap variat. Required for some keyboard layouts, e.g. fi, de."
+                description: qsTrId("nodeadkeys-desc")
+                width: parent.width - 2*Theme.paddingLarge
+                automaticCheck: false
+                onClicked:
+                {
+                    if (keymapVariant.value !== "nodeadkeys")
+                        keymapVariant.value = "nodeadkeys"
+                    else
+                        keymapVariant.value = ""
+                }
+                Component.onCompleted: checked = (keymapVariant.value === "nodeadkeys")
+            }
         }
+    }
+
+    ConfigurationValue
+    {
+        id: keymapVariant
+        key: "/desktop/lipstick-jolla-home/variant"
+        defaultValue: ""
+
+        onValueChanged:
+            nodeadkeysSwitch.checked = (value === "nodeadkeys")
     }
 }
 

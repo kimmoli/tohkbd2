@@ -241,3 +241,15 @@ void UserDaemon::installKeymaps(const bool &overwrite)
         }
     }
 }
+
+void UserDaemon::setKeymapLayout(const QString &value)
+{
+    MGConfItem keymapLayout("/desktop/lipstick-jolla-home/layout");
+    keymapLayout.set(value);
+}
+
+void UserDaemon::setKeymapVariant(const QString &value)
+{
+    MGConfItem keymapVariant("/desktop/lipstick-jolla-home/variant");
+    keymapVariant.set(value);
+}

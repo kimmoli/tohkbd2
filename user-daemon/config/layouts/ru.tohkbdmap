@@ -1,7 +1,10 @@
 # TOHKBD2 Key mapping file
-# English (us)
+# Russian (ru)
 #
 variant none
+#
+# Alternative layout can be toggled with Sym-Alt
+alternative us
 #
 #Code Plain key       Plain mod      Sym key            Sym mod
 #
@@ -56,10 +59,10 @@ D7    KEY_V           0              KEY_SLASH          0
 D8    KEY_B           0              KEY_BACKSLASH      SHIFT
 D9    KEY_N           0              KEY_BACKSLASH      0
 DA    KEY_M           0              KEY_M              0
-DB    KEY_SLASH       SHIFT          KEY_SLASH          SHIFT
-DC    KEY_1           SHIFT          KEY_1              SHIFT
-DD    KEY_COMMA       0              KEY_102ND          0
-DE    KEY_DOT         0              KEY_102ND          SHIFT
+DB    KEY_COMMA       0              KEY_102ND          0
+DC    KEY_DOT         0              KEY_102ND          SHIFT
+DD    KEY_SLASH       SHIFT          KEY_SLASH          SHIFT
+DE    KEY_SLASH       0              KEY_1              SHIFT
 EC    KEY_2           SHIFT          KEY_TOH_NEWEMAIL   0
 EF    KEY_ENTER       0              KEY_ENTER          0
 E9    KEY_SPACE       0              KEY_SPACE          0
