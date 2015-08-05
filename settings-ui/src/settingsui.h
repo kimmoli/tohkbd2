@@ -7,6 +7,7 @@
 #include <QObject>
 #include <QVariantList>
 #include <QTimer>
+#include <QMap>
 
 #include "../daemon/src/daemonInterface.h"
 #include "../user-daemon/src/userInterface.h"
@@ -29,6 +30,7 @@ public:
     Q_INVOKABLE QVariantList getApplications();
     Q_INVOKABLE QVariantList getCurrentShortcuts();
     Q_INVOKABLE QVariantMap getCurrentSettings();
+    Q_INVOKABLE QVariantList getCurrentLayouts();
     Q_INVOKABLE void setShortcut(QString key, QString appPath);
     Q_INVOKABLE QString readDaemonVersion();
     Q_INVOKABLE QString readUserDaemonVersion();
@@ -38,7 +40,6 @@ public:
     Q_INVOKABLE void setSettingInt(QString key, int value);
     Q_INVOKABLE void setSettingString(QString key, QString value);
     Q_INVOKABLE void forceKeymapReload();
-    Q_INVOKABLE void startJollaSettings();
     Q_INVOKABLE void restoreOriginalKeymaps();
 
 public slots:
@@ -59,6 +60,7 @@ private:
     ComKimmoliTohkbd2userInterface *tohkbd2user;
 
     bool m_dbusRegistered;
+    QMap<QString, QString> layoutToLanguage;
 };
 
 

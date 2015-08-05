@@ -41,6 +41,7 @@ Page
             {
                 if (!kr.menuOpen)
                 {
+                    updateLayouts()
                     kr.showMenu()
                     upDownSelection = 0
                 }
@@ -158,6 +159,7 @@ Page
                 onClicked:
                 {
                     kbdif.upDownSelection = (kbdif.upDownItemCount - 1)
+                    updateLayouts()
                     showMenu()
                 }
 
@@ -170,13 +172,22 @@ Page
                 }
                 Label
                 {
+                    id: kprfx
                     //: Prefix for showing current layout
-                    //% "Keyboard layout: %1"
-                    text: qsTrId("kbd-layout").arg(settings["physicalLayout"])
+                    //% "Keyboard layout"
+                    text: qsTrId("kbd-layout")
                     anchors.left: kimg.right
                     anchors.leftMargin: Theme.paddingLarge
                     anchors.verticalCenter: parent.verticalCenter
                     color: kr.highlighted ? Theme.highlightColor : Theme.primaryColor
+                }
+                Label
+                {
+                    text: settings["physicalLayout"]
+                    anchors.left: kprfx.right
+                    anchors.leftMargin: Theme.paddingMedium
+                    anchors.verticalCenter: parent.verticalCenter
+                    color: Theme.highlightColor
                 }
             }
 
@@ -185,10 +196,10 @@ Page
                 id: kcm
                 MenuItem
                 {
-                    //: Context menu entry for opening jolla-settings application
-                    //% "Start Jolla Settings..."
-                    text: qsTrId("start-jolla-settings")
-                    onClicked: settingsui.startJollaSettings()
+                    //: Context menu entry for changing the layout
+                    //% "Change layout..."
+                    text: qsTrId("change-layout")
+                    onClicked: pageStack.push(Qt.resolvedUrl("LayoutSwitcher.qml"))
                 }
                 MenuItem
                 {
@@ -200,7 +211,7 @@ Page
                 MenuItem
                 {
                     //: Context menu entry for overwrite keyboard mapping files with original ones
-                    //% "Reset keyboard mapping"
+                    //% "Restore original keymap files"
                     text: qsTrId("reset-keymaps")
                     onClicked: remorse.execute(qsTrId("reset-keymaps"),
                                                function() { settingsui.restoreOriginalKeymaps() } )
@@ -210,7 +221,7 @@ Page
             Label
             {
                 //: Description text for sticky and locking modifier keys
-                //% "To change keyboard layout, start Jolla Settings, go to System settings, Text input and change hardware keyboard active layout. Note that all layouts are not supported."
+                //% "To change keyboard layout, click above and select 'Change layout'. Unsupported layouts are dimmed."
                 text: qsTrId("layout-desc")
                 x: Theme.paddingLarge
                 wrapMode: Text.Wrap

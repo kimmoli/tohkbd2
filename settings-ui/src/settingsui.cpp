@@ -36,6 +36,24 @@ SettingsUi::SettingsUi(QObject *parent) :
 
     connect(tohkbd2user, SIGNAL(physicalLayoutChanged(QString)), this, SLOT(handlePhysicalLayoutChange(QString)));
 
+    layoutToLanguage.insert("cz" ,"Čeština");
+    layoutToLanguage.insert("dk" ,"Dansk");
+    layoutToLanguage.insert("de" ,"Deutsch");
+    layoutToLanguage.insert("ee" ,"Eesti");
+    layoutToLanguage.insert("us" ,"English");
+    layoutToLanguage.insert("es" ,"Español");
+    layoutToLanguage.insert("fr" ,"Français");
+    layoutToLanguage.insert("it" ,"Italiano");
+    layoutToLanguage.insert("nl" ,"Nederlands");
+    layoutToLanguage.insert("no" ,"Norsk");
+    layoutToLanguage.insert("pl" ,"Polski");
+    layoutToLanguage.insert("pt" ,"Português");
+    layoutToLanguage.insert("fi" ,"Suomi");
+    layoutToLanguage.insert("se" ,"Svenska");
+    layoutToLanguage.insert("tr" ,"Türkçe");
+    layoutToLanguage.insert("kz" ,"Қазақ");
+    layoutToLanguage.insert("ru" ,"Русский");
+
     emit versionChanged();
 }
 
@@ -152,25 +170,6 @@ QVariantMap SettingsUi::getCurrentSettings()
     settings.endGroup();
 
     QString layout = QString(tohkbd2user->getActivePhysicalLayout());
-
-    QMap<QString, QString> layoutToLanguage;
-    layoutToLanguage.insert("cz" ,"Čeština");
-    layoutToLanguage.insert("dk" ,"Dansk");
-    layoutToLanguage.insert("de" ,"Deutsch");
-    layoutToLanguage.insert("ee" ,"Eesti");
-    layoutToLanguage.insert("us" ,"English");
-    layoutToLanguage.insert("es" ,"Español");
-    layoutToLanguage.insert("fr" ,"Français");
-    layoutToLanguage.insert("it" ,"Italiano");
-    layoutToLanguage.insert("nl" ,"Nederlands");
-    layoutToLanguage.insert("no" ,"Norsk");
-    layoutToLanguage.insert("pl" ,"Polski");
-    layoutToLanguage.insert("pt" ,"Português");
-    layoutToLanguage.insert("fi" ,"Suomi");
-    layoutToLanguage.insert("se" ,"Svenska");
-    layoutToLanguage.insert("tr" ,"Türkçe");
-    layoutToLanguage.insert("kz" ,"Қазақ");
-    layoutToLanguage.insert("ru" ,"Русский");
 
     map.insert("physicalLayout", layoutToLanguage.value(layout));
 
@@ -360,12 +359,43 @@ void SettingsUi::forceKeymapReload()
     tohkbd2daemon->forceKeymapReload(QString());
 }
 
-void SettingsUi::startJollaSettings()
-{
-    tohkbd2user->launchApplication("/usr/share/applications/jolla-settings.desktop");
-}
-
 void SettingsUi::restoreOriginalKeymaps()
 {
     tohkbd2user->installKeymaps(true);
+}
+
+QVariantList SettingsUi::getCurrentLayouts()
+{
+    QVariantList tmp;
+    QVariantMap map;
+
+    QFileInfoList list;
+    QDir dir;
+    QStringList keymaps;
+
+    /* Get list of .tohkbdmap files in config */
+    dir.setPath(QString(tohkbd2user->getPathTo("keymaplocation")));
+    dir.setFilter(QDir::Files | QDir::NoDotAndDotDot | QDir::NoSymLinks);
+    dir.setNameFilters(QStringList() << "*.tohkbdmap");
+
+    list = dir.entryInfoList();
+    for (int i=0 ; i<list.size() ; i++)
+    {
+        keymaps << list.at(i).fileName().split(".").at(0);
+    }
+
+    QMap<QString, QString>::iterator layout;
+    for (layout = layoutToLanguage.begin(); layout != layoutToLanguage.end(); ++layout)
+    {
+        /* key = us , name = English, supported = true */
+        map.clear();
+        map.insert("key", layout.key());
+        map.insert("name", layout.value());
+        map.insert("supported", keymaps.contains(layout.key()));
+        tmp.append(map);
+    }
+
+    std::sort(tmp.begin(), tmp.end(), appNameLessThan);
+
+    return tmp;
 }

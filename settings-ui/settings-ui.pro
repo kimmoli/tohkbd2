@@ -60,5 +60,6 @@ OTHER_FILES += qml/tohkbd2-settingsui.qml \
     qml/pages/Help.qml \
     config/com.kimmoli.tohkbd2settingsui.service \
     config/com.kimmoli.tohkbd2settingsui.xml \
-    qml/cover/HelpCoverPage.qml
+    qml/cover/HelpCoverPage.qml \
+    qml/pages/LayoutSwitcher.qml
 

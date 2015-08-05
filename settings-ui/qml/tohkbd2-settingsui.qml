@@ -264,6 +264,24 @@ ApplicationWindow
         //% "Sym mode"
         modifiers.append({ "combolabel": qsTrId("mod-sym-mode"), "key": "modifierSymMode" })
     }
+
+    ListModel
+    {
+        id: layoutsModel
+    }
+
+    function updateLayouts()
+    {
+        var i
+        var tmp = settingsui.getCurrentLayouts()
+
+        layoutsModel.clear()
+
+        for (i=0 ; i<tmp.length; i++)
+        {
+            layoutsModel.append({"key": tmp[i]["key"], "name": tmp[i]["name"], "supported": tmp[i]["supported"]})
+        }
+    }
 }
 
 

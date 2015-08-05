@@ -83,11 +83,6 @@
         <extracomment>Main menu selection for shortcuts configurations</extracomment>
         <translation type="unfinished"></translation>
     </message>
-    <message id="settings">
-        <source>Settings</source>
-        <extracomment>Main page header</extracomment>
-        <translation type="unfinished"></translation>
-    </message>
     <message id="shortcut-not-configured">
         <source>Not configured</source>
         <extracomment>Label shown instead of application name if Fn is not configured</extracomment>
@@ -96,34 +91,6 @@
     <message id="shortcut-nothing">
         <source>Nothing, use as %1</source>
         <extracomment>Pulldown menu option clear shortcut. Allows using Fn as Fn</extracomment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message id="kbd-layout">
-        <source>Keyboard layout: %1</source>
-        <oldsource>Current layout is %1</oldsource>
-        <extracomment>Prefix for showing current layout</extracomment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message id="layout-desc">
-        <source>To change keyboard layout, start Jolla Settings, go to System settings, Text input and change hardware keyboard active layout. Note that all layouts are not supported.</source>
-        <oldsource>To change keyboard layout, start Jolla Settings &gt; System settings &gt; Text input and change hardware keyboard active layout. Note that all layouts are not supported.</oldsource>
-        <extracomment>Description text for sticky and locking modifier keys</extracomment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message id="force-reload">
-        <source>Reload keyboard mapping</source>
-        <extracomment>Context menu entry for reloading keyboard mapping file for tohkbd</extracomment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message id="start-jolla-settings">
-        <source>Start Jolla Settings...</source>
-        <oldsource>Start Jolla Settings</oldsource>
-        <extracomment>Context menu entry for opening jolla-settings application</extracomment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message id="reset-keymaps">
-        <source>Reset keyboard mapping</source>
-        <extracomment>Context menu entry for overwrite keyboard mapping files with original ones</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message id="help">
@@ -385,6 +352,37 @@
         <source>Set &apos;nodeadkeys&apos; to keymap variat. Required for some keyboard layouts, e.g. fi, de.</source>
         <oldsource>Set &apos;nodeadkeys&apos; to keymap variat. Required for some keyboard layouts, e.g. fi</oldsource>
         <extracomment>No deadkeys switch description</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message id="kbd-layout">
+        <source>Keyboard layout</source>
+        <extracomment>Prefix for showing current layout</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message id="settings">
+        <source>Settings</source>
+        <extracomment>Main page header</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message id="change-layout">
+        <source>Change layout...</source>
+        <extracomment>Context menu entry for changing the layout</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message id="force-reload">
+        <source>Reload keyboard mapping</source>
+        <extracomment>Context menu entry for reloading keyboard mapping file for tohkbd</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message id="reset-keymaps">
+        <source>Restore original keymap files</source>
+        <extracomment>Context menu entry for overwrite keyboard mapping files with original ones</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message id="layout-desc">
+        <source>To change keyboard layout, click above and select &apos;Change layout&apos;. Unsupported layouts are dimmed.</source>
+        <oldsource>To change keyboard layout, start Jolla Settings, go to System settings, Text input and change hardware keyboard active layout. Note that all layouts are not supported.</oldsource>
+        <extracomment>Description text for sticky and locking modifier keys</extracomment>
         <translation type="unfinished"></translation>
     </message>
 </context>
