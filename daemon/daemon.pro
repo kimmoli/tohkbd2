@@ -3,10 +3,6 @@ TARGET = harbour-tohkbd2
 QT += dbus
 QT -= gui
 
-# D-bus adaptor and interface
-system(qdbusxml2cpp config/com.kimmoli.tohkbd2.xml -i src/tohkeyboard.h -a src/daemonAdaptor)
-system(qdbusxml2cpp config/com.kimmoli.tohkbd2.xml -p ../daemon/src/daemonInterface)
-
 DEFINES += "APPVERSION=\\\"$${SPECVERSION}\\\""
 
 target.path = /usr/bin/

@@ -12,9 +12,6 @@ PKGCONFIG += mlite5 sailfishapp
 
 DEFINES += "APPVERSION=\\\"$${SPECVERSION}\\\""
 
-system(qdbusxml2cpp config/com.kimmoli.tohkbd2settingsui.xml -i src/settingsui.h -a src/settingsuiAdaptor)
-system(qdbusxml2cpp config/com.kimmoli.tohkbd2settingsui.xml -p ../settings-ui/src/settingsuiInterface)
-
 system(lupdate src qml -no-obsolete -ts $$PWD/i18n/engineering_en.ts)
 system(lrelease -idbased $$PWD/i18n/*.ts)
 

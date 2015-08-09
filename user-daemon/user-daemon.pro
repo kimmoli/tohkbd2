@@ -5,9 +5,6 @@ PKGCONFIG += sailfishapp mlite5 nemonotifications-qt5
 
 QT += dbus gui-private
 
-system(qdbusxml2cpp config/com.kimmoli.tohkbd2user.xml -i src/userdaemon.h -a src/userAdaptor)
-system(qdbusxml2cpp config/com.kimmoli.tohkbd2user.xml -p ../user-daemon/src/userInterface)
-
 system(lupdate src qml -no-obsolete -ts $$PWD/i18n/engineering_en.ts)
 system(lrelease -idbased $$PWD/i18n/*.ts)
 
