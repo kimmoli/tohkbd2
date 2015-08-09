@@ -39,7 +39,7 @@ C4    KEY_A           0              KEY_COMMA          SHIFT
 C5    KEY_S           0              KEY_BACKSLASH      0
 C6    KEY_D           0              KEY_3              RALT
 C7    KEY_F           0              KEY_EQUAL          SHIFT
-C8    KEY_G           0              KEY_EQUAL          0
+C8    KEY_G           0              KEY_EQUAL          RALT
 C9    KEY_H           0              KEY_H              0
 CA    KEY_J           0              KEY_J              0
 CB    KEY_K           0              KEY_8              RALT
@@ -53,8 +53,8 @@ D4    KEY_Z           0              KEY_DOT            SHIFT
 D5    KEY_X           0              KEY_2              SHIFT
 D6    KEY_C           0              KEY_E              RALT
 D7    KEY_V           0              KEY_7              SHIFT
-D8    KEY_B           0              KEY_102ND          RALT
-D9    KEY_N           0              KEY_MINUS          RALT
+D8    KEY_B           0              KEY_GRAVE          0
+D9    KEY_N           0              KEY_EQUAL          0
 DA    KEY_M           0              KEY_M              RALT
 DB    KEY_MINUS       SHIFT          KEY_MINUS          SHIFT
 DC    KEY_1           SHIFT          KEY_1              SHIFT
