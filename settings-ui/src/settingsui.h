@@ -9,8 +9,8 @@
 #include <QTimer>
 #include <QMap>
 
-#include "../daemon/src/daemonInterface.h"
-#include "../user-daemon/src/userInterface.h"
+#include "../dbus/src/daemonInterface.h"
+#include "../dbus/src/userdaemonInterface.h"
 
 #define SERVICE_NAME "com.kimmoli.tohkbd2settingsui"
 

@@ -10,40 +10,26 @@ system(lrelease -idbased $$PWD/i18n/*.ts)
 
 DEFINES += "APPVERSION=\\\"$${SPECVERSION}\\\""
 
-dbusService.files = config/com.kimmoli.tohkbd2user.service
-dbusService.path = /usr/share/dbus-1/services/
-
-dbusInterface.files = config/com.kimmoli.tohkbd2user.xml
-dbusInterface.path = /usr/share/dbus-1/interfaces/
-
 translations.path = /usr/share/$${TARGET}/i18n
 translations.files = i18n/*.qm
 
 icons.path = /usr/share/$${TARGET}
 icons.files = config/icon-system-keyboard.png
 
-INSTALLS +=  dbusService dbusInterface translations icons
+INSTALLS += translations icons
 
 message($${DEFINES})
 
 SOURCES += \
     src/tohkbd2user.cpp \
-    src/userAdaptor.cpp \
+    ../dbus/src/userdaemonAdaptor.cpp \
     src/userdaemon.cpp \
     src/viewhelper.cpp \
     src/applauncher.cpp \
     src/screenshot.cpp
 
-OTHER_FILES += \
-    config/com.kimmoli.tohkbd2user.service \
-    config/com.kimmoli.tohkbd2user.xml \
-    config/icon-system-keyboard.png \
-    i18n/*.ts \
-    qml/taskswitcher.qml \
-    config/layouts/*.tohkbdmap
-
 HEADERS += \
-    src/userAdaptor.h \
+    ../dbus/src/userdaemonAdaptor.h \
     src/userdaemon.h \
     src/viewhelper.h \
     src/applauncher.h \
@@ -51,3 +37,10 @@ HEADERS += \
 
 RESOURCES += \
     config/keymaps.qrc
+
+OTHER_FILES += \
+    config/icon-system-keyboard.png \
+    i18n/*.ts \
+    qml/taskswitcher.qml \
+    config/layouts/*.tohkbdmap
+

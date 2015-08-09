@@ -14,7 +14,7 @@
 #include <mlite5/MDesktopEntry>
 #include <linux/input.h>
 #include "../../daemon/src/defaultSettings.h"
-#include "settingsuiAdaptor.h"
+#include "../dbus/src/settingsuiAdaptor.h"
 
 static const char *SERVICE = SERVICE_NAME;
 static const char *PATH = "/";

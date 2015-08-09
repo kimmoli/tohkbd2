@@ -58,7 +58,7 @@ desktop-file-install --delete-original       \
 %attr(755,root,root) %{_bindir}/harbour-tohkbd2
 %attr(755,root,root) %{_bindir}/harbour-tohkbd2-settingsui
 %attr(755,root,root) %{_bindir}/harbour-tohkbd2-user
-%{_sysconfdir}/systemd/system/
+/%{_lib}/systemd/system/
 %{_sysconfdir}/udev/rules.d/
 %{_sysconfdir}/dbus-1/system.d/
 %{_datadir}/maliit/plugins/com/jolla/layouts/

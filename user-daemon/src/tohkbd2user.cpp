@@ -23,7 +23,7 @@
 #include <sailfishapp.h>
 
 #include "userdaemon.h"
-#include "userAdaptor.h"
+#include "../dbus/src/userdaemonAdaptor.h"
 #include "viewhelper.h"
 #include "applauncher.h"
 #include "screenshot.h"
