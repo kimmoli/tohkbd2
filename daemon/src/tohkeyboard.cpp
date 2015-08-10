@@ -148,6 +148,17 @@ Tohkbd::~Tohkbd()
         tohkbd2user->setOrientationLock(currentOrientationLock);
     }
 
+    if (keypadIsPresent)
+    {
+        keypadIsPresent = false;
+        /* keypad was removed if daemon gets killed */
+        emitKeypadSlideEvent(keypadIsPresent);
+
+        /* restore vkb when daemon gets killed */
+        vkbLayoutIsTohkbd = keypadIsPresent;
+        changeActiveLayout();
+    }
+
     uinputif->closeUinputDevice();
 
     worker->abort();
