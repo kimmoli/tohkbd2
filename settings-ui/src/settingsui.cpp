@@ -121,7 +121,7 @@ QVariantList SettingsUi::getApplications()
     {
         MDesktopEntry app(list.at(i).absoluteFilePath());
 
-        if (!app.hidden() && !app.icon().isEmpty() && !app.noDisplay() && !app.notShowIn().contains("X-Meego"))
+        if (!app.hidden() && !app.icon().isEmpty() && !app.noDisplay() && !app.notShowIn().contains("X-Meego", Qt::CaseInsensitive))
         {
             map.clear();
             map.insert("filePath", list.at(i).absoluteFilePath());
