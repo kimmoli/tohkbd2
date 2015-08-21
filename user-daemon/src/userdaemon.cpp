@@ -67,10 +67,10 @@ void UserDaemon::setActiveLayout(const QString &value)
         MGConfItem ci("/sailfish/text_input/active_layout");
         ci.set(value);
         
-        QStringList tohlayout("harbour-tohkbd2.qml");
+        QString tohlayout("harbour-tohkbd2.qml");
         MGConfItem el("/sailfish/text_input/enabled_layouts");
         QStringList list = el.value().toStringList();
-        if (value.equals(tohlayout)) {
+        if (value.compare(tohlayout) == 0) {
             if (!list.contains(tohlayout)) {
                 list.append(tohlayout);
                 el.set(list);
