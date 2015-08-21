@@ -66,6 +66,22 @@ void UserDaemon::setActiveLayout(const QString &value)
 
         MGConfItem ci("/sailfish/text_input/active_layout");
         ci.set(value);
+        
+        QStringList tohlayout("harbour-tohkbd2.qml");
+        MGConfItem el("/sailfish/text_input/enabled_layouts");
+        QStringList list = el.value().toStringList();
+        if (value.equals(tohlayout)) {
+            if (!list.contains(tohlayout)) {
+                list.append(tohlayout);
+                el.set(list);
+            }
+        }
+        else {
+            if (list.contains(tohlayout)) {
+                list.removeAll(tohlayout);
+                el.set(list);
+            }
+        }
     }
     else
     {
