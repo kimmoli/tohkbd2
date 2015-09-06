@@ -1,7 +1,10 @@
 TARGET = harbour-tohkbd2
 
-QT += dbus
+QT += dbus network
 QT -= gui
+
+CONFIG += link_pkgconfig
+PKGCONFIG += Qt5SystemInfo
 
 DEFINES += "APPVERSION=\\\"$${SPECVERSION}\\\""
 

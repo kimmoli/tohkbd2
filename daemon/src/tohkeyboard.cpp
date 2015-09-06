@@ -9,11 +9,13 @@
 #include <QtCore/QCoreApplication>
 #include <QDBusMessage>
 #include <QThread>
+#include <QTimer>
+#include <QHostAddress>
+#include <QtSystemInfo/QDeviceInfo>
 
 #include <unistd.h>
 #include <linux/input.h>
 #include <linux/uinput.h>
-#include <QTimer>
 
 #include "tohkeyboard.h"
 #include "toh.h"
@@ -49,7 +51,7 @@ Tohkbd::Tohkbd(QObject *parent) :
     taskSwitcherVisible = false;
     selfieLedOn = false;
     gpioInterruptCounter = 0;
-    actualSailfishVersion = QString();
+    verboseMode = true;
 
     fix_CapsLock = !checkSailfishVersion("1.1.7.0");
     capsLock = false;
@@ -1277,48 +1279,17 @@ bool Tohkbd::tohcoreBind(bool bind)
  */
 bool Tohkbd::checkSailfishVersion(QString versionToCompare)
 {
-    QString actualVersion = "0.0.0.0";
+    QDeviceInfo deviceInfo;
+    QString sailfishVersion = deviceInfo.version(QDeviceInfo::Os);
 
-    if (actualSailfishVersion.isEmpty())
-    {
-        QFile inputFile( "/etc/sailfish-release" );
+    if (verboseMode)
+        printf("Sailfish version %s\n", qPrintable(sailfishVersion));
 
-        if ( inputFile.open( QIODevice::ReadOnly | QIODevice::Text ) )
-        {
-           QTextStream in( &inputFile );
-
-           while (not in.atEnd())
-           {
-               QString line = in.readLine();
-               if (line.startsWith("VERSION_ID="))
-               {
-                   actualVersion = line.split('=').at(1);
-                   break;
-               }
-           }
-           inputFile.close();
-        }
-        actualSailfishVersion = actualVersion;
-
-        if (verboseMode)
-            printf("Sailfish version %s\n", qPrintable(actualSailfishVersion));
-    }
-
-    QStringList avList = actualSailfishVersion.split(".");
-    QStringList vList = versionToCompare.split(".");
-
-    if (avList.size() == 4 && vList.size() == 4)
-    {
-        long avLong = (avList.at(0).toInt() << 24) | (avList.at(1).toInt() << 16) | (avList.at(2).toInt() << 8) | avList.at(3).toInt();
-        long vLong = (vList.at(0).toInt() << 24) | (vList.at(1).toInt() << 16) | (vList.at(2).toInt() << 8) | vList.at(3).toInt();
-
-        return (avLong >= vLong);
-    }
-    else
-    {
-        printf("Sailfish version check failed!\n");
-        return false;
-    }
+    /* The version number is form 1.2.3.4 which is like IPv4 address
+     * Following uses QHostAddress.toIPv4Address() to convert
+     * version strings to comparable numbers */
+    return (QHostAddress(sailfishVersion).toIPv4Address()
+            >= QHostAddress(versionToCompare).toIPv4Address());
 }
 
 /* UinputEvPoll will emit signal if caps lock led state is seen in evdev
