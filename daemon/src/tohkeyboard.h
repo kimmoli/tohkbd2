@@ -40,7 +40,8 @@ public:
     explicit Tohkbd(QObject *parent = 0);
     virtual ~Tohkbd();
 
-    void registerDBus();
+    bool init();
+    bool registerDBus();
 
 public slots:
     /* dbus signal handler slots */

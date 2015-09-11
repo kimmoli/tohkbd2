@@ -55,11 +55,32 @@ Tohkbd::Tohkbd(QObject *parent) :
 
     fix_CapsLock = !checkSailfishVersion("1.1.7.0");
     capsLock = false;
+}
 
+/* Initialise. Returns false if failed
+ */
+bool Tohkbd::init()
+{
     tohkbd2user = new ComKimmoliTohkbd2userInterface("com.kimmoli.tohkbd2user", "/", QDBusConnection::sessionBus(), this);
     tohkbd2user->setTimeout(2000);
 
-    printf("waking up user daemon %s", qPrintable(tohkbd2user->getVersion()));
+    QString userDaemonVersion;
+
+    printf("waking up user daemon\n");
+
+    userDaemonVersion = tohkbd2user->getVersion();
+
+    /* User daemon needs to be same version as this daemon */
+    if (userDaemonVersion == APPVERSION)
+    {
+        printf("user daemon version %s\n", qPrintable(userDaemonVersion));
+    }
+    else
+    {
+        tohkbd2user->quit();
+        printf("wrong version of user daemon \"%s\"\n", qPrintable(userDaemonVersion));
+        return false;
+    }
 
     connect(tohkbd2user, SIGNAL(physicalLayoutChanged(QString)), this, SLOT(handlePhysicalLayout(QString)));
 
@@ -137,6 +158,8 @@ Tohkbd::Tohkbd(QObject *parent) :
 
     printf("physical layout is %s\n", qPrintable(currentPhysicalLayout));
     keymap->setLayout(currentPhysicalLayout);
+
+    return true;
 }
 
 /* Remove uinput device, stop threads and unregister from dbus
@@ -180,7 +203,7 @@ Tohkbd::~Tohkbd()
 
 /* Register to dbus
  */
-void Tohkbd::registerDBus()
+bool Tohkbd::registerDBus()
 {
     if (!dbusRegistered)
     {
@@ -188,19 +211,18 @@ void Tohkbd::registerDBus()
         QDBusConnection connection = QDBusConnection::systemBus();
         if (!connection.registerService(SERVICE))
         {
-            QCoreApplication::quit();
-            return;
+            return false;
         }
 
         if (!connection.registerObject(PATH, this))
         {
-            QCoreApplication::quit();
-            return;
+            return false;
         }
         dbusRegistered = true;
 
         printf("tohkbd2: succesfully registered to dbus systemBus \"%s\"\n", SERVICE);
     }
+    return dbusRegistered;
 }
 
 /* quit
