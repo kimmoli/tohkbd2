@@ -13,6 +13,8 @@
 #include <QHostAddress>
 #include <QtSystemInfo/QDeviceInfo>
 
+#include <mce/dbus-names.h>
+
 #include <unistd.h>
 #include <linux/input.h>
 #include <linux/uinput.h>
@@ -52,6 +54,7 @@ Tohkbd::Tohkbd(QObject *parent) :
     selfieLedOn = false;
     gpioInterruptCounter = 0;
     verboseMode = true;
+    turnDisplayOffWhenRemoved = false;
 
     fix_CapsLock = !checkSailfishVersion("1.1.7.0");
     capsLock = false;
@@ -397,8 +400,23 @@ bool Tohkbd::checkKeypadPresence()
 
         vkbLayoutIsTohkbd = keypadIsPresent;
         changeActiveLayout();
+
         if (forceLandscapeOrientation)
+        {
             changeOrientationLock();
+        }
+
+        if (turnDisplayOffWhenRemoved && !keypadIsPresent && displayIsOn)
+        {
+            /* if enabled, trigger a short powerkey press event when keyboard is removed, while display is on */
+            QDBusMessage m = QDBusMessage::createMethodCall(MCE_SERVICE, MCE_REQUEST_PATH, MCE_REQUEST_IF, MCE_TRIGGER_POWERKEY_EVENT_REQ);
+
+            QList<QVariant> args;
+            args.append((uint) 0); /* Short press, DBUS_TYPE_UINT32 0*/
+            m.setArguments(args);
+
+            QDBusConnection::systemBus().send(m);
+        }
     }
 
     return keypadIsPresent;
@@ -1052,6 +1070,7 @@ void Tohkbd::reloadSettings()
 
     forceLandscapeOrientation = settings.value("forceLandscapeOrientation", FORCE_LANDSCAPE_ORIENTATION).toBool();
     forceBacklightOn = settings.value("forceBacklightOn", FORCE_BACKLIGHT_ON).toBool();
+    turnDisplayOffWhenRemoved = settings.value("turnDisplayOffWhenRemoved", TURN_DISPLAY_OFF_WHEN_REMOVED).toBool();
     settings.endGroup();
 }
 
@@ -1131,6 +1150,9 @@ void Tohkbd::setSettingInt(const QString &key, const int &value)
 {
     QSettings settings(QSettings::SystemScope, "harbour-tohkbd2", "tohkbd2");
 
+    if (verboseMode)
+        printf("Setting %s to %d\n", qPrintable(key), value);
+
     if (key == "backlightTimeout" && value >= 100 && value <= 30000)
     {
         settings.beginGroup("generalsettings");
@@ -1191,6 +1213,13 @@ void Tohkbd::setSettingInt(const QString &key, const int &value)
             tohkbd2user->setOrientationLock("landscape");
         }
     }
+    else if (key == "turnDisplayOffWhenRemoved" && (value == 0 || value == 1))
+    {
+        settings.beginGroup("generalsettings");
+        settings.setValue("turnDisplayOffWhenRemoved", (value == 1));
+        turnDisplayOffWhenRemoved = (value == 1);
+        settings.endGroup();
+    }
     else if (key == "verboseMode"  && (value == 0 || value == 1))
     {
         settings.beginGroup("debug");
@@ -1211,7 +1240,7 @@ void Tohkbd::setSettingString(const QString &key, const QString &value)
     settings.endGroup();
 
     if(verboseMode)
-        printf("setSettingsString %s %s\n", qPrintable(key), qPrintable(value));
+        printf("setting %s to %s\n", qPrintable(key), qPrintable(value));
 
     if (key == "modifierShiftMode" && modifierHandler::KeyModeNames.contains(value))
         keymap->shift->setMode(modifierHandler::toKeyMode(value));

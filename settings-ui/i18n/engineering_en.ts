@@ -283,18 +283,19 @@
         <translation type="unfinished"></translation>
     </message>
     <message id="orientation-sect-header">
-        <source>Orientation</source>
-        <extracomment>Section header for orientation settings</extracomment>
+        <source>Display</source>
+        <oldsource>Orientation</oldsource>
+        <extracomment>Section header for display related settings</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message id="orientation-force-landscape-sw">
         <source>Force Landscape</source>
-        <extracomment>Force landsacep switch text</extracomment>
+        <extracomment>Force landscape switch text</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message id="orientation-force-landscape-desc">
         <source>Force landscape orientation when keyboard attached</source>
-        <extracomment>Force landsacep switch description</extracomment>
+        <extracomment>Force landscape switch description</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message id="repeat-sect-header">
@@ -383,6 +384,16 @@
         <source>To change keyboard layout, click above and select &apos;Change layout&apos;. Unsupported layouts are dimmed.</source>
         <oldsource>To change keyboard layout, start Jolla Settings, go to System settings, Text input and change hardware keyboard active layout. Note that all layouts are not supported.</oldsource>
         <extracomment>Description text for sticky and locking modifier keys</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message id="turn-display-off-when-removed-sw">
+        <source>Display Off when removed</source>
+        <extracomment>Display Off when removed switch text</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message id="turn-display-off-when-removed-desc">
+        <source>Turn display off when keyboard removed</source>
+        <extracomment>Display Off when removed switch description</extracomment>
         <translation type="unfinished"></translation>
     </message>
 </context>
