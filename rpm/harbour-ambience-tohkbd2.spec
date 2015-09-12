@@ -27,6 +27,7 @@ BuildRequires:  pkgconfig(mlite5)
 BuildRequires:  pkgconfig(sailfishapp) >= 0.0.10
 BuildRequires:  pkgconfig(nemonotifications-qt5)
 BuildRequires:  pkgconfig(Qt5SystemInfo)
+BuildRequires:  mce-headers
 BuildRequires:  desktop-file-utils
 BuildRequires:  qt5-qttools-linguist
 

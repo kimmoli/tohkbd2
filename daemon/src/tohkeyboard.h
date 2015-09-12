@@ -144,6 +144,7 @@ private:
     bool selfieLedOn;
     bool capsLock;
     bool verboseMode;
+    bool turnDisplayOffWhenRemoved;
 
     ComKimmoliTohkbd2userInterface *tohkbd2user;
     ComKimmoliTohkbd2settingsuiInterface *tohkbd2settingsui;

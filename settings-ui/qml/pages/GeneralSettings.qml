@@ -144,21 +144,33 @@ Page
 
             SectionHeader
             {
-                //: Section header for orientation settings
-                //% "Orientation"
+                //: Section header for display related settings
+                //% "Display"
                 text: qsTrId("orientation-sect-header")
             }
             TextSwitch
             {
-                //: Force landsacep switch text
+                //: Force landscape switch text
                 //% "Force Landscape"
                 text: qsTrId("orientation-force-landscape-sw")
-                //: Force landsacep switch description
+                //: Force landscape switch description
                 //% "Force landscape orientation when keyboard attached"
                 description: qsTrId("orientation-force-landscape-desc")
                 onCheckedChanged: settingsui.setSettingInt("forceLandscapeOrientation", checked ? 1 : 0)
                 width: parent.width - 2*Theme.paddingLarge
                 Component.onCompleted: checked = settings["forceLandscapeOrientation"]
+            }
+            TextSwitch
+            {
+                //: Display Off when removed switch text
+                //% "Display Off when removed"
+                text: qsTrId("turn-display-off-when-removed-sw")
+                //: Display Off when removed switch description
+                //% "Turn display off when keyboard removed"
+                description: qsTrId("turn-display-off-when-removed-desc")
+                onCheckedChanged: settingsui.setSettingInt("turnDisplayOffWhenRemoved", checked ? 1 : 0)
+                width: parent.width - 2*Theme.paddingLarge
+                Component.onCompleted: checked = settings["turnDisplayOffWhenRemoved"]
             }
 
             SectionHeader
