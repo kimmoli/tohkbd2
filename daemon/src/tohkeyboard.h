@@ -100,6 +100,7 @@ private:
     void controlLeds(bool restore);
     bool checkSailfishVersion(QString versionToCompare);
     void setVerboseMode(bool verbose);
+    bool getCurrentDisplayState();
 
     int gpio_fd;
 

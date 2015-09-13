@@ -14,6 +14,7 @@
 #include <QtSystemInfo/QDeviceInfo>
 
 #include <mce/dbus-names.h>
+#include <mce/mode-names.h>
 
 #include <unistd.h>
 #include <linux/input.h>
@@ -134,6 +135,8 @@ bool Tohkbd::init()
     keymap = new keymapping(QString(tohkbd2user->getPathTo("keymaplocation")));
 
     reloadSettings();
+
+    displayIsOn = getCurrentDisplayState();
 
     if (currentActiveLayout.isEmpty())
         changeActiveLayout(true);
@@ -365,7 +368,6 @@ bool Tohkbd::checkKeypadPresence()
 
         if (keypadIsPresent)
         {
-            keyboardConnectedNotification(false);
             presenceTimer->stop();
             handleKeyReleased();
         }
@@ -376,7 +378,6 @@ bool Tohkbd::checkKeypadPresence()
     {
         if (!keypadIsPresent)
         {
-            keyboardConnectedNotification(true);
             controlLeds(true);
             checkDoWeNeedBacklight();
             checkEEPROM();
@@ -395,6 +396,8 @@ bool Tohkbd::checkKeypadPresence()
 
     if (__prev_keypadPresence != keypadIsPresent)
     {
+        keyboardConnectedNotification(keypadIsPresent);
+
         emit keyboardConnectedChanged(keypadIsPresent);
         emitKeypadSlideEvent(keypadIsPresent);
 
@@ -408,13 +411,8 @@ bool Tohkbd::checkKeypadPresence()
 
         if (turnDisplayOffWhenRemoved && !keypadIsPresent && displayIsOn)
         {
-            /* if enabled, trigger a short powerkey press event when keyboard is removed, while display is on */
-            QDBusMessage m = QDBusMessage::createMethodCall(MCE_SERVICE, MCE_REQUEST_PATH, MCE_REQUEST_IF, MCE_TRIGGER_POWERKEY_EVENT_REQ);
-
-            QList<QVariant> args;
-            args.append((uint) 0); /* Short press, DBUS_TYPE_UINT32 0*/
-            m.setArguments(args);
-
+            /* if enabled and display is on, turn display off when keyboard is removed */
+            QDBusMessage m = QDBusMessage::createMethodCall(MCE_SERVICE, MCE_REQUEST_PATH, MCE_REQUEST_IF, MCE_DISPLAY_OFF_REQ);
             QDBusConnection::systemBus().send(m);
         }
     }
@@ -950,7 +948,7 @@ void Tohkbd::changeActiveLayout(bool justGetIt)
  */
 void Tohkbd::changeOrientationLock(bool justGetIt)
 {
-    QString __currentOrientationLock = tohkbd2user->call(QDBus::AutoDetect, "getOrientationLock").arguments().at(0).toString();
+    QString __currentOrientationLock = tohkbd2user->getOrientationLock();
 
     if (verboseMode)
         printf("Current orientation lock is %s\n", qPrintable(__currentOrientationLock));
@@ -1406,4 +1404,19 @@ void Tohkbd::setVerboseMode(bool verbose)
     keymap->ctrl->verboseMode = verbose;
     keymap->alt->verboseMode = verbose;
     keymap->sym->verboseMode = verbose;
+}
+
+/*
+ * Gets current display state from mce
+ * returns false if off, else true
+ */
+bool Tohkbd::getCurrentDisplayState()
+{
+    QDBusMessage m = QDBusMessage::createMethodCall(MCE_SERVICE, MCE_REQUEST_PATH, MCE_REQUEST_IF,  MCE_DISPLAY_STATUS_GET);
+    QString reply = QDBusConnection::systemBus().call(m).arguments().at(0).toString();
+
+    if (verboseMode)
+        printf("Display status is \"%s\"\n", qPrintable(reply));
+
+    return (reply.compare(MCE_DISPLAY_OFF_STRING) != 0);
 }
