@@ -8,7 +8,7 @@
 #include <mlite5/MDesktopEntry>
 
 #define SERVICE_NAME "com.kimmoli.tohkbd2user"
-#define KEYMAP_FOLDER "/.config/harbour-tohkbd2"
+#define KEYMAP_FOLDER "/harbour-tohkbd2"
 
 class QDBusInterface;
 class UserDaemon : public QObject
