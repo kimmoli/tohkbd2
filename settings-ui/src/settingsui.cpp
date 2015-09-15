@@ -164,6 +164,7 @@ QVariantMap SettingsUi::getCurrentSettings()
     map.insert("modifierAltMode", settings.value("modifierAltMode", MODIFIER_ALT_MODE).toString());
     map.insert("modifierSymMode", settings.value("modifierSymMode", MODIFIER_SYM_MODE).toString());
     map.insert("turnDisplayOffWhenRemoved", settings.value("turnDisplayOffWhenRemoved", TURN_DISPLAY_OFF_WHEN_REMOVED).toBool());
+    map.insert("keepDisplayOnWhenConnected", settings.value("keepDisplayOnWhenConnected", KEEP_DISPLAY_ON_WHEN_CONNECTED).toBool());
     settings.endGroup();
 
     settings.beginGroup("debug");
@@ -283,6 +284,7 @@ void SettingsUi::setSettingsToDefault()
     setSettingString("modifierSymMode", MODIFIER_SYM_MODE);
     setSettingInt("verboseMode", VERBOSE_MODE_ENABLED ? 1 : 0);
     setSettingInt("turnDisplayOffWhenRemoved", TURN_DISPLAY_OFF_WHEN_REMOVED ? 1 : 0);
+    setSettingInt("keepDisplayOnWhenConnected", KEEP_DISPLAY_ON_WHEN_CONNECTED ? 1: 0);
 
     QThread::msleep(200);
 

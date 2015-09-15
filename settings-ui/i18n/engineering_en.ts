@@ -387,13 +387,25 @@
         <translation type="unfinished"></translation>
     </message>
     <message id="turn-display-off-when-removed-sw">
-        <source>Display Off when removed</source>
-        <extracomment>Display Off when removed switch text</extracomment>
+        <source>Display off when removed</source>
+        <oldsource>Display Off when removed</oldsource>
+        <extracomment>Display off when removed switch text</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message id="turn-display-off-when-removed-desc">
-        <source>Turn display off when keyboard removed</source>
-        <extracomment>Display Off when removed switch description</extracomment>
+        <source>Turn display off when keyboard is removed</source>
+        <oldsource>Turn display off when keyboard removed</oldsource>
+        <extracomment>Display off when removed switch description</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message id="keep-display-on-when-connected-sw">
+        <source>Display on when connected</source>
+        <extracomment>Keep display on when connected switch text</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message id="keep-display-on-when-connected-desc">
+        <source>Keep display on when keyboard is connected</source>
+        <extracomment>Keep display on when connected switch description</extracomment>
         <translation type="unfinished"></translation>
     </message>
 </context>

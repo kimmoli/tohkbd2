@@ -162,11 +162,23 @@ Page
             }
             TextSwitch
             {
-                //: Display Off when removed switch text
-                //% "Display Off when removed"
+                //: Keep display on when connected switch text
+                //% "Display on when connected"
+                text: qsTrId("keep-display-on-when-connected-sw")
+                //: Keep display on when connected switch description
+                //% "Keep display on when keyboard is connected"
+                description: qsTrId("keep-display-on-when-connected-desc")
+                onCheckedChanged: settingsui.setSettingInt("keepDisplayOnWhenConnected", checked ? 1 : 0)
+                width: parent.width - 2*Theme.paddingLarge
+                Component.onCompleted: checked = settings["keepDisplayOnWhenConnected"]
+            }
+            TextSwitch
+            {
+                //: Display off when removed switch text
+                //% "Display off when removed"
                 text: qsTrId("turn-display-off-when-removed-sw")
-                //: Display Off when removed switch description
-                //% "Turn display off when keyboard removed"
+                //: Display off when removed switch description
+                //% "Turn display off when keyboard is removed"
                 description: qsTrId("turn-display-off-when-removed-desc")
                 onCheckedChanged: settingsui.setSettingInt("turnDisplayOffWhenRemoved", checked ? 1 : 0)
                 width: parent.width - 2*Theme.paddingLarge
