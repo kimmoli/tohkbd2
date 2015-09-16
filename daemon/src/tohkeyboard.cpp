@@ -926,13 +926,13 @@ void Tohkbd::backlightTimerTimeout()
 }
 
 /*
- * Display blank prevention. If enabled and display is on, request blank prevent from mce
- * and restart timer.
+ * Display blank prevention.
+ * If enabled, keyboard attached and display is on, request blank prevent from mce and restart timer,
  * otherwise, cancel request
  */
 void Tohkbd::displayBlankPreventTimerTimeout(bool forceCancel)
 {
-    if (keepDisplayOnWhenConnected && displayIsOn && !forceCancel)
+    if (keepDisplayOnWhenConnected && displayIsOn && keypadIsPresent && !forceCancel)
     {
         if (verboseMode)
             printf("requesting mce to prevent blanking\n");
