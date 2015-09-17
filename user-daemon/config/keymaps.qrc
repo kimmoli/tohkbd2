@@ -6,5 +6,6 @@
         <file>layouts/README</file>
         <file>layouts/ru.tohkbdmap</file>
         <file>layouts/no.tohkbdmap</file>
+        <file>layouts/pl.tohkbdmap</file>
     </qresource>
 </RCC>
