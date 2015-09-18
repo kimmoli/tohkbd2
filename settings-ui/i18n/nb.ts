@@ -1,100 +1,100 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="fr" version="2.1">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="nb" version="2.1">
 <context>
     <name/>
     <message id="tohkbd2-settings-app-name">
         <source>TOHKBD Settings</source>
         <extracomment>Application name</extracomment>
-        <translation>Paramètres TOHKBD2</translation>
+        <translation>TOHKBD-innstillinger</translation>
     </message>
     <message id="about">
         <source>About...</source>
         <extracomment>Menu option and header for about page</extracomment>
-        <translation>À propos...</translation>
+        <translation>Om...</translation>
     </message>
     <message id="team-header">
         <source>The TOHKBD2 Team</source>
         <extracomment>header label for the team presentation</extracomment>
-        <translation>L&apos;équipe TOHKBD2</translation>
+        <translation>TOHKBD2-laget</translation>
     </message>
     <message id="version-settings-ui">
         <source>Settings UI version: </source>
         <extracomment>Version information field, for Settings UI application version</extracomment>
-        <translation>Version IHM des paramètres :</translation>
+        <translation>Versjon:</translation>
     </message>
     <message id="version-daemon">
         <source>Daemon version: </source>
         <extracomment>Version information field, for daemon version (which runs as root)</extracomment>
-        <translation>Version du service :</translation>
+        <translation>Nisseversjon:</translation>
     </message>
     <message id="version-user-daemon">
         <source>User Daemon version: </source>
         <extracomment>Version information field, for user daemon version (which runs as nemo)</extracomment>
-        <translation>Version du service utilisateur :</translation>
+        <translation>Brukernisseversjon:</translation>
     </message>
     <message id="version-sailfish">
         <source>Sailfish version: </source>
         <extracomment>Version information field, for Sailfish OS version</extracomment>
-        <translation>Version Sailfish :</translation>
+        <translation>Sailfish-versjon:</translation>
     </message>
     <message id="select-application">
         <source>Select application</source>
         <extracomment>Application shortcut selector page header</extracomment>
-        <translation>Applications</translation>
+        <translation>Velg program</translation>
     </message>
     <message id="launch-ext-app">
         <source>Launching external application...</source>
         <extracomment>Text shown with busyindicator when starting external application</extracomment>
-        <translation>Lancement d&apos;une application externe</translation>
+        <translation>Starter eksternt program...</translation>
     </message>
     <message id="report-a-bug">
         <source>Report a bug</source>
         <extracomment>Main menu selection for FAQ and reporting an issue, page header for bug reporter page. button text for triggering email app.</extracomment>
-        <translation>Rapport d&apos;erreur</translation>
+        <translation>Meld fra om en feil</translation>
     </message>
     <message id="faq-text">
         <source>Please first check TOHKBD FAQ page at https://together.jolla.com. Button below opens this link in browser.</source>
         <extracomment>Description above open faq -button</extracomment>
-        <translation>Merci de vérifier la FAQ TOHKBD sur https://together.jolla.com. Le bouton ci-dessous ouvrira le lien dans le navigateur.</translation>
+        <translation>Se OSS for TOHKBD på https://together.jolla.com først. Knappen nedenfor åpner denne lenka i nettleseren.</translation>
     </message>
     <message id="faq-button">
         <source>Open FAQ</source>
         <extracomment>Button text, clicking this will open url showing FAQ</extracomment>
-        <translation>Ouvrir la FAQ</translation>
+        <translation>Åpne OSS</translation>
     </message>
     <message id="report-text">
         <source>If there is no answer to your issue, please report it. Button below launches email client.</source>
         <extracomment>Description above report issue -button</extracomment>
-        <translation>Si vous ne trouvez pas de réponse à votre problème, merci de le rapporter. Le bouton ci-dessous lance votre application mail.</translation>
+        <translation>Hvis spørsmålet ditt ikke er besvart, rapporter det. Knappen nedenfor starter epostklienten.</translation>
     </message>
     <message id="general-settings">
         <source>General settings</source>
         <extracomment>Main menu selection for general settings</extracomment>
-        <translation>Paramètres généraux</translation>
+        <translation>Generelle innstillinger</translation>
     </message>
     <message id="reset-to-defaults">
         <source>Reset all to defaults</source>
         <extracomment>Pulldown menu optiion to reset default values</extracomment>
-        <translation>Réinitialisation des paramètres par défaut</translation>
+        <translation>Tilbakestill alle til standardverdier</translation>
     </message>
     <message id="shortcuts">
         <source>Shortcuts</source>
         <extracomment>Main menu selection for shortcuts configurations</extracomment>
-        <translation>Raccourcis</translation>
+        <translation>Snarveier</translation>
     </message>
     <message id="shortcut-not-configured">
         <source>Not configured</source>
         <extracomment>Label shown instead of application name if Fn is not configured</extracomment>
-        <translation>Non configuré</translation>
+        <translation>Ikke satt opp</translation>
     </message>
     <message id="shortcut-nothing">
         <source>Nothing, use as %1</source>
         <extracomment>Pulldown menu option clear shortcut. Allows using Fn as Fn</extracomment>
-        <translation>Vide, utiliser pour %1</translation>
+        <translation>Ingen, bruk som %1</translation>
     </message>
     <message id="help">
         <source>Help</source>
         <extracomment>Main menu selection for Help page with keyboard shortcuts etc.</extracomment>
-        <translation>Aide</translation>
+        <translation type="unfinished"/>
     </message>
     <message id="key-combinations">
         <source>TOHKBD-only commands</source>
@@ -116,12 +116,12 @@
     <message id="help-screeshot">
         <source>Screenshot</source>
         <extracomment>Help page text (keep short)</extracomment>
-        <translation>Capture d&apos;écran</translation>
+        <translation type="unfinished"/>
     </message>
     <message id="help-selfie-led">
         <source>Selfie LED</source>
         <extracomment>Help page text (keep short)</extracomment>
-        <translation>Éclairage autoportrait</translation>
+        <translation type="unfinished"/>
     </message>
     <message id="help-toggle-backlight">
         <source>Toggle backlight</source>
@@ -131,12 +131,12 @@
     <message id="help-dec-volume">
         <source>Decrease volume</source>
         <extracomment>Help page text (keep short)</extracomment>
-        <translation>Baisser le volume</translation>
+        <translation type="unfinished"/>
     </message>
     <message id="help-inc-volume">
         <source>Increase volume</source>
         <extracomment>Help page text (keep short)</extracomment>
-        <translation>Augmenter le volume</translation>
+        <translation type="unfinished"/>
     </message>
     <message id="help-new-email">
         <source>New Email</source>
@@ -156,32 +156,32 @@
     <message id="help-select-all">
         <source>Select all</source>
         <extracomment>Help page text (keep short)</extracomment>
-        <translation>Tout sélectionner </translation>
+        <translation type="unfinished"/>
     </message>
     <message id="help-copy">
         <source>Copy</source>
         <extracomment>Help page text (keep short)</extracomment>
-        <translation>Copier</translation>
+        <translation type="unfinished"/>
     </message>
     <message id="help-cut">
         <source>Cut</source>
         <extracomment>Help page text (keep short)</extracomment>
-        <translation>Couper</translation>
+        <translation type="unfinished"/>
     </message>
     <message id="help-paste">
         <source>Paste</source>
         <extracomment>Help page text (keep short)</extracomment>
-        <translation>Coller</translation>
+        <translation type="unfinished"/>
     </message>
     <message id="help-undo">
         <source>Undo</source>
         <extracomment>Help page text (keep short)</extracomment>
-        <translation>Annuler</translation>
+        <translation type="unfinished"/>
     </message>
     <message id="help-redo">
         <source>Redo</source>
         <extracomment>Help page text (keep short)</extracomment>
-        <translation>Refaire</translation>
+        <translation type="unfinished"/>
     </message>
     <message id="help-delete-word">
         <source>Delete word</source>
@@ -207,7 +207,7 @@
     <message id="help-this-help">
         <source>Show this help</source>
         <extracomment>Help page text (keep short)</extracomment>
-        <translation>Afficher l&apos;aide</translation>
+        <translation type="unfinished"/>
     </message>
     <message id="mod-mode-normal">
         <source>Normal</source>
@@ -219,7 +219,7 @@
     </message>
     <message id="mod-mode-lock">
         <source>Lock</source>
-        <translation>Verrouiller</translation>
+        <translation type="unfinished"/>
     </message>
     <message id="mod-mode-cycle">
         <source>Cycle</source>
@@ -248,85 +248,83 @@
     <message id="backlight-sect-header">
         <source>Backlight</source>
         <extracomment>Section header for backlight settings</extracomment>
-        <translation>Rétroéclairage</translation>
+        <translation>Bakbelysning</translation>
     </message>
     <message id="bg-always-on-sw">
         <source>Always on</source>
         <extracomment>Backlight always on switch text</extracomment>
-        <translation>Toujours allumé</translation>
+        <translation>Alltid på</translation>
     </message>
     <message id="bg-always-on-desc">
         <source>Backlight is always on when keyboard attached and phone&apos;s display is on</source>
         <extracomment>Backlight always on description</extracomment>
-        <translation>Le rétroéclairage est toujours actif quand le clavier est connecté et l&apos;écran du téléphone est allumé</translation>
+        <translation>Bakbelysning er alltid på når tastaturet er tilkoblet og telefonskjermen er aktiv.</translation>
     </message>
     <message id="bg-automatic-sw">
         <source>Automatic</source>
         <extracomment>Backlight automatic switch text</extracomment>
-        <translation>Automatique</translation>
+        <translation>Automatisk</translation>
     </message>
     <message id="bg-automatic-desc">
         <source>Automatic backlight enable or always off</source>
         <extracomment>Backlight automatic description</extracomment>
-        <translation>Rétroéclairage automatique actif ou toujours inactif</translation>
+        <translation>Slå på eller av automatisk bakbelysning</translation>
     </message>
     <message id="bg-timeout-slider">
         <source>Backlight timeout</source>
         <extracomment>Backlight timeout slider name</extracomment>
-        <translation>Rétroéclairage</translation>
+        <translation>Tidsgrense for bakbelysning</translation>
     </message>
     <message id="bg-brightness-slider">
         <source>Brightness threshold</source>
         <extracomment>Backlight brightness threshold slider</extracomment>
-        <translation>Niveau de luminosité</translation>
+        <translation>Grense for lysstyrke</translation>
     </message>
     <message id="orientation-sect-header">
         <source>Display</source>
         <oldsource>Orientation</oldsource>
         <extracomment>Section header for display related settings</extracomment>
-        <translation>Orientation</translation>
+        <translation>Skjermorientering</translation>
     </message>
     <message id="orientation-force-landscape-sw">
         <source>Force Landscape</source>
         <extracomment>Force landscape switch text</extracomment>
-        <translation>Forcer le mode paysage</translation>
+        <translation>Tving landskapmodus</translation>
     </message>
     <message id="orientation-force-landscape-desc">
         <source>Force landscape orientation when keyboard attached</source>
         <extracomment>Force landscape switch description</extracomment>
-        <translation>Forcer le mode paysage quand le clavier est connecté</translation>
+        <translation>Tving landskapmodus når tastaturet er tilkoblet</translation>
     </message>
     <message id="repeat-sect-header">
         <source>Repeat</source>
         <extracomment>Section header for repeat settings</extracomment>
-        <translation>Répétition</translation>
+        <translation>Gjenta</translation>
     </message>
     <message id="repeat-delay-slider">
         <source>Repeat start delay</source>
         <extracomment>Keyboard repeat start delay slider</extracomment>
-        <translation>délai de répétition</translation>
+        <translation>Forsinkelse</translation>
     </message>
     <message id="repeat-rate-slider">
         <source>Repeat rate</source>
         <extracomment>Keyboard repeat rate slider</extracomment>
-        <translation>vitesse de répétition</translation>
+        <translation>Rate</translation>
     </message>
     <message id="test-here">
         <source>Test here</source>
         <extracomment>Placeholder text for textfield to test repeat settings</extracomment>
-        <translation>Tester ici</translation>
+        <translation>Test her</translation>
     </message>
     <message id="sticky-sect-header">
         <source>Sticky and locking modifier keys</source>
         <extracomment>Section header for sticky and locking settings</extracomment>
-        <translation>Personnalisation des touches rémanentes</translation>
+        <translation>Faste og låsende valgtaster</translation>
     </message>
     <message id="sticky-desc">
         <source>In Sticky mode, modifier key will stay on after pressed once and released after pressing again or any other key. In Lock mode modifier key will lock on double-press and released on third. In Cycle mode Sticky and Lock modes are both active, after first press is Sticky and second press is Lock. In all modes you can also use them as normal modifier keys.</source>
         <extracomment>Description text for sticky and locking modifier keys</extracomment>
-        <translation>Rémanence : verrouille quand pressé 1x et déverrouille quand pressé une 2nde fois.
-Verrouillage : verrouille sur double-clic et déverrouille sur le 3ème appui. 
-Dans les 2 modes, vous pouvez les utiliser comme des touches classiques.</translation>
+        <translation>Fast valgtast skrus på når du trykker en gang og av når du trykker en annen tast. Låsende valgtast skrus på med dobbelttrykk og av igjen med et nytt trykk. I begge modi kan de også brukes som vanlige valgtaster.</translation>
     </message>
     <message id="debug-sect-header">
         <source>Debug</source>
@@ -363,12 +361,12 @@ Dans les 2 modes, vous pouvez les utiliser comme des touches classiques.</transl
     <message id="settings">
         <source>Settings</source>
         <extracomment>Main page header</extracomment>
-        <translation>Paramètres</translation>
+        <translation>Innstillinger</translation>
     </message>
     <message id="change-layout">
         <source>Change layout...</source>
         <extracomment>Context menu entry for changing the layout</extracomment>
-        <translation>Changer la disposition...</translation>
+        <translation type="unfinished"/>
     </message>
     <message id="force-reload">
         <source>Reload keyboard mapping</source>

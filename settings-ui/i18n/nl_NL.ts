@@ -66,35 +66,184 @@
         <extracomment>Description above report issue -button</extracomment>
         <translation>Als er geen antwoord is voor uw probleem, rapporteer het dan. De knop hieronder opent de e-mailapp.</translation>
     </message>
-    <message id="customize-key-header">
-        <source>Customize %1 -key</source>
-        <extracomment>page header for key customizer, shows label of the key</extracomment>
-        <translation>%1-toets aanpassen</translation>
-    </message>
-    <message id="customize-key-warning">
-        <source>You are about to change behaviour of this key</source>
-        <extracomment>warning text shown on customizer page</extracomment>
-        <translation>U staat op het punt om het gedrag van deze toets aan te passen</translation>
-    </message>
-    <message id="plain-key">
-        <source>Plain key</source>
-        <extracomment>Text shon above the key without any modifiers, e.g. A</extracomment>
-        <translation>Standaardtoets</translation>
-    </message>
-    <message id="with-sym-key">
-        <source>Key with Sym</source>
-        <extracomment>Text shon above the key wit sym modifier, e.g. ;</extracomment>
-        <translation>Toets met Sym</translation>
-    </message>
-    <message id="none-key">
-        <source>None</source>
-        <extracomment>This text is shown instead of key label (e.g. A) if there is nothing assigned to this key</extracomment>
-        <translation>Geen</translation>
-    </message>
     <message id="general-settings">
         <source>General settings</source>
         <extracomment>Main menu selection for general settings</extracomment>
         <translation>Algemene instellingen</translation>
+    </message>
+    <message id="reset-to-defaults">
+        <source>Reset all to defaults</source>
+        <extracomment>Pulldown menu optiion to reset default values</extracomment>
+        <translation>Alles herstellen naar standaardwaarden</translation>
+    </message>
+    <message id="shortcuts">
+        <source>Shortcuts</source>
+        <extracomment>Main menu selection for shortcuts configurations</extracomment>
+        <translation>Sneltoetsen</translation>
+    </message>
+    <message id="shortcut-not-configured">
+        <source>Not configured</source>
+        <extracomment>Label shown instead of application name if Fn is not configured</extracomment>
+        <translation>Niet ingesteld</translation>
+    </message>
+    <message id="shortcut-nothing">
+        <source>Nothing, use as %1</source>
+        <extracomment>Pulldown menu option clear shortcut. Allows using Fn as Fn</extracomment>
+        <translation>Niets; gebruiken als %1</translation>
+    </message>
+    <message id="help">
+        <source>Help</source>
+        <extracomment>Main menu selection for Help page with keyboard shortcuts etc.</extracomment>
+        <translation>Hulp</translation>
+    </message>
+    <message id="key-combinations">
+        <source>TOHKBD-only commands</source>
+        <oldsource>TOHKBD key combinations</oldsource>
+        <extracomment>Section header for list of TOHKBD daemon provided key combinations</extracomment>
+        <translation>TOHKBD-specifieke commando&apos;s</translation>
+    </message>
+    <message id="more-desc">
+        <source>This list is most propably not complete as the operating system/Qt can offer more key combinations.</source>
+        <extracomment>Description text saying there can be more combinations by the OS</extracomment>
+        <translation>Deze lijst is mogelijk incompleet omdat het besturingssysteem/Qt meer toetsencombinaties aankan.</translation>
+    </message>
+    <message id="help-switch-app">
+        <source>Switch apps</source>
+        <oldsource>Switch between apps</oldsource>
+        <extracomment>Help page text (keep short)</extracomment>
+        <translation>Tussen apps schakelen</translation>
+    </message>
+    <message id="help-screeshot">
+        <source>Screenshot</source>
+        <extracomment>Help page text (keep short)</extracomment>
+        <translation>Schermafdruk</translation>
+    </message>
+    <message id="help-selfie-led">
+        <source>Selfie LED</source>
+        <extracomment>Help page text (keep short)</extracomment>
+        <translation>Selfie-LED</translation>
+    </message>
+    <message id="help-toggle-backlight">
+        <source>Toggle backlight</source>
+        <extracomment>Help page text (keep short)</extracomment>
+        <translation>Achtergrondverlichting schakelen</translation>
+    </message>
+    <message id="help-dec-volume">
+        <source>Decrease volume</source>
+        <extracomment>Help page text (keep short)</extracomment>
+        <translation>Volume verlagen</translation>
+    </message>
+    <message id="help-inc-volume">
+        <source>Increase volume</source>
+        <extracomment>Help page text (keep short)</extracomment>
+        <translation>Volume verhogen</translation>
+    </message>
+    <message id="help-new-email">
+        <source>New Email</source>
+        <extracomment>Help page text (keep short)</extracomment>
+        <translation>Nieuw e-mailbericht</translation>
+    </message>
+    <message id="help-capslock">
+        <source>Toggle CapsLock</source>
+        <extracomment>Help page text (keep short)</extracomment>
+        <translation>CapsLock schakelen</translation>
+    </message>
+    <message id="help-select">
+        <source>Select text</source>
+        <extracomment>Help page text (keep short)</extracomment>
+        <translation>Tekst selecteren</translation>
+    </message>
+    <message id="help-select-all">
+        <source>Select all</source>
+        <extracomment>Help page text (keep short)</extracomment>
+        <translation>Alles selecteren</translation>
+    </message>
+    <message id="help-copy">
+        <source>Copy</source>
+        <extracomment>Help page text (keep short)</extracomment>
+        <translation>Kopiëren</translation>
+    </message>
+    <message id="help-cut">
+        <source>Cut</source>
+        <extracomment>Help page text (keep short)</extracomment>
+        <translation>Knippen</translation>
+    </message>
+    <message id="help-paste">
+        <source>Paste</source>
+        <extracomment>Help page text (keep short)</extracomment>
+        <translation>Plakken</translation>
+    </message>
+    <message id="help-undo">
+        <source>Undo</source>
+        <extracomment>Help page text (keep short)</extracomment>
+        <translation>Ongedaan maken</translation>
+    </message>
+    <message id="help-redo">
+        <source>Redo</source>
+        <extracomment>Help page text (keep short)</extracomment>
+        <translation>Herhalen</translation>
+    </message>
+    <message id="help-delete-word">
+        <source>Delete word</source>
+        <extracomment>Help page text (keep short)</extracomment>
+        <translation>Woord verwijderen</translation>
+    </message>
+    <message id="help-reboot-phone">
+        <source>Reboot phone</source>
+        <extracomment>Help page text (keep short)</extracomment>
+        <translation>Telefoon herstarten</translation>
+    </message>
+    <message id="help-restart-lipstick">
+        <source>Restart lipstick</source>
+        <extracomment>Help page text (keep short)</extracomment>
+        <translation>Lipstick herstarten</translation>
+    </message>
+    <message id="sys-key-combinations">
+        <source>Text edit key combinations</source>
+        <oldsource>System key combinations</oldsource>
+        <extracomment>Section header for list of key combinations provided by os (text edits mostly)</extracomment>
+        <translation>Toetsenbordcombinaties voor tekstbewerking</translation>
+    </message>
+    <message id="help-this-help">
+        <source>Show this help</source>
+        <extracomment>Help page text (keep short)</extracomment>
+        <translation>Deze hulp weergeven</translation>
+    </message>
+    <message id="mod-mode-normal">
+        <source>Normal</source>
+        <translation>Normaal</translation>
+    </message>
+    <message id="mod-mode-sticky">
+        <source>Sticky</source>
+        <translation>Vastgezet</translation>
+    </message>
+    <message id="mod-mode-lock">
+        <source>Lock</source>
+        <translation>Vergrendelen</translation>
+    </message>
+    <message id="mod-mode-cycle">
+        <source>Cycle</source>
+        <translation>Wisselen</translation>
+    </message>
+    <message id="mod-shift-mode">
+        <source>Shift mode</source>
+        <extracomment>Modifier Shift mode selector combo-box label</extracomment>
+        <translation>Shift-modus</translation>
+    </message>
+    <message id="mod-ctrl-mode">
+        <source>Ctrl mode</source>
+        <extracomment>Modifier Ctrl mode selector combo-box label</extracomment>
+        <translation>Ctrl-modus</translation>
+    </message>
+    <message id="mod-alt-mode">
+        <source>Alt mode</source>
+        <extracomment>Modifier Alt mode selector combo-box label</extracomment>
+        <translation>Alt-modus</translation>
+    </message>
+    <message id="mod-sym-mode">
+        <source>Sym mode</source>
+        <extracomment>Modifier Sym mode selector combo-box label</extracomment>
+        <translation>Sym-modus</translation>
     </message>
     <message id="backlight-sect-header">
         <source>Backlight</source>
@@ -132,18 +281,19 @@
         <translation>Drempelwaarde van achtergrondverlichting</translation>
     </message>
     <message id="orientation-sect-header">
-        <source>Orientation</source>
-        <extracomment>Section header for orientation settings</extracomment>
+        <source>Display</source>
+        <oldsource>Orientation</oldsource>
+        <extracomment>Section header for display related settings</extracomment>
         <translation>Oriëntatie</translation>
     </message>
     <message id="orientation-force-landscape-sw">
         <source>Force Landscape</source>
-        <extracomment>Force landsacep switch text</extracomment>
+        <extracomment>Force landscape switch text</extracomment>
         <translation>Landschapsmodus forceren</translation>
     </message>
     <message id="orientation-force-landscape-desc">
         <source>Force landscape orientation when keyboard attached</source>
-        <extracomment>Force landsacep switch description</extracomment>
+        <extracomment>Force landscape switch description</extracomment>
         <translation>Oriëntatie in landschapsmodus forceren wanneer het toetsenbord is aangekoppeld</translation>
     </message>
     <message id="repeat-sect-header">
@@ -172,82 +322,89 @@
         <translation>Vastgezette en vergrendelde aanpassingstoetsen</translation>
     </message>
     <message id="sticky-desc">
-        <source>Sticky modifiers will toggle when pressed once and released after pressing any other key. Locking modifier will lock on double-press and released on third. In both modes you can also use them as normal modifier keys.</source>
-        <oldsource>Sticky modifiers will toggle when pressed once and released after pressing any other key. Locking modifier will lock on double-press and released on third. In both modes you can also use them as normal modifier keys</oldsource>
+        <source>In Sticky mode, modifier key will stay on after pressed once and released after pressing again or any other key. In Lock mode modifier key will lock on double-press and released on third. In Cycle mode Sticky and Lock modes are both active, after first press is Sticky and second press is Lock. In all modes you can also use them as normal modifier keys.</source>
         <extracomment>Description text for sticky and locking modifier keys</extracomment>
         <translation>Vastgezette aanpassingstoetsen zullen worden geschakeld na eenmaal indrukken en worden vrijgegeven na het drukken op een andere toets. Vergrendelde aanpassingstoetsen zullen worden vergrendeld na tweemaal indrukken en worden vrijgegeven na een derde keer indrukken. In beide modi kunt u ze ook gebruiken als normale aanpassingstoetsen.</translation>
     </message>
-    <message id="sticky-shift">
-        <source>Sticky Shift</source>
-        <translation>Vastgezette Shift</translation>
+    <message id="debug-sect-header">
+        <source>Debug</source>
+        <extracomment>Section header for Debug settings</extracomment>
+        <translation>Foutopsporing</translation>
     </message>
-    <message id="locking-shift">
-        <source>Locking Shift</source>
-        <translation>Vergrendelde Shift</translation>
+    <message id="verbose-mode-sw">
+        <source>Verbose mode</source>
+        <extracomment>Enable verbose mode to print more stuff on journal</extracomment>
+        <translation>Gedetailleerde uitvoer-modus</translation>
     </message>
-    <message id="sticky-ctrl">
-        <source>Sticky Ctrl</source>
-        <translation>Vastgezette Ctrl</translation>
+    <message id="verbose-mode-desc">
+        <source>Print more information in Journal logs. Use &apos;devel-su journalctl -fa | grep toh&apos; to see output.</source>
+        <oldsource>Print more information in Journal logs. Use </oldsource>
+        <extracomment>Verbose mode switch description</extracomment>
+        <translation>Print meer informatie naar logboeken. Gebruik &apos;devel-su journalctl -fa | grep toh&apos; om de uitvoer te zien.</translation>
     </message>
-    <message id="locking-ctrl">
-        <source>Locking Ctrl</source>
-        <translation>Vergrendelde Ctrl</translation>
+    <message id="nodeadkeys-sw">
+        <source>No deadkeys</source>
+        <extracomment>Switch to set 'nodeadkeys' in keymap variant</extracomment>
+        <translation>Geen dode toetsen</translation>
     </message>
-    <message id="sticky-alt">
-        <source>Sticky Alt</source>
-        <translation>Vastgezette Alt</translation>
+    <message id="nodeadkeys-desc">
+        <source>Set &apos;nodeadkeys&apos; to keymap variat. Required for some keyboard layouts, e.g. fi, de.</source>
+        <oldsource>Set 'nodeadkeys' to keymap variat. Required for some keyboard layouts, e.g. fi</oldsource>
+        <extracomment>No deadkeys switch description</extracomment>
+        <translation>Stelt &apos;geendodetoetsen&apos; in als toetsenbordindelingsvariant. Benodigd voor sommige indelingen, zoals fi en de.</translation>
     </message>
-    <message id="locking-alt">
-        <source>Locking Alt</source>
-        <translation>Vergrendelde Alt</translation>
-    </message>
-    <message id="sticky-sym">
-        <source>Sticky Sym</source>
-        <translation>Vastgezette Sym</translation>
-    </message>
-    <message id="locking-sym">
-        <source>Locking Sym</source>
-        <translation>Vergrendelde Sym</translation>
-    </message>
-    <message id="active-layout">
-        <source>Active</source>
-        <extracomment>label showing this layout is currently selected</extracomment>
-        <translation>Actief</translation>
-    </message>
-    <message id="select-layout">
-        <source>Select</source>
-        <extracomment>Button text for button to select this as active LayoutItem</extracomment>
-        <translation>Selecteren</translation>
-    </message>
-    <message id="reset-to-defaults">
-        <source>Reset all to defaults</source>
-        <extracomment>Pulldown menu optiion to reset default values</extracomment>
-        <translation>Alles herstellen naar standaardwaarden</translation>
-    </message>
-    <message id="shortcuts">
-        <source>Shortcuts</source>
-        <extracomment>Main menu selection for shortcuts configurations</extracomment>
-        <translation>Sneltoetsen</translation>
+    <message id="kbd-layout">
+        <source>Keyboard layout</source>
+        <extracomment>Prefix for showing current layout</extracomment>
+        <translation>Toetsenbordindeling</translation>
     </message>
     <message id="settings">
         <source>Settings</source>
         <extracomment>Main page header</extracomment>
         <translation>Instellingen</translation>
     </message>
-    <message id="layout">
-        <source>Layout</source>
-        <extracomment>Main menu selection for layout selection</extracomment>
-        <translation>Lay-out</translation>
+    <message id="change-layout">
+        <source>Change layout...</source>
+        <extracomment>Context menu entry for changing the layout</extracomment>
+        <translation>Indeling wijzigen...</translation>
     </message>
-    <message id="shortcut-not-configured">
-        <source>Not configured</source>
-        <extracomment>Label shown instead of application name if Fn is not configured</extracomment>
-        <translation>Niet ingesteld</translation>
+    <message id="force-reload">
+        <source>Reload keyboard mapping</source>
+        <extracomment>Context menu entry for reloading keyboard mapping file for tohkbd</extracomment>
+        <translation>Toetsenbordindeling herladen</translation>
     </message>
-    <message id="shortcut-nothing">
-        <source>Nothing, use as %1</source>
-        <extracomment>Pulldown menu option clear shortcut. Allows using Fn as Fn</extracomment>
-        <translation>Niets; gebruiken als %1</translation>
+    <message id="reset-keymaps">
+        <source>Restore original keymap files</source>
+        <extracomment>Context menu entry for overwrite keyboard mapping files with original ones</extracomment>
+        <translation>Originele indelingsbestanden herstellen</translation>
+    </message>
+    <message id="layout-desc">
+        <source>To change keyboard layout, click above and select &apos;Change layout&apos;. Unsupported layouts are dimmed.</source>
+        <oldsource>To change keyboard layout, start Jolla Settings, go to System settings, Text input and change hardware keyboard active layout. Note that all layouts are not supported.</oldsource>
+        <extracomment>Description text for sticky and locking modifier keys</extracomment>
+        <translation>Om de toetsenbordindeling te wijzigen, klikt u boven en selecteert u &apos;Indeling wijzigen...&apos;. Niet-ondersteunde indelingen zijn uitgegrijsd.</translation>
+    </message>
+    <message id="turn-display-off-when-removed-sw">
+        <source>Display off when removed</source>
+        <oldsource>Display Off when removed</oldsource>
+        <extracomment>Display off when removed switch text</extracomment>
+        <translation>Scherm wordt uitgeschakeld wanneer het toetsenbord wordt verwijderd</translation>
+    </message>
+    <message id="turn-display-off-when-removed-desc">
+        <source>Turn display off when keyboard is removed</source>
+        <oldsource>Turn display off when keyboard removed</oldsource>
+        <extracomment>Display off when removed switch description</extracomment>
+        <translation>Scherm uitschakelen wanneer toetsenbord verwijderd wordt</translation>
+    </message>
+    <message id="keep-display-on-when-connected-sw">
+        <source>Display on when connected</source>
+        <extracomment>Keep display on when connected switch text</extracomment>
+        <translation>Scherm blijft ingeschakeld wanneer het toetsenbord verbonden is</translation>
+    </message>
+    <message id="keep-display-on-when-connected-desc">
+        <source>Keep display on when keyboard is connected</source>
+        <extracomment>Keep display on when connected switch description</extracomment>
+        <translation>Scherm ingeschakeld houden wanneer het toetsenbord verbonden is</translation>
     </message>
 </context>
 </TS>

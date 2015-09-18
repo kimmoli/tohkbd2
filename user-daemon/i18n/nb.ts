@@ -1,4 +1,4 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="no" version="2.1">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="nb" version="2.1">
 <context>
     <name/>
     <message id="screenshot-saved">
@@ -30,6 +30,12 @@
         <source>Restarting Lipstick</source>
         <extracomment>Remorse timer text, &quot;Restarting Lipstick&quot; in 5 seconds</extracomment>
         <translation>Omstart av Lipstick</translation>
+    </message>
+    <message id="layout-unsupported">
+        <source>The selected physical layout is not supported by TOHKBD2. Config file can also be invalid or missing.</source>
+        <oldsource>The selected physical layout is not supported by TOHKBD2</oldsource>
+        <extracomment>Notification shown when a physical layout is not supported or the config file has an error. Notification text will scroll.</extracomment>
+        <translation type="unfinished"/>
     </message>
 </context>
 </TS>
