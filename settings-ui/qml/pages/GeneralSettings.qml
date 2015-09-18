@@ -331,7 +331,7 @@ Page
                 //% "No deadkeys"
                 text: qsTrId("nodeadkeys-sw")
                 //: No deadkeys switch description
-                //% "Set 'nodeadkeys' to keymap variat. Required for some keyboard layouts, e.g. fi, de."
+                //% "Set 'nodeadkeys' to keymap variant. Required for some keyboard layouts, e.g. fi, de."
                 description: qsTrId("nodeadkeys-desc")
                 width: parent.width - 2*Theme.paddingLarge
                 automaticCheck: false

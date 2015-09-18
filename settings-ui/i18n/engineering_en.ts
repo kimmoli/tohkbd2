@@ -350,8 +350,8 @@
         <translation type="unfinished"></translation>
     </message>
     <message id="nodeadkeys-desc">
-        <source>Set &apos;nodeadkeys&apos; to keymap variat. Required for some keyboard layouts, e.g. fi, de.</source>
-        <oldsource>Set &apos;nodeadkeys&apos; to keymap variat. Required for some keyboard layouts, e.g. fi</oldsource>
+        <source>Set &apos;nodeadkeys&apos; to keymap variant. Required for some keyboard layouts, e.g. fi, de.</source>
+        <oldsource>Set &apos;nodeadkeys&apos; to keymap variat. Required for some keyboard layouts, e.g. fi, de.</oldsource>
         <extracomment>No deadkeys switch description</extracomment>
         <translation type="unfinished"></translation>
     </message>
