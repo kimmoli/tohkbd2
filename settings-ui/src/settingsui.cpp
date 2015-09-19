@@ -11,8 +11,7 @@
 #include <QDebug>
 #include <QtDBus/QtDBus>
 #include <QtSystemInfo/QDeviceInfo>
-
-#include <algorithm>
+#include <QtAlgorithms>
 #include <mlite5/MDesktopEntry>
 #include <linux/input.h>
 #include "../../daemon/src/defaultSettings.h"
@@ -142,7 +141,7 @@ QVariantList SettingsUi::getApplications()
     }
 
     // sort them by application name
-    std::sort(tmp.begin(), tmp.end(), appNameLessThan);
+    qSort(tmp.begin(), tmp.end(), appNameLessThan);
 
     return tmp;
 }
@@ -382,7 +381,7 @@ QVariantList SettingsUi::getCurrentLayouts()
         tmp.append(map);
     }
 
-    std::sort(tmp.begin(), tmp.end(), appNameLessThan);
+    qSort(tmp.begin(), tmp.end(), appNameLessThan);
 
     return tmp;
 }
