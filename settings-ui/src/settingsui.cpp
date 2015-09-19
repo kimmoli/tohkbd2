@@ -10,6 +10,8 @@
 #include <QSettings>
 #include <QDebug>
 #include <QtDBus/QtDBus>
+#include <QtSystemInfo/QDeviceInfo>
+
 #include <algorithm>
 #include <mlite5/MDesktopEntry>
 #include <linux/input.h>
@@ -327,28 +329,9 @@ QString SettingsUi::readUserDaemonVersion()
 
 QString SettingsUi::readSailfishVersion()
 {
-    QString version = "N/A";
+    QDeviceInfo deviceInfo;
 
-    QFile inputFile( "/etc/sailfish-release" );
-
-    if ( inputFile.open( QIODevice::ReadOnly | QIODevice::Text ) )
-    {
-       QTextStream in( &inputFile );
-
-       while (not in.atEnd())
-       {
-           QString line = in.readLine();
-           if (line.startsWith("VERSION_ID="))
-           {
-               version = line.split('=').at(1);
-               break;
-           }
-       }
-       inputFile.close();
-    }
-    qDebug() << "Sailfish version is" << version;
-
-    return version;
+    return deviceInfo.version(QDeviceInfo::Os);
 }
 
 void SettingsUi::handlePhysicalLayoutChange(QString layout)

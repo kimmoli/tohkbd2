@@ -8,7 +8,7 @@ QT += dbus
 
 CONFIG += sailfishapp
 CONFIG += link_pkgconfig
-PKGCONFIG += mlite5 sailfishapp
+PKGCONFIG += mlite5 Qt5SystemInfo sailfishapp
 
 DEFINES += "APPVERSION=\\\"$${SPECVERSION}\\\""
 
