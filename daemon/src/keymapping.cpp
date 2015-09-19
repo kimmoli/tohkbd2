@@ -1,6 +1,7 @@
 #include <QStringList>
 #include <QFile>
 #include <QTextStream>
+#include <QDir>
 
 #include "keymapping.h"
 #include <linux/input.h>
@@ -24,10 +25,10 @@ QStringList keymapping::keyNames = QStringList()
     << "KEY_TOH_TABLE_DELIMITER" /* Keys after this are custom keys */
     << "KEY_TOH_SCREENSHOT" << "KEY_TOH_SELFIE" << "KEY_TOH_NEWEMAIL" << "KEY_TOH_BACKLIGHT";
 
-keymapping::keymapping(QString pathToLayouts, QObject *parent) :
+keymapping::keymapping(QObject *parent) :
     QObject(parent)
 {
-    layoutPath = pathToLayouts;
+    layoutPath = QString();
     alternativeLayout = QString();
     originalLayout = QString();
 
@@ -60,7 +61,6 @@ keymapping::keymapping(QString pathToLayouts, QObject *parent) :
 
 void keymapping::process(QByteArray inputReport)
 {
-    int n;
     QList< QPair<int,int> > retKey;
     char irCode = 0;
 
@@ -72,6 +72,7 @@ void keymapping::process(QByteArray inputReport)
 
     if (verboseMode)
     {
+        int n;
         printf("Processing report: ");
         for (n=0 ; n<inputReport.count() ; n++)
             printf("%02x ", inputReport.at(n));
@@ -365,5 +366,19 @@ void keymapping::toggleAlternativeLayout()
     else if (layout == originalLayout)
     {
         emit setKeymapLayout(alternativeLayout);
+    }
+}
+
+bool keymapping::setPathToLayouts(QString pathToLayouts)
+{
+    if (QDir(pathToLayouts).exists())
+    {
+        layoutPath = pathToLayouts;
+        return true;
+    }
+    else
+    {
+        printf("keymap: path provided is invalid: %s\n", qPrintable(pathToLayouts));
+        return false;
     }
 }

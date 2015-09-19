@@ -2,11 +2,6 @@
     tohkbd2-settings-u, The Otherhalf Keyboard 2 settings UI
 */
 
-
-#ifdef QT_QML_DEBUG
-#include <QtQuick>
-#endif
-
 #include <sailfishapp.h>
 #include <QtQml>
 #include <QScopedPointer>

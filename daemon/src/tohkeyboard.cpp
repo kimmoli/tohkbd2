@@ -55,21 +55,43 @@ Tohkbd::Tohkbd(QObject *parent) :
     selfieLedOn = false;
     gpioInterruptCounter = 0;
     verboseMode = true;
-    turnDisplayOffWhenRemoved = false;
-    keepDisplayOnWhenConnected = false;
+    turnDisplayOffWhenRemoved = TURN_DISPLAY_OFF_WHEN_REMOVED;
+    keepDisplayOnWhenConnected = KEEP_DISPLAY_ON_WHEN_CONNECTED;
     displayBlankPreventRequested = false;
+    backlightLuxThreshold = BACKLIGHT_LUXTHRESHOLD;
+    keyRepeatDelay = KEYREPEAT_DELAY;
+    keyRepeatRate = KEYREPEAT_RATE;
+    forceBacklightOn = FORCE_BACKLIGHT_ON;
+    backlightEnabled = BACKLIGHT_ENABLED;
+    forceLandscapeOrientation = FORCE_LANDSCAPE_ORIENTATION;
 
     fix_CapsLock = !checkSailfishVersion("1.1.7.0");
     capsLock = false;
+
+    tohkbd2user = new ComKimmoliTohkbd2userInterface("com.kimmoli.tohkbd2user", "/", QDBusConnection::sessionBus(), this);
+    tohkbd2user->setTimeout(2000);
+
+    tohkbd2settingsui = new ComKimmoliTohkbd2settingsuiInterface("com.kimmoli.tohkbd2settingsui", "/", QDBusConnection::sessionBus(), this);
+    tohkbd2settingsui->setTimeout(2000);
+
+    thread = new QThread();
+    worker = new Worker();
+
+    backlightTimer = new QTimer(this);
+    presenceTimer = new QTimer(this);
+    repeatTimer = new QTimer(this);
+    displayBlankPreventTimer = new QTimer(this);
+    uinputif = new UinputIf();
+    uinputevpoll = new UinputEvPoll();
+    evpollThread = new QThread();
+    tca8424 = new tca8424driver(0x3b);
+    keymap = new keymapping();
 }
 
 /* Initialise. Returns false if failed
  */
 bool Tohkbd::init()
 {
-    tohkbd2user = new ComKimmoliTohkbd2userInterface("com.kimmoli.tohkbd2user", "/", QDBusConnection::sessionBus(), this);
-    tohkbd2user->setTimeout(2000);
-
     QString userDaemonVersion;
 
     printf("waking up user daemon\n");
@@ -90,32 +112,22 @@ bool Tohkbd::init()
 
     connect(tohkbd2user, SIGNAL(physicalLayoutChanged(QString)), this, SLOT(handlePhysicalLayout(QString)));
 
-    tohkbd2settingsui = new ComKimmoliTohkbd2settingsuiInterface("com.kimmoli.tohkbd2settingsui", "/", QDBusConnection::sessionBus(), this);
-    tohkbd2settingsui->setTimeout(2000);
-
-    thread = new QThread();
-    worker = new Worker();
-
     worker->moveToThread(thread);
     connect(worker, SIGNAL(gpioInterruptCaptured()), this, SLOT(handleGpioInterrupt()));
     connect(worker, SIGNAL(workRequested()), thread, SLOT(start()));
     connect(thread, SIGNAL(started()), worker, SLOT(doWork()));
     connect(worker, SIGNAL(finished()), thread, SLOT(quit()), Qt::DirectConnection);
 
-    backlightTimer = new QTimer(this);
     backlightTimer->setSingleShot(true);
     connect(backlightTimer, SIGNAL(timeout()), this, SLOT(backlightTimerTimeout()));
 
-    presenceTimer = new QTimer(this);
     presenceTimer->setInterval(2000);
     presenceTimer->setSingleShot(true);
     connect(presenceTimer, SIGNAL(timeout()), this, SLOT(presenceTimerTimeout()));
 
-    repeatTimer = new QTimer(this);
     repeatTimer->setSingleShot(true);
     connect(repeatTimer, SIGNAL(timeout()), this, SLOT(repeatTimerTimeout()));
 
-    displayBlankPreventTimer = new QTimer(this);
     displayBlankPreventTimer->setSingleShot(true);
     connect(displayBlankPreventTimer, SIGNAL(timeout()), this, SLOT(displayBlankPreventTimerTimeout()));
 
@@ -123,11 +135,7 @@ bool Tohkbd::init()
     setVddState(true);
     setInterruptEnable(true);
 
-    uinputif = new UinputIf();
     uinputif->openUinputDevice();
-
-    uinputevpoll = new UinputEvPoll();
-    evpollThread = new QThread();
 
     uinputevpoll->moveToThread(evpollThread);
     connect(uinputevpoll, SIGNAL(capsLockLedChanged(bool)), this, SLOT(capsLockLedState(bool)));
@@ -137,15 +145,19 @@ bool Tohkbd::init()
 
     uinputevpoll->requestPolling(uinputif->getFd());
 
-    tca8424 = new tca8424driver(0x3b);
-    keymap = new keymapping(QString(tohkbd2user->getPathTo("keymaplocation")));
+    if (!keymap->setPathToLayouts(QString(tohkbd2user->getPathTo("keymaplocation"))))
+    {
+        return false;
+    }
 
     reloadSettings();
 
     displayIsOn = getCurrentDisplayState();
 
     if (currentActiveLayout.isEmpty())
+    {
         changeActiveLayout(true);
+    }
 
     if (currentOrientationLock.isEmpty())
     {

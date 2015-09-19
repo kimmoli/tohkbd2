@@ -134,7 +134,6 @@ private:
     bool keypadIsPresent;
     bool vkbLayoutIsTohkbd;
     bool dbusRegistered;
-    bool stickyCtrl;
     bool displayIsOn;
     bool vddEnabled;
     bool interruptsEnabled;

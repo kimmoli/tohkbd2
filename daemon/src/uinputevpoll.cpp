@@ -10,6 +10,7 @@ UinputEvPoll::UinputEvPoll(QObject *parent) :
 {
     _polling = false;
     _abort = false;
+    _uinputfd = -1;
 }
 
 void UinputEvPoll::abort()

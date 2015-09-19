@@ -25,7 +25,7 @@ class keymapping : public QObject
 {
     Q_OBJECT
 public:
-    explicit keymapping(QString pathToLayouts, QObject *parent = 0);
+    explicit keymapping(QObject *parent = 0);
 
     void process(QByteArray inputReport);
 
@@ -35,6 +35,8 @@ public:
     modifierHandler *ctrl;
     modifierHandler *alt;
     modifierHandler *sym;
+
+    bool setPathToLayouts(QString pathToLayouts);
 
     bool setLayout(QString toLayout, bool forceReload = false);
 
