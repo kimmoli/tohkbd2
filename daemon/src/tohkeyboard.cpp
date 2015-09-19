@@ -68,6 +68,8 @@ Tohkbd::Tohkbd(QObject *parent) :
     fix_CapsLock = !checkSailfishVersion("1.1.7.0");
     capsLock = false;
 
+    doNotChangeVkbLayout = checkSailfishVersion("2.0.0.0");
+
     tohkbd2user = new ComKimmoliTohkbd2userInterface("com.kimmoli.tohkbd2user", "/", QDBusConnection::sessionBus(), this);
     tohkbd2user->setTimeout(2000);
 
@@ -977,6 +979,9 @@ void Tohkbd::displayBlankPreventTimerTimeout(bool forceCancel)
  */
 void Tohkbd::changeActiveLayout(bool justGetIt)
 {
+    if (doNotChangeVkbLayout)
+        return;
+
     QString __currentActiveLayout = tohkbd2user->getActiveLayout();
 
     if (verboseMode)

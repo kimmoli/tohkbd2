@@ -149,6 +149,7 @@ private:
     bool turnDisplayOffWhenRemoved;
     bool keepDisplayOnWhenConnected;
     bool displayBlankPreventRequested;
+    bool doNotChangeVkbLayout;
 
     ComKimmoliTohkbd2userInterface *tohkbd2user;
     ComKimmoliTohkbd2settingsuiInterface *tohkbd2settingsui;
