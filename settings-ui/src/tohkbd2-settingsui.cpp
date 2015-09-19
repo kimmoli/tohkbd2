@@ -12,11 +12,13 @@
 #include <QCoreApplication>
 #include "settingsui.h"
 #include "IconProvider.h"
+#include "consolemodel.h"
 
 
 int main(int argc, char *argv[])
 {
     qmlRegisterType<SettingsUi>("harbour.tohkbd2.settingsui", 1, 0, "SettingsUi");
+    qmlRegisterType<ConsoleModel>("harbour.tohkbd2.ConsoleModel", 1, 0, "ConsoleModel");
 
     QScopedPointer<QGuiApplication> app(SailfishApp::application(argc, argv));
 

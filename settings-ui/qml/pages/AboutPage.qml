@@ -4,6 +4,7 @@
 
 import QtQuick 2.0
 import Sailfish.Silica 1.0
+import harbour.tohkbd2.ConsoleModel 1.0
 import "../components"
 
 Page
@@ -23,6 +24,9 @@ Page
             aboutPageOpen = false
         else
             aboutPageOpen = true
+
+        if (status === PageStatus.Activating)
+            consoleModel.executeCommand("rpm", [ "-q", "--changelog", "harbour-ambience-tohkbd2" ])
     }
 
     BusyIndicator
@@ -43,12 +47,18 @@ Page
         onKeyBackspacePressed: pageStack.pop()
     }
 
+    ConsoleModel
+    {
+        id: consoleModel
+    }
+
     SilicaFlickable
     {
         id: flick
         anchors.fill: parent
 
         contentHeight: column.height
+        VerticalScrollDecorator { flickable: flick }
 
         Column
         {
@@ -188,6 +198,34 @@ Page
                 font.pixelSize: Theme.fontSizeMedium
                 anchors.horizontalCenter: parent.horizontalCenter
             }
+            SectionHeader
+            {
+                //: section header for changelog
+                //% "Changes"
+                text: qsTrId("about-changes")
+            }
+            Column
+            {
+                width: parent.width - Theme.horizontalPageMargin
+                x: Theme.horizontalPageMargin
+                spacing: -Theme.fontSizeExtraSmall
+                Repeater
+                {
+                    width: parent.width
+                    model: consoleModel
+                    delegate: Text
+                    {
+                        width: parent.width
+                        text: modelData
+                        textFormat: Text.PlainText
+                        color: Theme.secondaryColor
+                        wrapMode: Text.Wrap
+                        font.pixelSize: Theme.fontSizeExtraSmall
+                        font.bold: text.charAt(0) == "*"
+                        visible: text.length > 1
+                    }
+                }
+            }
         }
     }
     ListModel
@@ -211,9 +249,5 @@ Page
             iconsource: "image://tohkbd2/kimmoli"
             linkurl: "http://www.kimmoli.fi"
         }
-
     }
 }
-
-
-

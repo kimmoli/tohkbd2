@@ -408,5 +408,10 @@
         <extracomment>Keep display on when connected switch description</extracomment>
         <translation type="unfinished"></translation>
     </message>
+    <message id="about-changes">
+        <source>Changes</source>
+        <extracomment>section header for changelog</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 </TS>

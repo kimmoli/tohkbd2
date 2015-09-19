@@ -24,12 +24,14 @@ message($${DEFINES})
 
 SOURCES += src/tohkbd2-settingsui.cpp \
         src/settingsui.cpp \
+        src/consolemodel.cpp \
         ../dbus/src/settingsuiAdaptor.cpp \
         ../dbus/src/daemonInterface.cpp \
         ../dbus/src/userdaemonInterface.cpp
 	
 HEADERS += src/settingsui.h \
         src/IconProvider.h \
+        src/consolemodel.h \
         ../dbus/src/settingsuiAdaptor.h \
         ../dbus/src/daemonInterface.h \
         ../dbus/src/userdaemonInterface.h
@@ -54,4 +56,3 @@ OTHER_FILES += qml/tohkbd2-settingsui.qml \
     qml/pages/Help.qml \
     qml/cover/HelpCoverPage.qml \
     qml/pages/LayoutSwitcher.qml
-
