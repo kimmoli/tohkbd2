@@ -169,6 +169,12 @@ bool Tohkbd::init()
 
     checkKeypadPresence();
 
+    /* tell that keyboard is not attached, so maliit does not hide vkb */
+    if (!keypadIsPresent)
+    {
+        emitKeypadSlideEvent(false);
+    }
+
     connect(keymap, SIGNAL(shiftChanged()), this, SLOT(handleShiftChanged()));
     connect(keymap, SIGNAL(ctrlChanged()), this, SLOT(handleCtrlChanged()));
     connect(keymap, SIGNAL(altChanged()), this, SLOT(handleAltChanged()));
