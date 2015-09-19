@@ -44,6 +44,7 @@ RESOURCES += \
     config/keymaps.qrc
 
 OTHER_FILES += \
+    harbour-tohkbd2-user.desktop \
     config/icon-system-keyboard.png \
     config/icon-lock-tohkbd2.png \
     config/x-harbour.tohkbd2.conf \
