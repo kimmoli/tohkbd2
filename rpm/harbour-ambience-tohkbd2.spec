@@ -51,9 +51,9 @@ rm -rf %{buildroot}
 
 %qmake5_install
 
-desktop-file-install --delete-original       \
-  --dir %{buildroot}%{_datadir}/applications             \
-   %{buildroot}%{_datadir}/applications/*.desktop
+desktop-file-install --delete-original \
+    --dir %{buildroot}%{_datadir}/applications \
+    %{buildroot}%{_datadir}/applications/*.desktop
 
 %files
 %defattr(644,root,root,755)
@@ -61,8 +61,8 @@ desktop-file-install --delete-original       \
 %attr(755,root,root) %{_bindir}/harbour-tohkbd2-settingsui
 %attr(755,root,root) %{_bindir}/harbour-tohkbd2-user
 /%{_lib}/systemd/system/
-%{_sysconfdir}/udev/rules.d/
-%{_sysconfdir}/dbus-1/system.d/
+%config %{_sysconfdir}/udev/rules.d/
+%config %{_sysconfdir}/dbus-1/system.d/
 %{_datadir}/maliit/plugins/com/jolla/layouts/
 %{_datadir}/harbour-tohkbd2-user/
 %{_datadir}/dbus-1/
@@ -75,7 +75,7 @@ desktop-file-install --delete-original       \
 
 %post
 DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/100000/dbus/user_bus_socket" \
-  dbus-send --type=method_call --dest=org.freedesktop.DBus / org.freedesktop.DBus.ReloadConfig
+    dbus-send --type=method_call --dest=org.freedesktop.DBus / org.freedesktop.DBus.ReloadConfig
 #restart maliit
 systemctl-user restart maliit-server
 #reload udev rules
@@ -84,32 +84,32 @@ udevadm control --reload
 # vendor id 6537 = 0x1989 = dirkvl
 # product id 3 = tohkbd2
 if [ -e /sys/devices/platform/toh-core.0/vendor ]; then
- if grep -q 6537 /sys/devices/platform/toh-core.0/vendor ; then
-  if grep -q 3 /sys/devices/platform/toh-core.0/product ; then
-   systemctl start harbour-tohkbd2.service
-  fi
- fi
+    if grep -q 6537 /sys/devices/platform/toh-core.0/vendor ; then
+        if grep -q 3 /sys/devices/platform/toh-core.0/product ; then
+            systemctl start harbour-tohkbd2.service
+        fi
+    fi
 fi
 %_ambience_post
 
 %pre
 # In case of update, stop and disable first
 if [ "$1" = "2" ]; then
-  systemctl stop harbour-tohkbd2.service
-  systemctl disable harbour-tohkbd2.service
-  udevadm control --reload
+    systemctl stop harbour-tohkbd2.service
+    systemctl disable harbour-tohkbd2.service
+    udevadm control --reload
 fi
 
 %preun
 # in case of complete removal, stop and disable
 if [ "$1" = "0" ]; then
-  systemctl stop harbour-tohkbd2.service
-  systemctl disable harbour-tohkbd2.service
-  udevadm control --reload
+    systemctl stop harbour-tohkbd2.service
+    systemctl disable harbour-tohkbd2.service
+    udevadm control --reload
 fi
 
 %postun
 DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/100000/dbus/user_bus_socket" \
-  dbus-send --type=method_call --dest=org.freedesktop.DBus / org.freedesktop.DBus.ReloadConfig
+    dbus-send --type=method_call --dest=org.freedesktop.DBus / org.freedesktop.DBus.ReloadConfig
 #restart maliit
-    systemctl-user restart maliit-server
+systemctl-user restart maliit-server
