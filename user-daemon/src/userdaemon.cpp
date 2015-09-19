@@ -180,7 +180,7 @@ void UserDaemon::showNotification(const QString &text)
     Notification notif;
 
     notif.setPreviewBody(text);
-    notif.setHintValue("x-nemo-preview-icon", SailfishApp::pathTo("/icon-system-keyboard.png").toLocalFile());
+    notif.setCategory("x-harbour.tohkbd2");
     notif.publish();
 }
 

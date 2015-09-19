@@ -71,7 +71,7 @@ desktop-file-install --delete-original       \
 %{_datadir}/icons/hicolor/86x86/apps/
 %{_datadir}/ambience/%{name}/%{name}.ambience
 %{_datadir}/ambience/%{name}/images/%{name}.jpg
-
+%{_datadir}/lipstick/notificationcategories/
 
 %post
 DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/100000/dbus/user_bus_socket" \
