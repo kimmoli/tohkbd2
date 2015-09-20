@@ -1352,16 +1352,6 @@ void Tohkbd::keyboardConnectedNotification(bool connected)
     tohkbd2user->showKeyboardConnectionNotification(connected);
 }
 
-/** DBUS Test methods */
-
-/* dbus-send --system --print-reply --dest=com.kimmoli.tohkbd2 / com.kimmoli.tohkbd2.fakeKeyPress array:byte:0x00,0x00,0x00,0x00,0x00,0xA3,0x00,0x00,0x00,0x00,0x00
- */
-void Tohkbd::fakeInputReport(const QByteArray &data)
-{
-    printf("input report from dbus\n");
-    keymap->process(data);
-}
-
 /* Checks contents of base and keyboard EEPROM
  */
 void Tohkbd::checkEEPROM()
