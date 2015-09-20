@@ -420,7 +420,7 @@ bool Tohkbd::checkKeypadPresence()
 
     if (__prev_keypadPresence != keypadIsPresent)
     {
-        keyboardConnectedNotification(keypadIsPresent);
+        tohkbd2user->showKeyboardConnectionNotification(keypadIsPresent);
 
         emit keyboardConnectedChanged(keypadIsPresent);
         emitKeypadSlideEvent(keypadIsPresent);
@@ -1280,12 +1280,6 @@ void Tohkbd::setSetting(const QString &key, const QDBusVariant &value)
     }
 
     keymap->releaseStickyModifiers(true);
-}
-
-/* Tell user daemon to show notification */
-void Tohkbd::keyboardConnectedNotification(bool connected)
-{
-    tohkbd2user->showKeyboardConnectionNotification(connected);
 }
 
 /* Checks contents of base and keyboard EEPROM
