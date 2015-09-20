@@ -72,8 +72,7 @@ public slots:
     Q_NOREPLY void quit();
     Q_NOREPLY void setShortcut(const QString &key, const QString &appPath);
     Q_NOREPLY void setShortcutsToDefault();
-    Q_NOREPLY void setSettingInt(const QString &key, const int &value);
-    Q_NOREPLY void setSettingString(const QString &key, const QString &value);
+    Q_NOREPLY void setSetting(const QString &key, const QDBusVariant &value);
     Q_NOREPLY void forceKeymapReload(const QString &layout);
 
 signals:
@@ -101,6 +100,7 @@ private:
     bool checkSailfishVersion(QString versionToCompare);
     void setVerboseMode(bool verbose);
     bool getCurrentDisplayState();
+    QVariantMap settingsMap;
 
     int gpio_fd;
 
@@ -111,11 +111,6 @@ private:
     QThread *evpollThread;
     tca8424driver *tca8424;
     keymapping *keymap;
-
-    int backlightLuxThreshold;
-    int keyRepeatDelay;
-    int keyRepeatRate;
-    bool forceBacklightOn;
 
     QMutex mutex;
 
@@ -138,15 +133,11 @@ private:
     bool interruptsEnabled;
     bool keyIsPressed;
     bool keyRepeat;
-    bool backlightEnabled;
     bool slideEventEmitted;
-    bool forceLandscapeOrientation;
     bool taskSwitcherVisible;
     bool selfieLedOn;
     bool capsLock;
     bool verboseMode;
-    bool turnDisplayOffWhenRemoved;
-    bool keepDisplayOnWhenConnected;
     bool displayBlankPreventRequested;
     bool doNotChangeVkbLayout;
 

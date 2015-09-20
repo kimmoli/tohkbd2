@@ -55,15 +55,7 @@ Tohkbd::Tohkbd(QObject *parent) :
     selfieLedOn = false;
     gpioInterruptCounter = 0;
     verboseMode = true;
-    turnDisplayOffWhenRemoved = TURN_DISPLAY_OFF_WHEN_REMOVED;
-    keepDisplayOnWhenConnected = KEEP_DISPLAY_ON_WHEN_CONNECTED;
     displayBlankPreventRequested = false;
-    backlightLuxThreshold = BACKLIGHT_LUXTHRESHOLD;
-    keyRepeatDelay = KEYREPEAT_DELAY;
-    keyRepeatRate = KEYREPEAT_RATE;
-    forceBacklightOn = FORCE_BACKLIGHT_ON;
-    backlightEnabled = BACKLIGHT_ENABLED;
-    forceLandscapeOrientation = FORCE_LANDSCAPE_ORIENTATION;
 
     fix_CapsLock = !checkSailfishVersion("1.1.7.0");
     capsLock = false;
@@ -199,7 +191,7 @@ bool Tohkbd::init()
 Tohkbd::~Tohkbd()
 {
     /* Restore orientation when shutting down */
-    if (forceLandscapeOrientation)
+    if (settingsMap.value("forceLandscapeOrientation").toBool())
     {
         tohkbd2user->setOrientationLock(currentOrientationLock);
     }
@@ -436,7 +428,7 @@ bool Tohkbd::checkKeypadPresence()
         vkbLayoutIsTohkbd = keypadIsPresent;
         changeActiveLayout();
 
-        if (forceLandscapeOrientation)
+        if (settingsMap.value("forceLandscapeOrientation").toBool())
         {
             changeOrientationLock();
         }
@@ -448,11 +440,11 @@ bool Tohkbd::checkKeypadPresence()
         }
         else // not present
         {
-            if (keepDisplayOnWhenConnected)
+            if (settingsMap.value("keepDisplayOnWhenConnected").toBool())
             {
                 displayBlankPreventTimerTimeout(true);
             }
-            if (turnDisplayOffWhenRemoved && displayIsOn)
+            if (settingsMap.value("turnDisplayOffWhenRemoved").toBool() && displayIsOn)
             {
                 /* if enabled and display is on, turn display off when keyboard is removed */
                 if (verboseMode)
@@ -503,7 +495,7 @@ void Tohkbd::controlLeds(bool restore)
         if (selfieLedOn)
             i |= LED_SELFIE_ON;
 
-        if (forceBacklightOn)
+        if (settingsMap.value("forceBacklightOn").toBool())
             i |= LED_BACKLIGHT_ON;
 
         tca8424->setLeds(i);
@@ -638,7 +630,7 @@ void Tohkbd::handleKeyPressed(QList< QPair<int, int> > keyCode)
                     break;
 
                 case KEY_TOH_BACKLIGHT:
-                    forceBacklightOn = !forceBacklightOn;
+                    settingsMap.insert("forceBacklightOn", !settingsMap.value("forceBacklightOn").toBool());
                     checkDoWeNeedBacklight();
                     break;
 
@@ -770,7 +762,8 @@ void Tohkbd::handleKeyPressed(QList< QPair<int, int> > keyCode)
     lastKeyCode = keyCode;
 
     /* Repeat delay first, then repeat rate */
-    repeatTimer->start(keyRepeat ? (keyRepeatRate-(KEYREPEAT_RATE-1)) : keyRepeatDelay);
+    repeatTimer->start(keyRepeat ? (settingsMap.value("keyRepeatRate").toInt()-(KEYREPEAT_RATE-1)) :
+                                    settingsMap.value("keyRepeatDelay").toInt());
     keyIsPressed = true;
 }
 
@@ -901,15 +894,15 @@ void Tohkbd::checkDoWeNeedBacklight()
     if (!vddEnabled) /* No power applied, get out from here */
         return;
 
-    if (forceBacklightOn)
+    if (settingsMap.value("forceBacklightOn").toBool())
     {
         tca8424->setLeds(LED_BACKLIGHT_ON);
     }
-    else if (backlightEnabled)
+    else if (settingsMap.value("backlightEnabled").toBool())
     {
         if (!backlightTimer->isActive())
         {
-            if (readOneLineFromFile("/sys/devices/virtual/input/input11/als_lux").toInt() < backlightLuxThreshold)
+            if (readOneLineFromFile("/sys/devices/virtual/input/input11/als_lux").toInt() < settingsMap.value("backlightLuxThreshold").toInt())
             {
                 if (verboseMode)
                     printf("backlight on\n");
@@ -941,7 +934,7 @@ void Tohkbd::backlightTimerTimeout()
     if (!vddEnabled) /* No power applied, get out from here */
         return;
 
-    if (!forceBacklightOn)
+    if (!settingsMap.value("forceBacklightOn").toBool())
         tca8424->setLeds(LED_BACKLIGHT_OFF);
 }
 
@@ -952,7 +945,7 @@ void Tohkbd::backlightTimerTimeout()
  */
 void Tohkbd::displayBlankPreventTimerTimeout(bool forceCancel)
 {
-    if (keepDisplayOnWhenConnected && displayIsOn && keypadIsPresent && !forceCancel)
+    if (settingsMap.value("keepDisplayOnWhenConnected").toBool() && displayIsOn && keypadIsPresent && !forceCancel)
     {
         if (verboseMode)
             printf("requesting mce to prevent blanking\n");
@@ -1091,7 +1084,7 @@ void Tohkbd::reloadSettings()
 {
     QSettings settings(QSettings::SystemScope, "harbour-tohkbd2", "tohkbd2");
 
-    settings.beginGroup("debug");
+    settings.beginGroup("generalsettings");
     setVerboseMode(settings.value("verboseMode", VERBOSE_MODE_ENABLED).toBool());
     settings.endGroup();
 
@@ -1129,10 +1122,10 @@ void Tohkbd::reloadSettings()
 
     settings.beginGroup("generalsettings");
     backlightTimer->setInterval(settings.value("backlightTimeout", BACKLIGHT_TIMEOUT).toInt());
-    backlightLuxThreshold = settings.value("backlightLuxThreshold", BACKLIGHT_LUXTHRESHOLD).toInt();
-    backlightEnabled = settings.value("backlightEnabled", BACKLIGHT_ENABLED).toBool();
-    keyRepeatDelay = settings.value("keyRepeatDelay", KEYREPEAT_DELAY).toInt();
-    keyRepeatRate = settings.value("keyRepeatRate", KEYREPEAT_RATE).toInt();
+    settingsMap.insert("backlightLuxThreshold", settings.value("backlightLuxThreshold", BACKLIGHT_LUXTHRESHOLD).toInt());
+    settingsMap.insert("backlightEnabled", settings.value("backlightEnabled", BACKLIGHT_ENABLED).toBool());
+    settingsMap.insert("keyRepeatDelay", settings.value("keyRepeatDelay", KEYREPEAT_DELAY).toInt());
+    settingsMap.insert("keyRepeatRate", settings.value("keyRepeatRate", KEYREPEAT_RATE).toInt());
 
     keymap->shift->setMode(modifierHandler::toKeyMode(settings.value("modifierShiftMode", MODIFIER_SHIFT_MODE).toString()));
     keymap->ctrl->setMode(modifierHandler::toKeyMode(settings.value("modifierCtrlMode", MODIFIER_CTRL_MODE).toString()));
@@ -1149,10 +1142,10 @@ void Tohkbd::reloadSettings()
     settings.remove("stickySymEnabled");
     settings.remove("lockingSymEnabled");
 
-    forceLandscapeOrientation = settings.value("forceLandscapeOrientation", FORCE_LANDSCAPE_ORIENTATION).toBool();
-    forceBacklightOn = settings.value("forceBacklightOn", FORCE_BACKLIGHT_ON).toBool();
-    turnDisplayOffWhenRemoved = settings.value("turnDisplayOffWhenRemoved", TURN_DISPLAY_OFF_WHEN_REMOVED).toBool();
-    keepDisplayOnWhenConnected = settings.value("keepDisplayOnWhenConnected", KEEP_DISPLAY_ON_WHEN_CONNECTED).toBool();
+    settingsMap.insert("forceLandscapeOrientation", settings.value("forceLandscapeOrientation", FORCE_LANDSCAPE_ORIENTATION).toBool());
+    settingsMap.insert("forceBacklightOn", settings.value("forceBacklightOn", FORCE_BACKLIGHT_ON).toBool());
+    settingsMap.insert("turnDisplayOffWhenRemoved", settings.value("turnDisplayOffWhenRemoved", TURN_DISPLAY_OFF_WHEN_REMOVED).toBool());
+    settingsMap.insert("keepDisplayOnWhenConnected", settings.value("keepDisplayOnWhenConnected", KEEP_DISPLAY_ON_WHEN_CONNECTED).toBool());
     settings.endGroup();
 }
 
@@ -1228,122 +1221,65 @@ void Tohkbd::setShortcutsToDefault()
 
 /* Set integer setting and save it to settings
  */
-void Tohkbd::setSettingInt(const QString &key, const int &value)
+void Tohkbd::setSetting(const QString &key, const QDBusVariant &value)
+//void Tohkbd::setSettingInt(const QString &key, const int &value)
 {
     QSettings settings(QSettings::SystemScope, "harbour-tohkbd2", "tohkbd2");
 
     if (verboseMode)
-        printf("Setting %s to %d\n", qPrintable(key), value);
+        printf("Setting %s to %s\n", qPrintable(key), qPrintable(value.variant().toString()));
 
-    if (key == "backlightTimeout" && value >= 100 && value <= 30000)
+    settingsMap.insert(key, value.variant());
+
+    settings.beginGroup("generalsettings");
+    settings.setValue(key, value.variant());
+    settings.endGroup();
+
+    if (key == "verboseMode")
     {
-        settings.beginGroup("generalsettings");
-        settings.setValue("backlightTimeout", value);
-        backlightTimer->setInterval(value);
-        settings.endGroup();
+        setVerboseMode(value.variant().toBool());
     }
-    else if (key == "backlightLuxThreshold" && value >= 1 && value <= 50)
+    else if (key == "backlightTimeout")
     {
-        settings.beginGroup("generalsettings");
-        settings.setValue("backlightLuxThreshold", value);
-        backlightLuxThreshold = value;
-        settings.endGroup();
+        backlightTimer->setInterval(settingsMap.value(key).toInt());
     }
-    else if (key == "keyRepeatDelay" && value >= 50 && value <= 500)
+    else if (key == "backlightEnabled" || key == "forceBacklightOn")
     {
-        settings.beginGroup("generalsettings");
-        settings.setValue("keyRepeatDelay", value);
-        keyRepeatDelay = value;
-        settings.endGroup();
-    }
-    else if (key == "keyRepeatRate" && value >= 25 && value <= 100)
-    {
-        settings.beginGroup("generalsettings");
-        settings.setValue("keyRepeatRate", value);
-        keyRepeatRate = value;
-        settings.endGroup();
-    }
-    else if (key == "backlightEnabled" && (value == 0 || value == 1))
-    {
-        settings.beginGroup("generalsettings");
-        settings.setValue("backlightEnabled", (value == 1));
-        backlightEnabled = (value == 1);
-        settings.endGroup();
         checkDoWeNeedBacklight();
     }
-    else if (key == "forceBacklightOn" && (value == 0 || value == 1))
+    else if (key == "forceLandscapeOrientation")
     {
-        settings.beginGroup("generalsettings");
-        settings.setValue("forceBacklightOn", (value == 1));
-        forceBacklightOn = (value == 1);
-        settings.endGroup();
-        checkDoWeNeedBacklight();
-    }
-    else if (key == "forceLandscapeOrientation" && (value == 0 || value == 1))
-    {
-        settings.beginGroup("generalsettings");
-        settings.setValue("forceLandscapeOrientation", (value == 1));
-        forceLandscapeOrientation = (value == 1);
-        settings.endGroup();
-
-        if (value == 0 && !currentOrientationLock.isEmpty())
+        if (!value.variant().toBool() && !currentOrientationLock.isEmpty())
         {
             tohkbd2user->setOrientationLock(currentOrientationLock);
         }
-        else if (value == 1 && keypadIsPresent)
+        else if (value.variant().toBool())
         {
             tohkbd2user->setOrientationLock("landscape");
         }
     }
-    else if (key == "turnDisplayOffWhenRemoved" && (value == 0 || value == 1))
+    else if (key == "keepDisplayOnWhenConnected")
     {
-        settings.beginGroup("generalsettings");
-        settings.setValue("turnDisplayOffWhenRemoved", (value == 1));
-        turnDisplayOffWhenRemoved = (value == 1);
-        settings.endGroup();
-    }
-    else if (key == "keepDisplayOnWhenConnected" && (value == 0 || value == 1))
-    {
-        settings.beginGroup("generalsettings");
-        settings.setValue("keepDisplayOnWhenConnected", (value == 1));
-        keepDisplayOnWhenConnected = (value == 1);
         displayBlankPreventTimerTimeout();
-        settings.endGroup();
     }
-    else if (key == "verboseMode"  && (value == 0 || value == 1))
+    else if (key == "modifierShiftMode")
     {
-        settings.beginGroup("debug");
-        settings.setValue("verboseMode", (value == 1));
-        setVerboseMode(value == 1);
-        settings.endGroup();
+        keymap->shift->setMode(modifierHandler::toKeyMode(value.variant().toString()));
+    }
+    else if (key == "modifierCtrlMode")
+    {
+        keymap->ctrl->setMode(modifierHandler::toKeyMode(value.variant().toString()));
+    }
+    else if (key == "modifierAltMode")
+    {
+        keymap->alt->setMode(modifierHandler::toKeyMode(value.variant().toString()));
+    }
+    if (key == "modifierSymMode")
+    {
+        keymap->sym->setMode(modifierHandler::toKeyMode(value.variant().toString()));
     }
 
     keymap->releaseStickyModifiers(true);
-}
-
-void Tohkbd::setSettingString(const QString &key, const QString &value)
-{
-    QSettings settings(QSettings::SystemScope, "harbour-tohkbd2", "tohkbd2");
-
-    settings.beginGroup("generalsettings");
-    settings.setValue(key, value);
-    settings.endGroup();
-
-    if(verboseMode)
-        printf("setting %s to %s\n", qPrintable(key), qPrintable(value));
-
-    if (key == "modifierShiftMode" && modifierHandler::KeyModeNames.contains(value))
-        keymap->shift->setMode(modifierHandler::toKeyMode(value));
-
-    if (key == "modifierCtrlMode" && modifierHandler::KeyModeNames.contains(value))
-        keymap->ctrl->setMode(modifierHandler::toKeyMode(value));
-
-    if (key == "modifierAltMode" && modifierHandler::KeyModeNames.contains(value))
-        keymap->alt->setMode(modifierHandler::toKeyMode(value));
-
-    if (key == "modifierSymMode" && modifierHandler::KeyModeNames.contains(value))
-        keymap->sym->setMode(modifierHandler::toKeyMode(value));
-
 }
 
 /* Tell user daemon to show notification */

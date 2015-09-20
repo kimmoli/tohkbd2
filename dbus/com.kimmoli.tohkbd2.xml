@@ -10,13 +10,9 @@
             <arg name="appPath" type="s" direction="in" />
         </method>
         <method name="setShortcutsToDefault" />
-        <method name="setSettingInt">
+        <method name="setSetting">
             <arg name="key" type="s" direction="in" />
-            <arg name="value" type="i" direction="in" />
-        </method>
-        <method name="setSettingString">
-            <arg name="key" type="s" direction="in" />
-            <arg name="value" type="s" direction="in" />
+            <arg name="value" type="v" direction="in" />
         </method>
         <method name="forceKeymapReload">
             <arg name="layout" type="s" direction="in" />

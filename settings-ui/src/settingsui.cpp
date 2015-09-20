@@ -151,8 +151,8 @@ QVariantMap SettingsUi::getCurrentSettings()
     QVariantMap map;
 
     QSettings settings("harbour-tohkbd2", "tohkbd2");
-    settings.beginGroup("generalsettings");
 
+    settings.beginGroup("generalsettings");
     map.insert("backlightTimeout", settings.value("backlightTimeout", BACKLIGHT_TIMEOUT).toInt());
     map.insert("backlightLuxThreshold", settings.value("backlightLuxThreshold", BACKLIGHT_LUXTHRESHOLD).toInt());
     map.insert("keyRepeatDelay", settings.value("keyRepeatDelay", KEYREPEAT_DELAY).toInt());
@@ -166,9 +166,6 @@ QVariantMap SettingsUi::getCurrentSettings()
     map.insert("modifierSymMode", settings.value("modifierSymMode", MODIFIER_SYM_MODE).toString());
     map.insert("turnDisplayOffWhenRemoved", settings.value("turnDisplayOffWhenRemoved", TURN_DISPLAY_OFF_WHEN_REMOVED).toBool());
     map.insert("keepDisplayOnWhenConnected", settings.value("keepDisplayOnWhenConnected", KEEP_DISPLAY_ON_WHEN_CONNECTED).toBool());
-    settings.endGroup();
-
-    settings.beginGroup("debug");
     map.insert("verboseMode", settings.value("verboseMode", VERBOSE_MODE_ENABLED).toBool());
     settings.endGroup();
 
@@ -237,22 +234,11 @@ void SettingsUi::setShortcut(QString key, QString appPath)
     emit shortcutsChanged();
 }
 
-void SettingsUi::setSettingInt(QString key, int value)
+void SettingsUi::setSetting(QString key, QVariant value)
 {
     qDebug() << "setting" << key << "to" << value;
 
-    tohkbd2daemon->setSettingInt(key, value);
-
-    QThread::msleep(200);
-
-    emit settingsChanged();
-}
-
-void SettingsUi::setSettingString(QString key, QString value)
-{
-    qDebug() << "setting" << key << "to" << value;
-
-    tohkbd2daemon->setSettingString(key, value);
+    tohkbd2daemon->setSetting(key, QDBusVariant(value));
 
     QThread::msleep(200);
 
@@ -272,20 +258,20 @@ void SettingsUi::setShortcutsToDefault()
 
 void SettingsUi::setSettingsToDefault()
 {
-    setSettingInt("backlightTimeout", BACKLIGHT_TIMEOUT);
-    setSettingInt("backlightLuxThreshold", BACKLIGHT_LUXTHRESHOLD);
-    setSettingInt("keyRepeatDelay", KEYREPEAT_DELAY);
-    setSettingInt("keyRepeatRate", KEYREPEAT_RATE);
-    setSettingInt("backlightEnabled", BACKLIGHT_ENABLED ? 1 : 0);
-    setSettingInt("forceLandscapeOrientation", FORCE_LANDSCAPE_ORIENTATION ? 1 : 0);
-    setSettingInt("forceBacklightOn", FORCE_BACKLIGHT_ON ? 1 : 0);
-    setSettingString("modifierShiftMode", MODIFIER_SHIFT_MODE);
-    setSettingString("modifierCtrlMode", MODIFIER_CTRL_MODE);
-    setSettingString("modifierAltMode", MODIFIER_ALT_MODE);
-    setSettingString("modifierSymMode", MODIFIER_SYM_MODE);
-    setSettingInt("verboseMode", VERBOSE_MODE_ENABLED ? 1 : 0);
-    setSettingInt("turnDisplayOffWhenRemoved", TURN_DISPLAY_OFF_WHEN_REMOVED ? 1 : 0);
-    setSettingInt("keepDisplayOnWhenConnected", KEEP_DISPLAY_ON_WHEN_CONNECTED ? 1: 0);
+    setSetting("backlightTimeout", BACKLIGHT_TIMEOUT);
+    setSetting("backlightLuxThreshold", BACKLIGHT_LUXTHRESHOLD);
+    setSetting("keyRepeatDelay", KEYREPEAT_DELAY);
+    setSetting("keyRepeatRate", KEYREPEAT_RATE);
+    setSetting("backlightEnabled", BACKLIGHT_ENABLED);
+    setSetting("forceLandscapeOrientation", FORCE_LANDSCAPE_ORIENTATION);
+    setSetting("forceBacklightOn", FORCE_BACKLIGHT_ON);
+    setSetting("modifierShiftMode", MODIFIER_SHIFT_MODE);
+    setSetting("modifierCtrlMode", MODIFIER_CTRL_MODE);
+    setSetting("modifierAltMode", MODIFIER_ALT_MODE);
+    setSetting("modifierSymMode", MODIFIER_SYM_MODE);
+    setSetting("verboseMode", VERBOSE_MODE_ENABLED);
+    setSetting("turnDisplayOffWhenRemoved", TURN_DISPLAY_OFF_WHEN_REMOVED);
+    setSetting("keepDisplayOnWhenConnected", KEEP_DISPLAY_ON_WHEN_CONNECTED);
 
     QThread::msleep(200);
 
