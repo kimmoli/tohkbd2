@@ -618,6 +618,10 @@ void Tohkbd::handleKeyPressed(QList< QPair<int, int> > keyCode)
         {
             switch (keyCode.at(0).first)
             {
+                /* No mapping for this key */
+                case KEY_TOH_NONE:
+                    break;
+
                 /* Sym-Int takes a screenshot */
                 case KEY_TOH_SCREENSHOT:
                     tohkbd2user->takeScreenShot();

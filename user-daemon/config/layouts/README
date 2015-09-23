@@ -49,6 +49,8 @@ And a few custom keys:
 
 KEY_TOH_SCREENSHOT, KEY_TOH_SELFIE, KEY_TOH_NEWEMAIL, KEY_TOH_BACKLIGHT
 
+For non-mapped key, use KEY_TOH_NONE
+
 Supported modifiers:
 
 0      No modifier

@@ -20,6 +20,7 @@
 #define KEY_TOH_SELFIE     (KEY_MAX+2)
 #define KEY_TOH_NEWEMAIL   (KEY_MAX+3)
 #define KEY_TOH_BACKLIGHT  (KEY_MAX+4)
+#define KEY_TOH_NONE       (KEY_MAX+5)
 
 class keymapping : public QObject
 {
