@@ -577,6 +577,7 @@ void Tohkbd::handleGpioInterrupt()
 void Tohkbd::handleKeyPressed(QList< QPair<int, int> > keyCode)
 {
     bool processAllKeys = true;
+    bool useKeyCode = false;
 
     /* No need to do this all if we are repeating */
     if (!keyRepeat)
@@ -717,6 +718,26 @@ void Tohkbd::handleKeyPressed(QList< QPair<int, int> > keyCode)
         }
     }
 
+    if (keyCode.at(0).second & USE_KEYCODE)
+    {
+        QString code = QString("0%1").arg(keyCode.at(0).first);
+        printf("keycode %s\n", qPrintable(code));
+
+        keyCode.clear();
+
+        for (int i=0; i<code.length(); i++)
+        {
+            int key_ = keymap->keyNames.indexOf(QString("KEY_KP%1").arg(code.at(i)));
+            printf("key %s = %d\n", qPrintable(QString("KEY_KP%1").arg(code.at(i))), key_);
+            keyCode.append(qMakePair(key_, 0));
+        }
+        printf("keyCode length %d\n", keyCode.length());
+
+        uinputif->sendUinputKeyPress(KEY_LEFTALT, 1);
+
+        useKeyCode = true;
+    }
+
     if (processAllKeys)
     {
         for (int i=0; i<keyCode.count(); i++)
@@ -759,6 +780,9 @@ void Tohkbd::handleKeyPressed(QList< QPair<int, int> > keyCode)
                 uinputif->sendUinputKeyPress(KEY_RIGHTALT, 0);
         }
     }
+
+    if (useKeyCode)
+        uinputif->sendUinputKeyPress(KEY_LEFTALT, 0);
 
     uinputif->synUinputDevice();
 

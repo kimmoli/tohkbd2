@@ -14,6 +14,7 @@
 #define FORCE_COMPOSE  (8)
 #define KEEP           (0x10)
 #define FORCE_CTRL     (0x20)
+#define USE_KEYCODE    (0x40)
 
 // Custom keys
 #define KEY_TOH_SCREENSHOT (KEY_MAX+1)
@@ -42,6 +43,8 @@ public:
     bool setLayout(QString toLayout, bool forceReload = false);
 
     bool verboseMode;
+
+    static QStringList keyNames;
 
 signals:
     void shiftChanged();
@@ -72,8 +75,6 @@ private:
 
     QMap< int, QPair<int, int> > lut_plain;
     QMap< int, QPair<int, int> > lut_sym;
-
-    static QStringList keyNames;
 };
 
 #endif // KEYMAPPING_H

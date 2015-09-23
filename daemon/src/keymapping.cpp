@@ -267,9 +267,18 @@ bool keymapping::setLayout(QString toLayout, bool forceReload)
 
             if (plainKeyIndex < 0)
             {
-               printf("keymap: error parsing %s\n", qPrintable(line.at(1)));
-               ret = false;
-               break;
+                ok = false;
+                if (line.at(1).startsWith("0"))
+                {
+                    plainKeyIndex = line.at(1).toInt(&ok, 10);
+                    printf("keymap: got keycode (plain) %d\n", plainKeyIndex);
+                }
+                if (!ok)
+                {
+                    printf("keymap: error parsing %s\n", qPrintable(line.at(1)));
+                    ret = false;
+                    break;
+                }
             }
 
             /* Custom keys */
@@ -278,9 +287,18 @@ bool keymapping::setLayout(QString toLayout, bool forceReload)
 
             if (symKeyIndex < 0)
             {
-               printf("keymap: error parsing %s\n", qPrintable(line.at(3)));
-               ret = false;
-               break;
+                ok = false;
+                if (line.at(3).startsWith("0"))
+                {
+                    symKeyIndex = line.at(3).toInt(&ok, 10);
+                    printf("keymap: got keycode (sym) %d\n", symKeyIndex);
+                }
+                if (!ok)
+                {
+                    printf("keymap: error parsing %s\n", qPrintable(line.at(3)));
+                    ret = false;
+                    break;
+                }
             }
 
             if (line.at(3).startsWith("KEY_TOH_"))
@@ -296,6 +314,8 @@ bool keymapping::setLayout(QString toLayout, bool forceReload)
                 plainModifier |= FORCE_CTRL;
             if (line.at(2).contains("COMP"))
                 plainModifier |= FORCE_COMPOSE;
+            if (line.at(2).contains("CODE"))
+                plainModifier |= USE_KEYCODE;
 
             if (line.at(4).contains("SHIFT"))
                 symModifier |= FORCE_SHIFT;
@@ -307,6 +327,8 @@ bool keymapping::setLayout(QString toLayout, bool forceReload)
                 symModifier |= FORCE_CTRL;
             if (line.at(4).contains("COMP"))
                 symModifier |= FORCE_COMPOSE;
+            if (line.at(4).contains("CODE"))
+                symModifier |= USE_KEYCODE;
 
             lut_plain.insert(code, qMakePair(plainKeyIndex, plainModifier));
             lut_sym.insert(code, qMakePair(symKeyIndex, symModifier));
