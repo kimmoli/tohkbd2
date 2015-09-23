@@ -40,8 +40,8 @@ C5    KEY_S           0              KEY_BACKSLASH      SHIFT
 C6    KEY_D           0              KEY_3              RALT
 C7    KEY_F           0              KEY_EQUAL          SHIFT
 C8    KEY_G           0              KEY_EQUAL          0
-C9    KEY_H           0              KEY_H              0
-CA    KEY_J           0              KEY_J              0
+C9    KEY_H           0              KEY_TOH_NONE       0
+CA    KEY_J           0              KEY_TOH_NONE       0
 CB    KEY_K           0              KEY_8              RALT
 CC    KEY_L           0              KEY_9              RALT
 CD    KEY_SEMICOLON   0              KEY_8              SHIFT
@@ -56,10 +56,10 @@ D7    KEY_V           0              KEY_7              SHIFT
 D8    KEY_B           0              KEY_102ND          RALT
 D9    KEY_N           0              KEY_MINUS          RALT
 DA    KEY_M           0              KEY_M              RALT
-DB    KEY_MINUS       SHIFT          KEY_MINUS          0
+DB    KEY_MINUS       SHIFT          KEY_MINUS          SHIFT
 DC    KEY_1           SHIFT          KEY_1              SHIFT
 DD    KEY_COMMA       0              KEY_102ND          0
 DE    KEY_DOT         0              KEY_102ND          SHIFT
-EC    KEY_Q           RALT           KEY_TOH_NEWEMAIL   0
+EC    KEY_MINUS       0              KEY_Q              RALT
 EF    KEY_ENTER       0              KEY_ENTER          0
 E9    KEY_SPACE       0              KEY_SPACE          0
