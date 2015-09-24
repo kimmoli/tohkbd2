@@ -13,7 +13,7 @@
 #include <sys/types.h>
 #include "tohkeyboard.h"
 #include "toh.h"
-#include "daemonAdaptor.h"
+#include "../dbus/src/daemonAdaptor.h"
 
 #include <QtCore/QCoreApplication>
 #include <QDBusConnection>
@@ -55,12 +55,23 @@ int main(int argc, char **argv)
 
     printf("Connected to D-Bus sessionbus\n");
 
-
     Tohkbd tohkbd;
 
     /* Register to dbus systemBus */
     new Tohkbd2Adaptor(&tohkbd);
-    tohkbd.registerDBus();
+    if (!tohkbd.registerDBus())
+    {
+        printf("Failed to register to dbus\n");
+        sleep(3);
+        exit(EXIT_FAILURE);
+    }
+
+    if (!tohkbd.init())
+    {
+        printf("Failed to initialise tohkbd daemon\n");
+        sleep(3);
+        exit(EXIT_FAILURE);
+    }
 
     /* Nokia MCE display_status_ind
      * used to enable and disable keyboard when display is on or off

@@ -9,11 +9,16 @@
 #include <QtCore/QCoreApplication>
 #include <QDBusMessage>
 #include <QThread>
+#include <QTimer>
+#include <QHostAddress>
+#include <QtSystemInfo/QDeviceInfo>
+
+#include <mce/dbus-names.h>
+#include <mce/mode-names.h>
 
 #include <unistd.h>
 #include <linux/input.h>
 #include <linux/uinput.h>
-#include <QTimer>
 
 #include "tohkeyboard.h"
 #include "toh.h"
@@ -24,6 +29,9 @@
 
 static const char *SERVICE = SERVICE_NAME;
 static const char *PATH = "/";
+
+QList<int> Tohkbd::FKEYS = QList<int>() << KEY_F1 << KEY_F2 << KEY_F3 << KEY_F4 << KEY_F5 << KEY_F6
+                                        << KEY_F7 << KEY_F8 << KEY_F9 << KEY_F10 << KEY_F11 << KEY_F12;
 
 
 /* Main
@@ -46,16 +54,57 @@ Tohkbd::Tohkbd(QObject *parent) :
     taskSwitcherVisible = false;
     selfieLedOn = false;
     gpioInterruptCounter = 0;
-    actualSailfishVersion = QString();
+    verboseMode = true;
+    displayBlankPreventRequested = false;
 
     fix_CapsLock = !checkSailfishVersion("1.1.7.0");
     capsLock = false;
 
+    doNotChangeVkbLayout = checkSailfishVersion("2.0.0.0");
+
     tohkbd2user = new ComKimmoliTohkbd2userInterface("com.kimmoli.tohkbd2user", "/", QDBusConnection::sessionBus(), this);
     tohkbd2user->setTimeout(2000);
 
+    tohkbd2settingsui = new ComKimmoliTohkbd2settingsuiInterface("com.kimmoli.tohkbd2settingsui", "/", QDBusConnection::sessionBus(), this);
+    tohkbd2settingsui->setTimeout(2000);
+
     thread = new QThread();
     worker = new Worker();
+
+    backlightTimer = new QTimer(this);
+    presenceTimer = new QTimer(this);
+    repeatTimer = new QTimer(this);
+    displayBlankPreventTimer = new QTimer(this);
+    uinputif = new UinputIf();
+    uinputevpoll = new UinputEvPoll();
+    evpollThread = new QThread();
+    tca8424 = new tca8424driver(0x3b);
+    keymap = new keymapping();
+}
+
+/* Initialise. Returns false if failed
+ */
+bool Tohkbd::init()
+{
+    QString userDaemonVersion;
+
+    printf("waking up user daemon\n");
+
+    userDaemonVersion = tohkbd2user->getVersion();
+
+    /* User daemon needs to be same version as this daemon */
+    if (userDaemonVersion == APPVERSION)
+    {
+        printf("user daemon version %s\n", qPrintable(userDaemonVersion));
+    }
+    else
+    {
+        tohkbd2user->quit();
+        printf("wrong version of user daemon \"%s\"\n", qPrintable(userDaemonVersion));
+        return false;
+    }
+
+    connect(tohkbd2user, SIGNAL(physicalLayoutChanged(QString)), this, SLOT(handlePhysicalLayout(QString)));
 
     worker->moveToThread(thread);
     connect(worker, SIGNAL(gpioInterruptCaptured()), this, SLOT(handleGpioInterrupt()));
@@ -63,28 +112,24 @@ Tohkbd::Tohkbd(QObject *parent) :
     connect(thread, SIGNAL(started()), worker, SLOT(doWork()));
     connect(worker, SIGNAL(finished()), thread, SLOT(quit()), Qt::DirectConnection);
 
-    backlightTimer = new QTimer(this);
     backlightTimer->setSingleShot(true);
     connect(backlightTimer, SIGNAL(timeout()), this, SLOT(backlightTimerTimeout()));
 
-    presenceTimer = new QTimer(this);
     presenceTimer->setInterval(2000);
     presenceTimer->setSingleShot(true);
     connect(presenceTimer, SIGNAL(timeout()), this, SLOT(presenceTimerTimeout()));
 
-    repeatTimer = new QTimer(this);
     repeatTimer->setSingleShot(true);
     connect(repeatTimer, SIGNAL(timeout()), this, SLOT(repeatTimerTimeout()));
+
+    displayBlankPreventTimer->setSingleShot(true);
+    connect(displayBlankPreventTimer, SIGNAL(timeout()), this, SLOT(displayBlankPreventTimerTimeout()));
 
     /* do this automatically at startup */
     setVddState(true);
     setInterruptEnable(true);
 
-    uinputif = new UinputIf();
     uinputif->openUinputDevice();
-
-    uinputevpoll = new UinputEvPoll();
-    evpollThread = new QThread();
 
     uinputevpoll->moveToThread(evpollThread);
     connect(uinputevpoll, SIGNAL(capsLockLedChanged(bool)), this, SLOT(capsLockLedState(bool)));
@@ -94,31 +139,19 @@ Tohkbd::Tohkbd(QObject *parent) :
 
     uinputevpoll->requestPolling(uinputif->getFd());
 
-    printf("uinputevpoll->requestPolling(uinputif->getFd());\n");
-
-    tca8424 = new tca8424driver(0x3b);
-    keymap = new keymapping();
-
-    FKEYS.clear();
-    FKEYS.append(KEY_F1);
-    FKEYS.append(KEY_F2);
-    FKEYS.append(KEY_F3);
-    FKEYS.append(KEY_F4);
-    FKEYS.append(KEY_F5);
-    FKEYS.append(KEY_F6);
-    FKEYS.append(KEY_F7);
-    FKEYS.append(KEY_F8);
-    FKEYS.append(KEY_F9);
-    FKEYS.append(KEY_F10);
-    FKEYS.append(KEY_F11);
-    FKEYS.append(KEY_F12);
+    if (!keymap->setPathToLayouts(QString(tohkbd2user->getPathTo("keymaplocation"))))
+    {
+        return false;
+    }
 
     reloadSettings();
 
-    keymap->setLayout(masterLayout);
+    displayIsOn = getCurrentDisplayState();
 
     if (currentActiveLayout.isEmpty())
+    {
         changeActiveLayout(true);
+    }
 
     if (currentOrientationLock.isEmpty())
     {
@@ -128,6 +161,12 @@ Tohkbd::Tohkbd(QObject *parent) :
 
     checkKeypadPresence();
 
+    /* tell that keyboard is not attached, so maliit does not hide vkb */
+    if (!keypadIsPresent)
+    {
+        emitKeypadSlideEvent(false);
+    }
+
     connect(keymap, SIGNAL(shiftChanged()), this, SLOT(handleShiftChanged()));
     connect(keymap, SIGNAL(ctrlChanged()), this, SLOT(handleCtrlChanged()));
     connect(keymap, SIGNAL(altChanged()), this, SLOT(handleAltChanged()));
@@ -136,6 +175,15 @@ Tohkbd::Tohkbd(QObject *parent) :
     connect(keymap, SIGNAL(keyPressed(QList< QPair<int, int> >)), this, SLOT(handleKeyPressed(QList< QPair<int, int> >)));
     connect(keymap, SIGNAL(keyReleased()), this, SLOT(handleKeyReleased()));
     connect(keymap, SIGNAL(bogusDetected()), tca8424, SLOT(reset()));
+    connect(keymap, SIGNAL(setKeymapLayout(QString)), tohkbd2user, SLOT(setKeymapLayout(QString)));
+    connect(keymap, SIGNAL(setKeymapVariant(QString)), tohkbd2user, SLOT(setKeymapVariant(QString)));
+
+    QString currentPhysicalLayout = tohkbd2user->getActivePhysicalLayout();
+
+    printf("physical layout is %s\n", qPrintable(currentPhysicalLayout));
+    keymap->setLayout(currentPhysicalLayout);
+
+    return true;
 }
 
 /* Remove uinput device, stop threads and unregister from dbus
@@ -143,7 +191,7 @@ Tohkbd::Tohkbd(QObject *parent) :
 Tohkbd::~Tohkbd()
 {
     /* Restore orientation when shutting down */
-    if (forceLandscapeOrientation)
+    if (settingsMap.value("forceLandscapeOrientation").toBool())
     {
         tohkbd2user->setOrientationLock(currentOrientationLock);
     }
@@ -179,7 +227,7 @@ Tohkbd::~Tohkbd()
 
 /* Register to dbus
  */
-void Tohkbd::registerDBus()
+bool Tohkbd::registerDBus()
 {
     if (!dbusRegistered)
     {
@@ -187,19 +235,18 @@ void Tohkbd::registerDBus()
         QDBusConnection connection = QDBusConnection::systemBus();
         if (!connection.registerService(SERVICE))
         {
-            QCoreApplication::quit();
-            return;
+            return false;
         }
 
         if (!connection.registerObject(PATH, this))
         {
-            QCoreApplication::quit();
-            return;
+            return false;
         }
         dbusRegistered = true;
 
         printf("tohkbd2: succesfully registered to dbus systemBus \"%s\"\n", SERVICE);
     }
+    return dbusRegistered;
 }
 
 /* quit
@@ -221,11 +268,13 @@ QString Tohkbd::getVersion()
  */
 bool Tohkbd::setVddState(bool state)
 {
-    printf("VDD control request - turn %s\n", state ? "on" : "off");
+    if (verboseMode)
+        printf("VDD control request - turn %s\n", state ? "on" : "off");
 
     if (vddEnabled == state)
     {
-        printf("VDD state already %s\n", state ? "on" : "off");
+        if (verboseMode)
+            printf("VDD state already %s\n", state ? "on" : "off");
     }
     else if (controlVdd(state) < 0)
     {
@@ -285,23 +334,31 @@ bool Tohkbd::setInterruptEnable(bool state)
  */
 void Tohkbd::handleDisplayStatus(const QDBusMessage& msg)
 {
-    QList<QVariant> args = msg.arguments();
-    const char *turn = qPrintable(args.at(0).toString());
+    bool __previousDisplayStatus = displayIsOn;
+    QString turn = msg.arguments().at(0).toString();
 
-    printf("Display status changed to \"%s\"\n", turn);
-    if (strcmp(turn, "on") == 0)
+    if (verboseMode)
+        printf("Display status changed to \"%s\"\n", qPrintable(turn));
+
+    if (turn.compare("on", Qt::CaseInsensitive) == 0)
     {
         controlLeds(true);
         checkDoWeNeedBacklight();
         displayIsOn = true;
         slideEventEmitted = false;
     }
-    else if (strcmp(turn, "off") == 0)
+    else if (turn.compare("off", Qt::CaseInsensitive) == 0)
     {
         displayIsOn = false;
 
         backlightTimer->stop();
         controlLeds(false);
+    }
+
+    if (displayIsOn != __previousDisplayStatus)
+    {
+        /* blank preventing or cancelling */
+        displayBlankPreventTimerTimeout();
     }
 }
 
@@ -316,7 +373,8 @@ bool Tohkbd::checkKeypadPresence()
     {
         /* keyboard is being connected to base */
         /* TODO: how to detect keyboard is removed ??? */
-        printf("Presence detected, turning power on\n");
+        if (verboseMode)
+            printf("Presence detected, turning power on\n");
         QThread::msleep(150);
         setVddState(true);
         QThread::msleep(150);
@@ -328,12 +386,12 @@ bool Tohkbd::checkKeypadPresence()
 
     if (res == tca8424driver::DetectFail)
     {
-        printf("keypad not present, turning power off\n");
+        if (verboseMode)
+            printf("keypad not present, turning power off\n");
         setVddState(false);
 
         if (keypadIsPresent)
         {
-            keyboardConnectedNotification(false);
             presenceTimer->stop();
             handleKeyReleased();
         }
@@ -344,7 +402,6 @@ bool Tohkbd::checkKeypadPresence()
     {
         if (!keypadIsPresent)
         {
-            keyboardConnectedNotification(true);
             controlLeds(true);
             checkDoWeNeedBacklight();
             checkEEPROM();
@@ -363,13 +420,40 @@ bool Tohkbd::checkKeypadPresence()
 
     if (__prev_keypadPresence != keypadIsPresent)
     {
+        tohkbd2user->showKeyboardConnectionNotification(keypadIsPresent);
+
         emit keyboardConnectedChanged(keypadIsPresent);
         emitKeypadSlideEvent(keypadIsPresent);
 
         vkbLayoutIsTohkbd = keypadIsPresent;
         changeActiveLayout();
-        if (forceLandscapeOrientation)
+
+        if (settingsMap.value("forceLandscapeOrientation").toBool())
+        {
             changeOrientationLock();
+        }
+
+        if (keypadIsPresent)
+        {
+            /* If display is off, this does nothing. It is called again when display turns on */
+            displayBlankPreventTimerTimeout();
+        }
+        else // not present
+        {
+            if (settingsMap.value("keepDisplayOnWhenConnected").toBool())
+            {
+                displayBlankPreventTimerTimeout(true);
+            }
+            if (settingsMap.value("turnDisplayOffWhenRemoved").toBool() && displayIsOn)
+            {
+                /* if enabled and display is on, turn display off when keyboard is removed */
+                if (verboseMode)
+                    printf("request mce to turn display off\n");
+
+                QDBusMessage m = QDBusMessage::createMethodCall(MCE_SERVICE, MCE_REQUEST_PATH, MCE_REQUEST_IF, MCE_DISPLAY_OFF_REQ);
+                QDBusConnection::systemBus().send(m);
+            }
+        }
     }
 
     return keypadIsPresent;
@@ -389,20 +473,20 @@ void Tohkbd::controlLeds(bool restore)
         /* If backlight was on, do not turn it off */
         int i = LED_CAPSLOCK_OFF | LED_SYMLOCK_OFF | LED_SELFIE_OFF;
 
-        if (((keymap->shift->mode == modifierHandler::Sticky) && keymap->shift->pressed)
-          || ((keymap->shift->mode == modifierHandler::Lock) && keymap->shift->locked))
+        if (((keymap->shift->mode == modifierHandler::Sticky || keymap->shift->mode == modifierHandler::Cycle) && keymap->shift->pressed)
+          || ((keymap->shift->mode == modifierHandler::Lock || keymap->shift->mode == modifierHandler::Cycle) && keymap->shift->locked))
             i |= LED_SYMLOCK_ON;
 
-        if (((keymap->ctrl->mode == modifierHandler::Sticky) && keymap->ctrl->pressed)
-          || ((keymap->ctrl->mode == modifierHandler::Lock) && keymap->ctrl->locked))
+        if (((keymap->ctrl->mode == modifierHandler::Sticky || keymap->ctrl->mode == modifierHandler::Cycle) && keymap->ctrl->pressed)
+          || ((keymap->ctrl->mode == modifierHandler::Lock || keymap->ctrl->mode == modifierHandler::Cycle) && keymap->ctrl->locked))
             i |= LED_SYMLOCK_ON;
 
-        if (((keymap->alt->mode == modifierHandler::Sticky) && keymap->alt->pressed)
-          || ((keymap->alt->mode == modifierHandler::Lock) && keymap->alt->locked))
+        if (((keymap->alt->mode == modifierHandler::Sticky || keymap->alt->mode == modifierHandler::Cycle) && keymap->alt->pressed)
+          || ((keymap->alt->mode == modifierHandler::Lock || keymap->alt->mode == modifierHandler::Cycle) && keymap->alt->locked))
             i |= LED_SYMLOCK_ON;
 
-        if (((keymap->sym->mode == modifierHandler::Sticky) && keymap->sym->pressed)
-          || ((keymap->sym->mode == modifierHandler::Lock) && keymap->sym->locked))
+        if (((keymap->sym->mode == modifierHandler::Sticky || keymap->sym->mode == modifierHandler::Cycle) && keymap->sym->pressed)
+          || ((keymap->sym->mode == modifierHandler::Lock || keymap->sym->mode == modifierHandler::Cycle) && keymap->sym->locked))
             i |= LED_SYMLOCK_ON;
 
         if (capsLock)
@@ -411,7 +495,7 @@ void Tohkbd::controlLeds(bool restore)
         if (selfieLedOn)
             i |= LED_SELFIE_ON;
 
-        if (forceBacklightOn)
+        if (settingsMap.value("forceBacklightOn").toBool())
             i |= LED_BACKLIGHT_ON;
 
         tca8424->setLeds(i);
@@ -476,7 +560,8 @@ void Tohkbd::handleGpioInterrupt()
             }
             else
             {
-                printf("Something wrong here now, retrying... %d\n", retries);
+                if (verboseMode)
+                    printf("Something wrong here now, retrying... %d\n", retries);
                 retries--;
                 QThread::msleep(100);
             }
@@ -533,6 +618,10 @@ void Tohkbd::handleKeyPressed(QList< QPair<int, int> > keyCode)
         {
             switch (keyCode.at(0).first)
             {
+                /* No mapping for this key */
+                case KEY_TOH_NONE:
+                    break;
+
                 /* Sym-Int takes a screenshot */
                 case KEY_TOH_SCREENSHOT:
                     tohkbd2user->takeScreenShot();
@@ -545,7 +634,7 @@ void Tohkbd::handleKeyPressed(QList< QPair<int, int> > keyCode)
                     break;
 
                 case KEY_TOH_BACKLIGHT:
-                    forceBacklightOn = !forceBacklightOn;
+                    settingsMap.insert("forceBacklightOn", !settingsMap.value("forceBacklightOn").toBool());
                     checkDoWeNeedBacklight();
                     break;
 
@@ -577,11 +666,21 @@ void Tohkbd::handleKeyPressed(QList< QPair<int, int> > keyCode)
 
         if (FKEYS.contains(keyCode.at(0).first))
         {
+            /* Ctrl-Sym-F1 is Help */
+            if (keyCode.at(0).first == KEY_F1 && keymap->ctrl->pressed)
+            {
+                tohkbd2settingsui->showHelp();
+
+                keyIsPressed = true;
+                return;
+            }
+
             QString cmd = applicationShortcuts[keyCode.at(0).first];
 
             if (!cmd.isEmpty())
             {
-                printf("Requesting user daemon to start %s\n", qPrintable(cmd));
+                if (verboseMode)
+                    printf("Requesting user daemon to start %s\n", qPrintable(cmd));
 
                 tohkbd2user->launchApplication(cmd);
 
@@ -595,7 +694,8 @@ void Tohkbd::handleKeyPressed(QList< QPair<int, int> > keyCode)
 
         if (keymap->alt->pressed && keymap->ctrl->pressed && keyCode.at(0).first == KEY_DELETE)
         {
-            printf("Requesting user daemon to reboot with remorse.\n");
+            if (verboseMode)
+                printf("Requesting user daemon to reboot with remorse.\n");
 
             tohkbd2user->actionWithRemorse(ACTION_REBOOT_REMORSE);
 
@@ -607,7 +707,8 @@ void Tohkbd::handleKeyPressed(QList< QPair<int, int> > keyCode)
 
         if (keymap->alt->pressed && keymap->ctrl->pressed && keyCode.at(0).first == KEY_BACKSPACE)
         {
-            printf("Requesting user daemon to restart lipstick with remorse.\n");
+            if (verboseMode)
+                printf("Requesting user daemon to restart lipstick with remorse.\n");
 
             tohkbd2user->actionWithRemorse(ACTION_RESTART_LIPSTICK_REMORSE);
 
@@ -626,9 +727,14 @@ void Tohkbd::handleKeyPressed(QList< QPair<int, int> > keyCode)
                                           || (keyCode.at(i).first >= KEY_A && keyCode.at(i).first <= KEY_L)
                                           || (keyCode.at(i).first >= KEY_Z && keyCode.at(i).first <= KEY_M) ));
 
-            /* Some of the keys require shift pressed to get correct symbol */
             if (keyCode.at(i).second & FORCE_COMPOSE)
+            {
                 uinputif->sendUinputKeyPress(KEY_COMPOSE, 1);
+                QThread::msleep(KEYREPEAT_RATE);
+                uinputif->sendUinputKeyPress(KEY_COMPOSE, 0);
+                uinputif->synUinputDevice();
+            }
+
             if ((keyCode.at(i).second & FORCE_RIGHTALT))
                 uinputif->sendUinputKeyPress(KEY_RIGHTALT, 1);
             if ((keyCode.at(i).second & FORCE_SHIFT) || tweakCapsLock)
@@ -651,8 +757,6 @@ void Tohkbd::handleKeyPressed(QList< QPair<int, int> > keyCode)
                 uinputif->sendUinputKeyPress(KEY_LEFTSHIFT, 0);
             if ((keyCode.at(i).second & FORCE_RIGHTALT))
                 uinputif->sendUinputKeyPress(KEY_RIGHTALT, 0);
-            if (keyCode.at(i).second & FORCE_COMPOSE)
-                uinputif->sendUinputKeyPress(KEY_COMPOSE, 0);
         }
     }
 
@@ -662,7 +766,8 @@ void Tohkbd::handleKeyPressed(QList< QPair<int, int> > keyCode)
     lastKeyCode = keyCode;
 
     /* Repeat delay first, then repeat rate */
-    repeatTimer->start(keyRepeat ? (keyRepeatRate-(KEYREPEAT_RATE-1)) : keyRepeatDelay);
+    repeatTimer->start(keyRepeat ? (settingsMap.value("keyRepeatRate").toInt()-(KEYREPEAT_RATE-1)) :
+                                    settingsMap.value("keyRepeatDelay").toInt());
     keyIsPressed = true;
 }
 
@@ -675,7 +780,8 @@ void Tohkbd::repeatTimerTimeout()
         /* Check is the interrupt stuck down on first repeat timer timeout*/
         if (readOneLineFromFile("/sys/class/gpio/gpio" GPIO_INT "/value") == "0")
         {
-            printf("repeatTimerTimeout: interrupt is active, trying to handle it now.\n");
+            if (verboseMode)
+                printf("repeatTimerTimeout: interrupt is active, trying to handle it now.\n");
             handleGpioInterrupt();
             return;
         }
@@ -792,17 +898,18 @@ void Tohkbd::checkDoWeNeedBacklight()
     if (!vddEnabled) /* No power applied, get out from here */
         return;
 
-    if (forceBacklightOn)
+    if (settingsMap.value("forceBacklightOn").toBool())
     {
         tca8424->setLeds(LED_BACKLIGHT_ON);
     }
-    else if (backlightEnabled)
+    else if (settingsMap.value("backlightEnabled").toBool())
     {
         if (!backlightTimer->isActive())
         {
-            if (readOneLineFromFile("/sys/devices/virtual/input/input11/als_lux").toInt() < backlightLuxThreshold)
+            if (readOneLineFromFile("/sys/devices/virtual/input/input11/als_lux").toInt() < settingsMap.value("backlightLuxThreshold").toInt())
             {
-                printf("backlight on\n");
+                if (verboseMode)
+                    printf("backlight on\n");
 
                 tca8424->setLeds(LED_BACKLIGHT_ON);
                 backlightTimer->start();
@@ -831,8 +938,41 @@ void Tohkbd::backlightTimerTimeout()
     if (!vddEnabled) /* No power applied, get out from here */
         return;
 
-    if (!forceBacklightOn)
+    if (!settingsMap.value("forceBacklightOn").toBool())
         tca8424->setLeds(LED_BACKLIGHT_OFF);
+}
+
+/*
+ * Display blank prevention.
+ * If enabled, keyboard attached and display is on, request blank prevent from mce and restart timer,
+ * otherwise, cancel request
+ */
+void Tohkbd::displayBlankPreventTimerTimeout(bool forceCancel)
+{
+    if (settingsMap.value("keepDisplayOnWhenConnected").toBool() && displayIsOn && keypadIsPresent && !forceCancel)
+    {
+        if (verboseMode)
+            printf("requesting mce to prevent blanking\n");
+
+        QDBusMessage m = QDBusMessage::createMethodCall(MCE_SERVICE, MCE_REQUEST_PATH, MCE_REQUEST_IF, MCE_PREVENT_BLANK_REQ);
+        QDBusConnection::systemBus().send(m);
+        displayBlankPreventTimer->start(30000);
+        displayBlankPreventRequested = true;
+    }
+    else if (displayBlankPreventRequested || forceCancel)
+    {
+        if (verboseMode)
+            printf("cancelling blanking prevent request %s\n", forceCancel ? "(forced)" : "");
+
+        if (forceCancel)
+        {
+            displayBlankPreventTimer->stop();
+        }
+
+        QDBusMessage m = QDBusMessage::createMethodCall(MCE_SERVICE, MCE_REQUEST_PATH, MCE_REQUEST_IF, MCE_CANCEL_PREVENT_BLANK_REQ);
+        QDBusConnection::systemBus().send(m);
+        displayBlankPreventRequested = false;
+    }
 }
 
 /* Change virtual keyboard active layout,
@@ -842,9 +982,13 @@ void Tohkbd::backlightTimerTimeout()
  */
 void Tohkbd::changeActiveLayout(bool justGetIt)
 {
+    if (doNotChangeVkbLayout)
+        return;
+
     QString __currentActiveLayout = tohkbd2user->getActiveLayout();
 
-    printf("Current layout is %s\n", qPrintable(__currentActiveLayout));
+    if (verboseMode)
+        printf("Current layout is %s\n", qPrintable(__currentActiveLayout));
 
     if (__currentActiveLayout.contains("harbour-tohkbd2.qml") && vkbLayoutIsTohkbd)
     {
@@ -867,12 +1011,14 @@ void Tohkbd::changeActiveLayout(bool justGetIt)
 
     if (vkbLayoutIsTohkbd)
     {
-        printf("Changing to tohkbd\n");
+        if (verboseMode)
+            printf("Changing to tohkbd\n");
         tohkbd2user->setActiveLayout("harbour-tohkbd2.qml");
     }
     else if (currentActiveLayout.contains("qml"))
     {
-        printf("Changing to %s\n", qPrintable(currentActiveLayout));
+        if (verboseMode)
+            printf("Changing to %s\n", qPrintable(currentActiveLayout));
         tohkbd2user->setActiveLayout(currentActiveLayout);
     }
 }
@@ -882,9 +1028,10 @@ void Tohkbd::changeActiveLayout(bool justGetIt)
  */
 void Tohkbd::changeOrientationLock(bool justGetIt)
 {
-    QString __currentOrientationLock = tohkbd2user->call(QDBus::AutoDetect, "getOrientationLock").arguments().at(0).toString();
+    QString __currentOrientationLock = tohkbd2user->getOrientationLock();
 
-    printf("Current orientation lock is %s\n", qPrintable(__currentOrientationLock));
+    if (verboseMode)
+        printf("Current orientation lock is %s\n", qPrintable(__currentOrientationLock));
 
     /* Keyboard is now attached, store original orientation */
     if (keypadIsPresent || justGetIt)
@@ -911,7 +1058,8 @@ void Tohkbd::changeOrientationLock(bool justGetIt)
 
 void Tohkbd::emitKeypadSlideEvent(bool openKeypad)
 {
-    printf("SW_KEYPAD_SLIDE %s\n", openKeypad ? "open" : "close");
+    if (verboseMode)
+        printf("SW_KEYPAD_SLIDE %s\n", openKeypad ? "open" : "close");
 
     uinputif->sendUinputSwitch(SW_KEYPAD_SLIDE, openKeypad ? 1 : 0);
     uinputif->synUinputDevice();
@@ -927,7 +1075,8 @@ void Tohkbd::presenceTimerTimeout()
     {
         if (readOneLineFromFile("/sys/class/gpio/gpio" GPIO_INT "/value") == "0")
         {
-            printf("checkKeypadPresence: interrupt is active, trying to handle it now.\n");
+            if (verboseMode)
+                printf("checkKeypadPresence: interrupt is active, trying to handle it now.\n");
             handleGpioInterrupt();
         }
     }
@@ -938,6 +1087,10 @@ void Tohkbd::presenceTimerTimeout()
 void Tohkbd::reloadSettings()
 {
     QSettings settings(QSettings::SystemScope, "harbour-tohkbd2", "tohkbd2");
+
+    settings.beginGroup("generalsettings");
+    setVerboseMode(settings.value("verboseMode", VERBOSE_MODE_ENABLED).toBool());
+    settings.endGroup();
 
     settings.beginGroup("vkb");
     currentActiveLayout = settings.value("activeLayout", "").toString();
@@ -960,7 +1113,8 @@ void Tohkbd::reloadSettings()
 
     for (int i = 0 ; i<FKEYS.length() ; i++)
     {
-        printf("Shortcut F%d : %s\n", i+1, qPrintable(applicationShortcuts[FKEYS.at(i)]));
+        if (verboseMode)
+            printf("Shortcut F%d : %s\n", i+1, qPrintable(applicationShortcuts[FKEYS.at(i)]));
         /* Write them back, as we need default values there in settings app */
         settings.setValue(QString("KEY_F%1").arg(i+1), applicationShortcuts[FKEYS.at(i)]);
     }
@@ -970,47 +1124,32 @@ void Tohkbd::reloadSettings()
     currentOrientationLock = settings.value("originalOrientation", QString()).toString();
     settings.endGroup();
 
-    settings.beginGroup("layoutSettings");
-    masterLayout = settings.value("masterLayout", QString(MASTER_LAYOUT)).toString();
-    settings.endGroup();
-
     settings.beginGroup("generalsettings");
     backlightTimer->setInterval(settings.value("backlightTimeout", BACKLIGHT_TIMEOUT).toInt());
-    backlightLuxThreshold = settings.value("backlightLuxThreshold", BACKLIGHT_LUXTHRESHOLD).toInt();
-    backlightEnabled = settings.value("backlightEnabled", BACKLIGHT_ENABLED).toBool();
-    keyRepeatDelay = settings.value("keyRepeatDelay", KEYREPEAT_DELAY).toInt();
-    keyRepeatRate = settings.value("keyRepeatRate", KEYREPEAT_RATE).toInt();
+    settingsMap.insert("backlightLuxThreshold", settings.value("backlightLuxThreshold", BACKLIGHT_LUXTHRESHOLD).toInt());
+    settingsMap.insert("backlightEnabled", settings.value("backlightEnabled", BACKLIGHT_ENABLED).toBool());
+    settingsMap.insert("keyRepeatDelay", settings.value("keyRepeatDelay", KEYREPEAT_DELAY).toInt());
+    settingsMap.insert("keyRepeatRate", settings.value("keyRepeatRate", KEYREPEAT_RATE).toInt());
 
-    if (settings.value("stickyShiftEnabled", STICKY_SHIFT_ENABLED).toBool())
-        keymap->shift->setMode(modifierHandler::Sticky);
-    else if (settings.value("lockingShiftEnabled", LOCKING_SHIFT_ENABLED).toBool())
-        keymap->shift->setMode(modifierHandler::Lock);
-    else
-        keymap->shift->setMode(modifierHandler::Normal);
+    keymap->shift->setMode(modifierHandler::toKeyMode(settings.value("modifierShiftMode", MODIFIER_SHIFT_MODE).toString()));
+    keymap->ctrl->setMode(modifierHandler::toKeyMode(settings.value("modifierCtrlMode", MODIFIER_CTRL_MODE).toString()));
+    keymap->alt->setMode(modifierHandler::toKeyMode(settings.value("modifierAltMode", MODIFIER_ALT_MODE).toString()));
+    keymap->sym->setMode(modifierHandler::toKeyMode(settings.value("modifierSymMode", MODIFIER_SYM_MODE).toString()));
 
-    if (settings.value("stickyCtrlEnabled", STICKY_CTRL_ENABLED).toBool())
-        keymap->ctrl->setMode(modifierHandler::Sticky);
-    else if (settings.value("lockingCtrlEnabled", LOCKING_CTRL_ENABLED).toBool())
-        keymap->ctrl->setMode(modifierHandler::Lock);
-    else
-        keymap->ctrl->setMode(modifierHandler::Normal);
+    /* In case of update, we will ignore previous settings... brutally reset them to defaults */
+    settings.remove("stickyShiftEnabled");
+    settings.remove("lockingShiftEnabled");
+    settings.remove("stickyCtrlEnabled");
+    settings.remove("lockingCtrlEnabled");
+    settings.remove("stickyAltEnabled");
+    settings.remove("lockingAltEnabled");
+    settings.remove("stickySymEnabled");
+    settings.remove("lockingSymEnabled");
 
-    if (settings.value("stickyAltEnabled", STICKY_ALT_ENABLED).toBool())
-        keymap->alt->setMode(modifierHandler::Sticky);
-    else if (settings.value("lockingAltEnabled", LOCKING_ALT_ENABLED).toBool())
-        keymap->alt->setMode(modifierHandler::Lock);
-    else
-        keymap->alt->setMode(modifierHandler::Normal);
-
-    if (settings.value("stickySymEnabled", STICKY_SYM_ENABLED).toBool())
-        keymap->sym->setMode(modifierHandler::Sticky);
-    else if (settings.value("lockingSymEnabled", LOCKING_SYM_ENABLED).toBool())
-        keymap->sym->setMode(modifierHandler::Lock);
-    else
-        keymap->sym->setMode(modifierHandler::Normal);
-
-    forceLandscapeOrientation = settings.value("forceLandscapeOrientation", FORCE_LANDSCAPE_ORIENTATION).toBool();
-    forceBacklightOn = settings.value("forceBacklightOn", FORCE_BACKLIGHT_ON).toBool();
+    settingsMap.insert("forceLandscapeOrientation", settings.value("forceLandscapeOrientation", FORCE_LANDSCAPE_ORIENTATION).toBool());
+    settingsMap.insert("forceBacklightOn", settings.value("forceBacklightOn", FORCE_BACKLIGHT_ON).toBool());
+    settingsMap.insert("turnDisplayOffWhenRemoved", settings.value("turnDisplayOffWhenRemoved", TURN_DISPLAY_OFF_WHEN_REMOVED).toBool());
+    settingsMap.insert("keepDisplayOnWhenConnected", settings.value("keepDisplayOnWhenConnected", KEEP_DISPLAY_ON_WHEN_CONNECTED).toBool());
     settings.endGroup();
 }
 
@@ -1038,7 +1177,8 @@ void Tohkbd::saveOrientation()
  */
 void Tohkbd::setShortcut(const QString &key, const QString &appPath)
 {
-    printf("shortcut %s = \"%s\"\n", qPrintable(key), qPrintable(appPath));
+    if (verboseMode)
+        printf("shortcut %s = \"%s\"\n", qPrintable(key), qPrintable(appPath));
 
     if (key.startsWith("F") && (appPath.contains(".desktop") || appPath.isEmpty()))
     {
@@ -1085,159 +1225,65 @@ void Tohkbd::setShortcutsToDefault()
 
 /* Set integer setting and save it to settings
  */
-void Tohkbd::setSettingInt(const QString &key, const int &value)
+void Tohkbd::setSetting(const QString &key, const QDBusVariant &value)
+//void Tohkbd::setSettingInt(const QString &key, const int &value)
 {
     QSettings settings(QSettings::SystemScope, "harbour-tohkbd2", "tohkbd2");
 
-    if (key == "backlightTimeout" && value >= 100 && value <= 30000)
-    {
-        settings.beginGroup("generalsettings");
-        settings.setValue("backlightTimeout", value);
-        backlightTimer->setInterval(value);
-        settings.endGroup();
-    }
-    else if (key == "backlightLuxThreshold" && value >= 1 && value <= 50)
-    {
-        settings.beginGroup("generalsettings");
-        settings.setValue("backlightLuxThreshold", value);
-        backlightLuxThreshold = value;
-        settings.endGroup();
-    }
-    else if (key == "keyRepeatDelay" && value >= 50 && value <= 500)
-    {
-        settings.beginGroup("generalsettings");
-        settings.setValue("keyRepeatDelay", value);
-        keyRepeatDelay = value;
-        settings.endGroup();
-    }
-    else if (key == "keyRepeatRate" && value >= 25 && value <= 100)
-    {
-        settings.beginGroup("generalsettings");
-        settings.setValue("keyRepeatRate", value);
-        keyRepeatRate = value;
-        settings.endGroup();
-    }
-    else if (key == "backlightEnabled" && (value == 0 || value == 1))
-    {
-        settings.beginGroup("generalsettings");
-        settings.setValue("backlightEnabled", (value == 1));
-        backlightEnabled = (value == 1);
-        settings.endGroup();
-        checkDoWeNeedBacklight();
-    }
-    else if (key == "forceBacklightOn" && (value == 0 || value == 1))
-    {
-        settings.beginGroup("generalsettings");
-        settings.setValue("forceBacklightOn", (value == 1));
-        forceBacklightOn = (value == 1);
-        settings.endGroup();
-        checkDoWeNeedBacklight();
-    }
-    else if (key == "forceLandscapeOrientation" && (value == 0 || value == 1))
-    {
-        settings.beginGroup("generalsettings");
-        settings.setValue("forceLandscapeOrientation", (value == 1));
-        forceLandscapeOrientation = (value == 1);
-        settings.endGroup();
+    if (verboseMode)
+        printf("Setting %s to %s\n", qPrintable(key), qPrintable(value.variant().toString()));
 
-        if (value == 0 && !currentOrientationLock.isEmpty())
+    settingsMap.insert(key, value.variant());
+
+    settings.beginGroup("generalsettings");
+    settings.setValue(key, value.variant());
+    settings.endGroup();
+
+    if (key == "verboseMode")
+    {
+        setVerboseMode(value.variant().toBool());
+    }
+    else if (key == "backlightTimeout")
+    {
+        backlightTimer->setInterval(settingsMap.value(key).toInt());
+    }
+    else if (key == "backlightEnabled" || key == "forceBacklightOn")
+    {
+        checkDoWeNeedBacklight();
+    }
+    else if (key == "forceLandscapeOrientation")
+    {
+        if (!value.variant().toBool() && !currentOrientationLock.isEmpty())
         {
             tohkbd2user->setOrientationLock(currentOrientationLock);
         }
-        else if (value == 1 && keypadIsPresent)
+        else if (value.variant().toBool())
         {
             tohkbd2user->setOrientationLock("landscape");
         }
     }
-    else if (key == "stickyShiftEnabled" && (value == 0 || value == 1))
+    else if (key == "keepDisplayOnWhenConnected")
     {
-        settings.beginGroup("generalsettings");
-        settings.setValue("stickyShiftEnabled", (value == 1));
-        keymap->shift->setMode((value == 1) ? modifierHandler::Sticky : modifierHandler::Normal);
-        settings.endGroup();
+        displayBlankPreventTimerTimeout();
     }
-    else if (key == "stickyCtrlEnabled" && (value == 0 || value == 1))
+    else if (key == "modifierShiftMode")
     {
-        settings.beginGroup("generalsettings");
-        settings.setValue("stickyCtrlEnabled", (value == 1));
-        keymap->ctrl->setMode((value == 1) ? modifierHandler::Sticky : modifierHandler::Normal);
-        settings.endGroup();
+        keymap->shift->setMode(modifierHandler::toKeyMode(value.variant().toString()));
     }
-    else if (key == "stickyAltEnabled" && (value == 0 || value == 1))
+    else if (key == "modifierCtrlMode")
     {
-        settings.beginGroup("generalsettings");
-        settings.setValue("stickyAltEnabled", (value == 1));
-        keymap->alt->setMode((value == 1) ? modifierHandler::Sticky : modifierHandler::Normal);
-        settings.endGroup();
+        keymap->ctrl->setMode(modifierHandler::toKeyMode(value.variant().toString()));
     }
-    else if (key == "stickySymEnabled" && (value == 0 || value == 1))
+    else if (key == "modifierAltMode")
     {
-        settings.beginGroup("generalsettings");
-        settings.setValue("stickySymEnabled", (value == 1));
-        keymap->sym->setMode((value == 1) ? modifierHandler::Sticky : modifierHandler::Normal);
-        settings.endGroup();
+        keymap->alt->setMode(modifierHandler::toKeyMode(value.variant().toString()));
     }
-    else if (key == "lockingShiftEnabled" && (value == 0 || value == 1))
+    if (key == "modifierSymMode")
     {
-        settings.beginGroup("generalsettings");
-        settings.setValue("lockingShiftEnabled", (value == 1));
-        keymap->shift->setMode((value == 1) ? modifierHandler::Lock : modifierHandler::Normal);
-        settings.endGroup();
-    }
-    else if (key == "lockingCtrlEnabled" && (value == 0 || value == 1))
-    {
-        settings.beginGroup("generalsettings");
-        settings.setValue("lockingCtrlEnabled", (value == 1));
-        keymap->ctrl->setMode((value == 1) ? modifierHandler::Lock : modifierHandler::Normal);
-        settings.endGroup();
-    }
-    else if (key == "lockingAltEnabled" && (value == 0 || value == 1))
-    {
-        settings.beginGroup("generalsettings");
-        settings.setValue("lockingAltEnabled", (value == 1));
-        keymap->alt->setMode((value == 1) ? modifierHandler::Lock : modifierHandler::Normal);
-        settings.endGroup();
-    }
-    else if (key == "lockingSymEnabled" && (value == 0 || value == 1))
-    {
-        settings.beginGroup("generalsettings");
-        settings.setValue("lockingSymEnabled", (value == 1));
-        keymap->sym->setMode((value == 1) ? modifierHandler::Lock : modifierHandler::Normal);
-        settings.endGroup();
+        keymap->sym->setMode(modifierHandler::toKeyMode(value.variant().toString()));
     }
 
     keymap->releaseStickyModifiers(true);
-}
-
-void Tohkbd::setSettingString(const QString &key, const QString &value)
-{
-    QSettings settings(QSettings::SystemScope, "harbour-tohkbd2", "tohkbd2");
-
-    if (key == "masterLayout")
-    {
-        settings.beginGroup("layoutsettings");
-        settings.setValue(key, value);
-        settings.endGroup();
-
-        masterLayout = value;
-        keymap->setLayout(masterLayout);
-    }
-}
-
-/* Tell user daemon to show notification */
-void Tohkbd::keyboardConnectedNotification(bool connected)
-{
-    tohkbd2user->showKeyboardConnectionNotification(connected);
-}
-
-/** DBUS Test methods */
-
-/* dbus-send --system --print-reply --dest=com.kimmoli.tohkbd2 / com.kimmoli.tohkbd2.fakeKeyPress array:byte:0x00,0x00,0x00,0x00,0x00,0xA3,0x00,0x00,0x00,0x00,0x00
- */
-void Tohkbd::fakeInputReport(const QByteArray &data)
-{
-    printf("input report from dbus\n");
-    keymap->process(data);
 }
 
 /* Checks contents of base and keyboard EEPROM
@@ -1298,47 +1344,17 @@ bool Tohkbd::tohcoreBind(bool bind)
  */
 bool Tohkbd::checkSailfishVersion(QString versionToCompare)
 {
-    QString actualVersion = "0.0.0.0";
+    QDeviceInfo deviceInfo;
+    QString sailfishVersion = deviceInfo.version(QDeviceInfo::Os);
 
-    if (actualSailfishVersion.isEmpty())
-    {
-        QFile inputFile( "/etc/sailfish-release" );
+    if (verboseMode)
+        printf("Sailfish version %s\n", qPrintable(sailfishVersion));
 
-        if ( inputFile.open( QIODevice::ReadOnly | QIODevice::Text ) )
-        {
-           QTextStream in( &inputFile );
-
-           while (not in.atEnd())
-           {
-               QString line = in.readLine();
-               if (line.startsWith("VERSION_ID="))
-               {
-                   actualVersion = line.split('=').at(1);
-                   break;
-               }
-           }
-           inputFile.close();
-        }
-        actualSailfishVersion = actualVersion;
-
-        printf("Sailfish version %s\n", qPrintable(actualSailfishVersion));
-    }
-
-    QStringList avList = actualSailfishVersion.split(".");
-    QStringList vList = versionToCompare.split(".");
-
-    if (avList.size() == 4 && vList.size() == 4)
-    {
-        long avLong = (avList.at(0).toInt() << 24) | (avList.at(1).toInt() << 16) | (avList.at(2).toInt() << 8) | avList.at(3).toInt();
-        long vLong = (vList.at(0).toInt() << 24) | (vList.at(1).toInt() << 16) | (vList.at(2).toInt() << 8) | vList.at(3).toInt();
-
-        return (avLong >= vLong);
-    }
-    else
-    {
-        printf("Sailfish version check failed!\n");
-        return false;
-    }
+    /* The version number is form 1.2.3.4 which is like IPv4 address
+     * Following uses QHostAddress.toIPv4Address() to convert
+     * version strings to comparable numbers */
+    return (QHostAddress(sailfishVersion).toIPv4Address()
+            >= QHostAddress(versionToCompare).toIPv4Address());
 }
 
 /* UinputEvPoll will emit signal if caps lock led state is seen in evdev
@@ -1351,7 +1367,8 @@ void Tohkbd::capsLockLedState(bool state)
 
         if (displayIsOn)
         {
-            printf("caps lock led state changed to %s\n", state ? "on" : "off");
+            if (verboseMode)
+                printf("caps lock led state changed to %s\n", state ? "on" : "off");
 
             if (capsLock)
             {
@@ -1363,4 +1380,59 @@ void Tohkbd::capsLockLedState(bool state)
             }
         }
     }
+}
+
+/* Slot connected to userdaemon signal telling physical layout has changed
+ */
+void Tohkbd::handlePhysicalLayout(const QString &layout)
+{
+    if (verboseMode)
+        printf("physcial layout changed to \"%s\"\n", qPrintable(layout));
+
+    if (!keymap->setLayout(layout))
+    {
+        /* Inform the user that selected layout is not supported... */
+        tohkbd2user->showUnsupportedLayoutNotification();
+    }
+}
+
+/* DBUS method for forcing the keymap loading
+ * if "layout" is empty, get current layout from dconf and try to reload it
+ */
+void Tohkbd::forceKeymapReload(const QString &layout)
+{
+    QString toLayout = layout.isEmpty() ? QString(tohkbd2user->getActivePhysicalLayout()) : layout;
+
+    printf("forced keymap reload \"%s\"\n", qPrintable(toLayout));
+
+    if (!keymap->setLayout(toLayout, true))
+    {
+        tohkbd2user->showUnsupportedLayoutNotification();
+    }
+}
+
+void Tohkbd::setVerboseMode(bool verbose)
+{
+    verboseMode = verbose;
+
+    keymap->verboseMode = verbose;
+    keymap->shift->verboseMode = verbose;
+    keymap->ctrl->verboseMode = verbose;
+    keymap->alt->verboseMode = verbose;
+    keymap->sym->verboseMode = verbose;
+}
+
+/*
+ * Gets current display state from mce
+ * returns false if off, else true
+ */
+bool Tohkbd::getCurrentDisplayState()
+{
+    QDBusMessage m = QDBusMessage::createMethodCall(MCE_SERVICE, MCE_REQUEST_PATH, MCE_REQUEST_IF,  MCE_DISPLAY_STATUS_GET);
+    QString reply = QDBusConnection::systemBus().call(m).arguments().at(0).toString();
+
+    if (verboseMode)
+        printf("Display status is \"%s\"\n", qPrintable(reply));
+
+    return (reply.compare(MCE_DISPLAY_OFF_STRING) != 0);
 }

@@ -10,28 +10,89 @@
 #include <QSettings>
 #include <QDebug>
 #include <QtDBus/QtDBus>
-#include <algorithm>
-
-#include "../../daemon/src/defaultSettings.h"
-
+#include <QtSystemInfo/QDeviceInfo>
+#include <QtAlgorithms>
 #include <mlite5/MDesktopEntry>
-
 #include <linux/input.h>
+#include "../../daemon/src/defaultSettings.h"
+#include "../dbus/src/settingsuiAdaptor.h"
+
+static const char *SERVICE = SERVICE_NAME;
+static const char *PATH = "/";
+
 
 SettingsUi::SettingsUi(QObject *parent) :
     QObject(parent)
 {
+    m_dbusRegistered = false;
+
+    new Tohkbd2settingsuiAdaptor(this);
+
+    registerDBus();
+
     tohkbd2daemon = new ComKimmoliTohkbd2Interface("com.kimmoli.tohkbd2", "/", QDBusConnection::systemBus(), this);
     tohkbd2daemon->setTimeout(2000);
     tohkbd2user = new ComKimmoliTohkbd2userInterface("com.kimmoli.tohkbd2user", "/", QDBusConnection::sessionBus(), this);
     tohkbd2user->setTimeout(2000);
+
+    connect(tohkbd2user, SIGNAL(physicalLayoutChanged(QString)), this, SLOT(handlePhysicalLayoutChange(QString)));
+
+    layoutToLanguage.insert("cz" ,"Čeština");
+    layoutToLanguage.insert("dk" ,"Dansk");
+    layoutToLanguage.insert("de" ,"Deutsch");
+    layoutToLanguage.insert("ee" ,"Eesti");
+    layoutToLanguage.insert("us" ,"English");
+    layoutToLanguage.insert("es" ,"Español");
+    layoutToLanguage.insert("fr" ,"Français");
+    layoutToLanguage.insert("it" ,"Italiano");
+    layoutToLanguage.insert("nl" ,"Nederlands");
+    layoutToLanguage.insert("no" ,"Norsk");
+    layoutToLanguage.insert("pl" ,"Polski");
+    layoutToLanguage.insert("pt" ,"Português");
+    layoutToLanguage.insert("fi" ,"Suomi");
+    layoutToLanguage.insert("se" ,"Svenska");
+    layoutToLanguage.insert("tr" ,"Türkçe");
+    layoutToLanguage.insert("kz" ,"Қазақ");
+    layoutToLanguage.insert("ru" ,"Русский");
 
     emit versionChanged();
 }
 
 SettingsUi::~SettingsUi()
 {
+    if (m_dbusRegistered)
+    {
+        QDBusConnection connection = QDBusConnection::sessionBus();
+        connection.unregisterObject(PATH);
+        connection.unregisterService(SERVICE);
+
+        printf("tohkbd2-settingsui: unregistered from dbus sessionBus\n");
+    }
 }
+
+void SettingsUi::registerDBus()
+{
+    if (!m_dbusRegistered)
+    {
+        // DBus
+        QDBusConnection connection = QDBusConnection::sessionBus();
+        if (!connection.registerService(SERVICE))
+        {
+            QCoreApplication::quit();
+            return;
+        }
+
+        if (!connection.registerObject(PATH, this))
+        {
+            QCoreApplication::quit();
+            return;
+        }
+        m_dbusRegistered = true;
+
+        printf("tohkbd2-settingsui: succesfully registered to dbus sessionBus \"%s\"\n", SERVICE);
+    }
+}
+
 
 QString SettingsUi::readVersion()
 {
@@ -61,7 +122,7 @@ QVariantList SettingsUi::getApplications()
     {
         MDesktopEntry app(list.at(i).absoluteFilePath());
 
-        if (!app.hidden() && !app.icon().isEmpty() && !app.noDisplay() && !app.notShowIn().contains("X-Meego"))
+        if (!app.hidden() && !app.icon().isEmpty() && !app.noDisplay() && !app.notShowIn().contains("X-Meego", Qt::CaseInsensitive))
         {
             map.clear();
             map.insert("filePath", list.at(i).absoluteFilePath());
@@ -80,7 +141,7 @@ QVariantList SettingsUi::getApplications()
     }
 
     // sort them by application name
-    std::sort(tmp.begin(), tmp.end(), appNameLessThan);
+    qSort(tmp.begin(), tmp.end(), appNameLessThan);
 
     return tmp;
 }
@@ -90,8 +151,8 @@ QVariantMap SettingsUi::getCurrentSettings()
     QVariantMap map;
 
     QSettings settings("harbour-tohkbd2", "tohkbd2");
-    settings.beginGroup("generalsettings");
 
+    settings.beginGroup("generalsettings");
     map.insert("backlightTimeout", settings.value("backlightTimeout", BACKLIGHT_TIMEOUT).toInt());
     map.insert("backlightLuxThreshold", settings.value("backlightLuxThreshold", BACKLIGHT_LUXTHRESHOLD).toInt());
     map.insert("keyRepeatDelay", settings.value("keyRepeatDelay", KEYREPEAT_DELAY).toInt());
@@ -99,19 +160,18 @@ QVariantMap SettingsUi::getCurrentSettings()
     map.insert("backlightEnabled", settings.value("backlightEnabled", BACKLIGHT_ENABLED).toBool());
     map.insert("forceLandscapeOrientation", settings.value("forceLandscapeOrientation", FORCE_LANDSCAPE_ORIENTATION).toBool());
     map.insert("forceBacklightOn", settings.value("forceBacklightOn", FORCE_BACKLIGHT_ON).toBool());
-    map.insert("stickyShiftEnabled", settings.value("stickyShiftEnabled", STICKY_SHIFT_ENABLED).toBool());
-    map.insert("stickyCtrlEnabled", settings.value("stickyCtrlEnabled", STICKY_CTRL_ENABLED).toBool());
-    map.insert("stickyAltEnabled", settings.value("stickyAltEnabled", STICKY_ALT_ENABLED).toBool());
-    map.insert("stickySymEnabled", settings.value("stickySymEnabled", STICKY_SYM_ENABLED).toBool());
-    map.insert("lockingShiftEnabled", settings.value("lockingShiftEnabled", LOCKING_SHIFT_ENABLED).toBool());
-    map.insert("lockingCtrlEnabled", settings.value("lockingCtrlEnabled", LOCKING_CTRL_ENABLED).toBool());
-    map.insert("lockingAltEnabled", settings.value("lockingAltEnabled", LOCKING_ALT_ENABLED).toBool());
-    map.insert("lockingSymEnabled", settings.value("lockingSymEnabled", LOCKING_SYM_ENABLED).toBool());
+    map.insert("modifierShiftMode", settings.value("modifierShiftMode", MODIFIER_SHIFT_MODE).toString());
+    map.insert("modifierCtrlMode", settings.value("modifierCtrlMode", MODIFIER_CTRL_MODE).toString());
+    map.insert("modifierAltMode", settings.value("modifierAltMode", MODIFIER_ALT_MODE).toString());
+    map.insert("modifierSymMode", settings.value("modifierSymMode", MODIFIER_SYM_MODE).toString());
+    map.insert("turnDisplayOffWhenRemoved", settings.value("turnDisplayOffWhenRemoved", TURN_DISPLAY_OFF_WHEN_REMOVED).toBool());
+    map.insert("keepDisplayOnWhenConnected", settings.value("keepDisplayOnWhenConnected", KEEP_DISPLAY_ON_WHEN_CONNECTED).toBool());
+    map.insert("verboseMode", settings.value("verboseMode", VERBOSE_MODE_ENABLED).toBool());
     settings.endGroup();
 
-    settings.beginGroup("layoutsettings");
-    map.insert("masterLayout", settings.value("masterLayout", QString(MASTER_LAYOUT)).toString());
-    settings.endGroup();
+    QString layout = QString(tohkbd2user->getActivePhysicalLayout());
+
+    map.insert("physicalLayout", layoutToLanguage.value(layout));
 
     return map;
 }
@@ -174,22 +234,11 @@ void SettingsUi::setShortcut(QString key, QString appPath)
     emit shortcutsChanged();
 }
 
-void SettingsUi::setSettingInt(QString key, int value)
+void SettingsUi::setSetting(QString key, QVariant value)
 {
     qDebug() << "setting" << key << "to" << value;
 
-    tohkbd2daemon->setSettingInt(key, value);
-
-    QThread::msleep(200);
-
-    emit settingsChanged();
-}
-
-void SettingsUi::setSettingString(QString key, QString value)
-{
-    qDebug() << "setting" << key << "to" << value;
-
-    tohkbd2daemon->setSettingString(key, value);
+    tohkbd2daemon->setSetting(key, QDBusVariant(value));
 
     QThread::msleep(200);
 
@@ -209,21 +258,20 @@ void SettingsUi::setShortcutsToDefault()
 
 void SettingsUi::setSettingsToDefault()
 {
-    setSettingInt("backlightTimeout", BACKLIGHT_TIMEOUT);
-    setSettingInt("backlightLuxThreshold", BACKLIGHT_LUXTHRESHOLD);
-    setSettingInt("keyRepeatDelay", KEYREPEAT_DELAY);
-    setSettingInt("keyRepeatRate", KEYREPEAT_RATE);
-    setSettingInt("backlightEnabled", BACKLIGHT_ENABLED ? 1 : 0);
-    setSettingInt("forceLandscapeOrientation", FORCE_LANDSCAPE_ORIENTATION ? 1 : 0);
-    setSettingInt("forceBacklightOn", FORCE_BACKLIGHT_ON ? 1 : 0);
-    setSettingInt("stickyShiftEnabled", STICKY_SHIFT_ENABLED ? 1 : 0);
-    setSettingInt("stickyCtrlEnabled", STICKY_CTRL_ENABLED ? 1 : 0);
-    setSettingInt("stickyAltEnabled", STICKY_ALT_ENABLED ? 1 : 0);
-    setSettingInt("stickySymEnabled", STICKY_SYM_ENABLED ? 1 : 0);
-    setSettingInt("lockingShiftEnabled", LOCKING_SHIFT_ENABLED ? 1 : 0);
-    setSettingInt("lockingCtrlEnabled", LOCKING_CTRL_ENABLED ? 1 : 0);
-    setSettingInt("lockingAltEnabled", LOCKING_ALT_ENABLED ? 1 : 0);
-    setSettingInt("lockingSymEnabled", LOCKING_SYM_ENABLED ? 1 : 0);
+    setSetting("backlightTimeout", BACKLIGHT_TIMEOUT);
+    setSetting("backlightLuxThreshold", BACKLIGHT_LUXTHRESHOLD);
+    setSetting("keyRepeatDelay", KEYREPEAT_DELAY);
+    setSetting("keyRepeatRate", KEYREPEAT_RATE);
+    setSetting("backlightEnabled", BACKLIGHT_ENABLED);
+    setSetting("forceLandscapeOrientation", FORCE_LANDSCAPE_ORIENTATION);
+    setSetting("forceBacklightOn", FORCE_BACKLIGHT_ON);
+    setSetting("modifierShiftMode", MODIFIER_SHIFT_MODE);
+    setSetting("modifierCtrlMode", MODIFIER_CTRL_MODE);
+    setSetting("modifierAltMode", MODIFIER_ALT_MODE);
+    setSetting("modifierSymMode", MODIFIER_SYM_MODE);
+    setSetting("verboseMode", VERBOSE_MODE_ENABLED);
+    setSetting("turnDisplayOffWhenRemoved", TURN_DISPLAY_OFF_WHEN_REMOVED);
+    setSetting("keepDisplayOnWhenConnected", KEEP_DISPLAY_ON_WHEN_CONNECTED);
 
     QThread::msleep(200);
 
@@ -266,26 +314,60 @@ QString SettingsUi::readUserDaemonVersion()
 
 QString SettingsUi::readSailfishVersion()
 {
-    QString version = "N/A";
+    QDeviceInfo deviceInfo;
 
-    QFile inputFile( "/etc/sailfish-release" );
+    return deviceInfo.version(QDeviceInfo::Os);
+}
 
-    if ( inputFile.open( QIODevice::ReadOnly | QIODevice::Text ) )
+void SettingsUi::handlePhysicalLayoutChange(QString layout)
+{
+    Q_UNUSED(layout);
+
+    emit settingsChanged();
+}
+
+void SettingsUi::forceKeymapReload()
+{
+    tohkbd2daemon->forceKeymapReload(QString());
+}
+
+void SettingsUi::restoreOriginalKeymaps()
+{
+    tohkbd2user->installKeymaps(true);
+}
+
+QVariantList SettingsUi::getCurrentLayouts()
+{
+    QVariantList tmp;
+    QVariantMap map;
+
+    QFileInfoList list;
+    QDir dir;
+    QStringList keymaps;
+
+    /* Get list of .tohkbdmap files in config */
+    dir.setPath(QString(tohkbd2user->getPathTo("keymaplocation")));
+    dir.setFilter(QDir::Files | QDir::NoDotAndDotDot | QDir::NoSymLinks);
+    dir.setNameFilters(QStringList() << "*.tohkbdmap");
+
+    list = dir.entryInfoList();
+    for (int i=0 ; i<list.size() ; i++)
     {
-       QTextStream in( &inputFile );
-
-       while (not in.atEnd())
-       {
-           QString line = in.readLine();
-           if (line.startsWith("VERSION_ID="))
-           {
-               version = line.split('=').at(1);
-               break;
-           }
-       }
-       inputFile.close();
+        keymaps << list.at(i).fileName().split(".").at(0);
     }
-    qDebug() << "Sailfish version is" << version;
 
-    return version;
+    QMap<QString, QString>::iterator layout;
+    for (layout = layoutToLanguage.begin(); layout != layoutToLanguage.end(); ++layout)
+    {
+        /* key = us , name = English, supported = true */
+        map.clear();
+        map.insert("key", layout.key());
+        map.insert("name", layout.value());
+        map.insert("supported", keymaps.contains(layout.key()));
+        tmp.append(map);
+    }
+
+    qSort(tmp.begin(), tmp.end(), appNameLessThan);
+
+    return tmp;
 }

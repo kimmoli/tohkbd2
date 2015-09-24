@@ -28,14 +28,15 @@ void ScreenShot::takeScreenShot()
     else
         printf("tohkbd2-user: Screenshot failed\n");
 
+    notif.setAppName("TOHKBD");
     //: Notification shown after screenshot is taken
     //% "Screenshot saved"
     notif.setSummary(qtTrId("screenshot-saved"));
     notif.setPreviewSummary(qtTrId("screenshot-saved"));
     notif.setBody(ssFilename.split("/").last());
     notif.setPreviewBody(ssFilename.split("/").last());
-    notif.setHintValue("x-nemo-preview-icon", "icon-l-image");
-    notif.setHintValue("x-nemo-icon", "icon-l-image");
+    notif.setCategory("x-harbour.tohkbd2.screenshot");
+    notif.setReplacesId(0);
 
     args.clear();
     args.append((QStringList() << ssFilename));

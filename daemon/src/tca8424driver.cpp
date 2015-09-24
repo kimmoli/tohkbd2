@@ -61,9 +61,7 @@ void tca8424driver::setLeds(int value)
 
 QByteArray tca8424driver::readInputReport()
 {
-    QByteArray ret = QByteArray();
-
-    ret =  readBytes(tca8424address, 11);
+    QByteArray ret =  readBytes(tca8424address, 11);
 
     if (ret.isEmpty())
         printf("Error: readInputReport() failed\n");
@@ -73,9 +71,7 @@ QByteArray tca8424driver::readInputReport()
 
 tca8424driver::PresenceResult tca8424driver::testComms()
 {
-    QByteArray ret = QByteArray();
-
-    ret = readBytes(tca8424address, 2);
+    QByteArray ret = readBytes(tca8424address, 2);
 
     if (ret.isEmpty())
     {

@@ -31,5 +31,11 @@
         <extracomment>Remorse timer text, &quot;Restarting Lipstick&quot; in 5 seconds</extracomment>
         <translation>Bezig met het herstarten van Lipstick</translation>
     </message>
+    <message id="layout-unsupported">
+        <source>The selected physical layout is not supported by TOHKBD2. Config file can also be invalid or missing.</source>
+        <oldsource>The selected physical layout is not supported by TOHKBD2</oldsource>
+        <extracomment>Notification shown when a physical layout is not supported or the config file has an error. Notification text will scroll.</extracomment>
+        <translation>De geselecteerde, fysieke indeling wordt niet ondersteund door TOHKBD2. Het kan ook zijn dat het configuratiebestand ongeldig is of ontbreekt.</translation>
+    </message>
 </context>
 </TS>

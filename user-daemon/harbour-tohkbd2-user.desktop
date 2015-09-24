@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+NoDisplay=true
+Name=TOHKBD2 User Daemon
+Icon=icon-launcher-dummy
+Exec=/usr/bin/harbour-tohkbd2-user

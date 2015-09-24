@@ -5,48 +5,53 @@ PKGCONFIG += sailfishapp mlite5 nemonotifications-qt5
 
 QT += dbus gui-private
 
-system(qdbusxml2cpp config/com.kimmoli.tohkbd2user.xml -i src/userdaemon.h -a src/userAdaptor)
-system(qdbusxml2cpp config/com.kimmoli.tohkbd2user.xml -p ../user-daemon/src/userInterface)
-
-#system(lupdate src qml -no-obsolete -ts $$PWD/i18n/engineering_en.ts)
+system(lupdate src qml -no-obsolete -ts $$PWD/i18n/engineering_en.ts)
 system(lrelease -idbased $$PWD/i18n/*.ts)
 
 DEFINES += "APPVERSION=\\\"$${SPECVERSION}\\\""
-
-dbusService.files = config/com.kimmoli.tohkbd2user.service
-dbusService.path = /usr/share/dbus-1/services/
-
-dbusInterface.files = config/com.kimmoli.tohkbd2user.xml
-dbusInterface.path = /usr/share/dbus-1/interfaces/
 
 translations.path = /usr/share/$${TARGET}/i18n
 translations.files = i18n/*.qm
 
 icons.path = /usr/share/$${TARGET}
-icons.files = config/icon-system-keyboard.png
+icons.files = config/icon-system-keyboard.png \
+              config/icon-lock-tohkbd2.png
 
-INSTALLS +=  dbusService dbusInterface translations icons
+notificationCategories.path = /usr/share/lipstick/notificationcategories
+notificationCategories.files = config/x-harbour.tohkbd2.conf \
+                               config/x-harbour.tohkbd2.screenshot.conf
+
+INSTALLS += translations icons notificationCategories
 
 message($${DEFINES})
 
 SOURCES += \
     src/tohkbd2user.cpp \
-    src/userAdaptor.cpp \
+    ../dbus/src/userdaemonAdaptor.cpp \
     src/userdaemon.cpp \
     src/viewhelper.cpp \
     src/applauncher.cpp \
     src/screenshot.cpp
 
-OTHER_FILES += \
-    config/com.kimmoli.tohkbd2user.service \
-    config/com.kimmoli.tohkbd2user.xml \
-    config/icon-system-keyboard.png \
-    i18n/*.ts \
-    qml/taskswitcher.qml
-
 HEADERS += \
-    src/userAdaptor.h \
+    ../dbus/src/userdaemonAdaptor.h \
     src/userdaemon.h \
     src/viewhelper.h \
     src/applauncher.h \
     src/screenshot.h
+
+RESOURCES += \
+    config/keymaps.qrc
+
+OTHER_FILES += \
+    harbour-tohkbd2-user.desktop \
+    config/icon-system-keyboard.png \
+    config/icon-lock-tohkbd2.png \
+    config/x-harbour.tohkbd2.conf \
+    config/x-harbour.tohkbd2.screenshot.conf \
+    i18n/*.ts \
+    qml/taskswitcher.qml \
+    config/layouts/*.tohkbdmap \
+    config/x-harbour.tohkbd2.conf \
+    config/x-harbour.tohkbd2.screenshot.conf
+

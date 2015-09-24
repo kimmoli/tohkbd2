@@ -2,7 +2,9 @@
 *.pro.user
 *.pro.user.*
 *.qm
-userAdaptor.*
-userInterface.*
+userdaemonAdaptor.*
+userdaemonInterface.*
 daemonAdaptor.*
 daemonInterface.*
+settingsuiAdaptor.*
+settingsuiInterface.*

@@ -1,0 +1,65 @@
+# TOHKBD2 Key mapping file
+# Deutch QWERTZ (de)
+#
+variant nodeadkeys
+#
+#Code Plain key       Plain mod      Sym key            Sym mod
+#
+A1    KEY_TAB         0              KEY_ESC            0
+A3    KEY_1           0              KEY_F1             0
+A4    KEY_2           0              KEY_F2             0
+A5    KEY_3           0              KEY_F3             0
+A6    KEY_4           0              KEY_F4             0
+A7    KEY_5           0              KEY_F5             0
+A8    KEY_6           0              KEY_F6             0
+A9    KEY_7           0              KEY_F7             0
+AA    KEY_8           0              KEY_F8             0
+AB    KEY_9           0              KEY_F9             0
+AC    KEY_0           0              KEY_F10            0
+AD    KEY_SLASH       0              KEY_F11            0
+AE    KEY_0           SHIFT          KEY_F12            0
+AF    KEY_BACKSPACE   0              KEY_BACKSPACE      0
+B1    KEY_DELETE      0              KEY_TOH_SELFIE     0
+B2    KEY_UP          0              KEY_PAGEUP         0
+B3    KEY_INSERT      0              KEY_TOH_SCREENSHOT 0
+B4    KEY_Q           0              KEY_RIGHTBRACE     RALT
+B5    KEY_W           0              KEY_BACKSLASH      0
+B6    KEY_E           0              KEY_4              SHIFT
+B7    KEY_R           0              KEY_5              SHIFT
+B8    KEY_T           0              KEY_GRAVE          0
+B9    KEY_Y           0              KEY_6              SHIFT
+BA    KEY_U           0              KEY_RIGHTBRACE     SHIFT
+BB    KEY_I           0              KEY_7              RALT
+BC    KEY_O           0              KEY_0              RALT
+BD    KEY_P           0              KEY_SLASH          SHIFT
+BE    KEY_LEFTBRACE   0              KEY_RIGHTBRACE     0
+C1    KEY_LEFT        0              KEY_VOLUMEDOWN     0
+C3    KEY_RIGHT       0              KEY_VOLUMEUP       0
+C4    KEY_A           0              KEY_COMMA          SHIFT
+C5    KEY_S           0              KEY_BACKSLASH      SHIFT
+C6    KEY_D           0              KEY_3              RALT
+C7    KEY_F           0              KEY_EQUAL          SHIFT
+C8    KEY_G           0              KEY_EQUAL          0
+C9    KEY_H           0              KEY_TOH_NONE       0
+CA    KEY_J           0              KEY_TOH_NONE       0
+CB    KEY_K           0              KEY_8              RALT
+CC    KEY_L           0              KEY_9              RALT
+CD    KEY_SEMICOLON   0              KEY_8              SHIFT
+CE    KEY_APOSTROPHE  0              KEY_9              SHIFT
+D1    KEY_HOME        0              KEY_TOH_BACKLIGHT  0
+D2    KEY_DOWN        0              KEY_PAGEDOWN       0
+D3    KEY_END         0              KEY_END            0
+D4    KEY_Z           0              KEY_DOT            SHIFT
+D5    KEY_X           0              KEY_2              SHIFT
+D6    KEY_C           0              KEY_E              RALT
+D7    KEY_V           0              KEY_7              SHIFT
+D8    KEY_B           0              KEY_102ND          RALT
+D9    KEY_N           0              KEY_MINUS          RALT
+DA    KEY_M           0              KEY_M              RALT
+DB    KEY_MINUS       SHIFT          KEY_MINUS          SHIFT
+DC    KEY_1           SHIFT          KEY_1              SHIFT
+DD    KEY_COMMA       0              KEY_102ND          0
+DE    KEY_DOT         0              KEY_102ND          SHIFT
+EC    KEY_MINUS       0              KEY_Q              RALT
+EF    KEY_ENTER       0              KEY_ENTER          0
+E9    KEY_SPACE       0              KEY_SPACE          0

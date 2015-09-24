@@ -20,21 +20,22 @@
 #define KEYREPEAT_DELAY 400
 #define KEYREPEAT_RATE 25
 
-#define STICKY_SHIFT_ENABLED false
-#define STICKY_CTRL_ENABLED true
-#define STICKY_ALT_ENABLED false
-#define STICKY_SYM_ENABLED false
-#define LOCKING_SHIFT_ENABLED false
-#define LOCKING_CTRL_ENABLED false
-#define LOCKING_ALT_ENABLED false
-#define LOCKING_SYM_ENABLED false
+#define MODIFIER_SHIFT_MODE "Normal"
+#define MODIFIER_CTRL_MODE "Sticky"
+#define MODIFIER_ALT_MODE "Normal"
+#define MODIFIER_SYM_MODE "Normal"
 
 #define FORCE_LANDSCAPE_ORIENTATION true
 #define FORCE_BACKLIGHT_ON false
+
+#define TURN_DISPLAY_OFF_WHEN_REMOVED false
+#define KEEP_DISPLAY_ON_WHEN_CONNECTED false
 
 #define MASTER_LAYOUT "Scandic"
 
 #define ACTION_REBOOT_REMORSE "reboot-remorse"
 #define ACTION_RESTART_LIPSTICK_REMORSE "restart-lipstick-remorse"
+
+#define VERBOSE_MODE_ENABLED false
 
 #endif // DEFAULTSSETTINGS_H

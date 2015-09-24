@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QList>
 #include <QPair>
+#include <QMap>
 #include <linux/input.h>
 #include "modifierhandler.h"
 
@@ -19,6 +20,7 @@
 #define KEY_TOH_SELFIE     (KEY_MAX+2)
 #define KEY_TOH_NEWEMAIL   (KEY_MAX+3)
 #define KEY_TOH_BACKLIGHT  (KEY_MAX+4)
+#define KEY_TOH_NONE       (KEY_MAX+5)
 
 class keymapping : public QObject
 {
@@ -35,7 +37,11 @@ public:
     modifierHandler *alt;
     modifierHandler *sym;
 
-    void setLayout(QString toLayout);
+    bool setPathToLayouts(QString pathToLayouts);
+
+    bool setLayout(QString toLayout, bool forceReload = false);
+
+    bool verboseMode;
 
 signals:
     void shiftChanged();
@@ -46,18 +52,28 @@ signals:
     void keyReleased();
     void toggleCapsLock();
     void bogusDetected();
+    void setKeymapVariant(QString keymapVariant);
+    void setKeymapLayout(QString keymapLayout);
 
 public slots:
 
 private:
+    void toggleAlternativeLayout();
+    QString alternativeLayout;
+    QString originalLayout;
+
     bool keyIsPressed;
 
     char pressedCode;
     QByteArray _prevInputReport;
 
     QString layout;
+    QString layoutPath;
 
-    int lut_plain[256];
+    QMap< int, QPair<int, int> > lut_plain;
+    QMap< int, QPair<int, int> > lut_sym;
+
+    static QStringList keyNames;
 };
 
 #endif // KEYMAPPING_H

@@ -10,6 +10,11 @@ UserDaemon::UserDaemon(QObject *parent) :
 {
     m_dbusRegistered = false;
     m_launchPending = false;
+
+    installKeymaps(false);
+
+    physicalLayout = new MGConfItem("/desktop/lipstick-jolla-home/layout");
+    connect(physicalLayout, SIGNAL(valueChanged()), this, SLOT(handlePhysicalLayout()));
 }
 
 UserDaemon::~UserDaemon()
@@ -61,6 +66,22 @@ void UserDaemon::setActiveLayout(const QString &value)
 
         MGConfItem ci("/sailfish/text_input/active_layout");
         ci.set(value);
+        
+        QString tohlayout("harbour-tohkbd2.qml");
+        MGConfItem el("/sailfish/text_input/enabled_layouts");
+        QStringList list = el.value().toStringList();
+        if (value.compare(tohlayout) == 0) {
+            if (!list.contains(tohlayout)) {
+                list.append(tohlayout);
+                el.set(list);
+            }
+        }
+        else {
+            if (list.contains(tohlayout)) {
+                list.removeAll(tohlayout);
+                el.set(list);
+            }
+        }
     }
     else
     {
@@ -159,7 +180,7 @@ void UserDaemon::showNotification(const QString &text)
     Notification notif;
 
     notif.setPreviewBody(text);
-    notif.setHintValue("x-nemo-preview-icon", SailfishApp::pathTo("/icon-system-keyboard.png").toLocalFile());
+    notif.setCategory("x-harbour.tohkbd2");
     notif.publish();
 }
 
@@ -168,4 +189,83 @@ void UserDaemon::actionWithRemorse(const QString &action)
     printf("tohkbd2-user: requested %s.\n", qPrintable(action));
 
     emit _requestActionWithRemorse(action);
+}
+
+void UserDaemon::handlePhysicalLayout()
+{
+    emit physicalLayoutChanged(getActivePhysicalLayout());
+}
+
+QString UserDaemon::getActivePhysicalLayout()
+{
+    return physicalLayout->value().toString();
+}
+
+QString UserDaemon::getPathTo(const QString &filename)
+{
+    if (filename == "keymaplocation")
+    {
+        return QStandardPaths::writableLocation(QStandardPaths::ConfigLocation) + KEYMAP_FOLDER;
+    }
+
+    return SailfishApp::pathTo(filename).toLocalFile();
+}
+
+void UserDaemon::showUnsupportedLayoutNotification()
+{
+    //: Notification shown when a physical layout is not supported or the config file has an error. Notification text will scroll.
+    //% "The selected physical layout is not supported by TOHKBD2. Config file can also be invalid or missing."
+    showNotification(qtTrId("layout-unsupported"));
+}
+
+void UserDaemon::installKeymaps(const bool &overwrite)
+{
+    QDir keymapfolder(QStandardPaths::writableLocation(QStandardPaths::ConfigLocation) + KEYMAP_FOLDER);
+    keymapfolder.mkpath(".");
+
+    QDir keymapRes(":/layouts/");
+    QFileInfoList list = keymapRes.entryInfoList();
+
+    int i;
+    for (i=0 ; i < list.size() ; i++)
+    {
+        QString from = list.at(i).absoluteFilePath();
+        QString to = keymapfolder.path() + "/" + from.split("/").last();
+
+        QFileInfo toFile(to);
+
+        if(!toFile.exists() || overwrite)
+        {
+            QFile newToFile(to);
+            QResource res(from);
+
+            if (newToFile.open(QIODevice::WriteOnly) && res.isValid())
+            {
+                qint64 ws;
+                if (res.isCompressed())
+                    ws = newToFile.write( qUncompress(res.data(), res.size()));
+                else
+                    ws = newToFile.write( (char *)res.data());
+
+                newToFile.close();
+                printf("tohkbd2-user: Wrote %s (%lld bytes) to %s\n", qPrintable(from), ws, qPrintable(to));
+            }
+            else
+            {
+                printf("tohkbd2-user: Failed to write %s\n", qPrintable(to));
+            }
+        }
+    }
+}
+
+void UserDaemon::setKeymapLayout(const QString &value)
+{
+    MGConfItem keymapLayout("/desktop/lipstick-jolla-home/layout");
+    keymapLayout.set(value);
+}
+
+void UserDaemon::setKeymapVariant(const QString &value)
+{
+    MGConfItem keymapVariant("/desktop/lipstick-jolla-home/variant");
+    keymapVariant.set(value);
 }

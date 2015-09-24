@@ -29,6 +29,26 @@
             <arg name="value" type="s" direction="out" />
         </method>
         <method name="takeScreenShot" />
+        <method name="getActivePhysicalLayout">
+            <arg name="value" type="s" direction="out" />
+        </method>
+        <method name="getPathTo">
+            <arg name="file" type="s" direction="in" />
+            <arg name="path" type="s" direction="out" />
+        </method>
+        <method name="showUnsupportedLayoutNotification" />
+        <method name="installKeymaps">
+            <arg name="overwrite" type="b" direction="in" />
+        </method>
+        <method name="setKeymapLayout">
+            <arg name="value" type="s" direction="in" />
+        </method>
+        <method name="setKeymapVariant">
+            <arg name="value" type="s" direction="in" />
+        </method>
         <method name="quit" />
+        <signal name="physicalLayoutChanged">
+            <arg name="layout" type="s" direction="out" />
+        </signal>
     </interface>
 </node>

@@ -4,6 +4,7 @@
 
 import QtQuick 2.0
 import Sailfish.Silica 1.0
+import org.nemomobile.configuration 1.0
 import "../components"
 
 Page
@@ -64,14 +65,14 @@ Page
                 //: Backlight always on description
                 //% "Backlight is always on when keyboard attached and phone's display is on"
                 description: qsTrId("bg-always-on-desc")
-                onCheckedChanged: settingsui.setSettingInt("forceBacklightOn", checked ? 1 : 0)
+                onCheckedChanged: if (checked !== settings["forceBacklightOn"]) settingsui.setSetting("forceBacklightOn", checked)
                 width: parent.width - 2*Theme.paddingLarge
                 Component.onCompleted:
                 {
                     checked = settings["forceBacklightOn"]
                     /* Update to restore if overridden with key-combo Sym+Home */
-                    if (!checked)
-                        settingsui.setSettingInt("forceBacklightOn", 0)
+                    if (!checked && !settings["forceBacklightOn"])
+                        settingsui.setSetting("forceBacklightOn", false)
                 }
             }
             TextSwitch
@@ -83,7 +84,7 @@ Page
                 //: Backlight automatic description
                 //% "Automatic backlight enable or always off"
                 description: qsTrId("bg-automatic-desc")
-                onCheckedChanged: settingsui.setSettingInt("backlightEnabled", checked ? 1 : 0)
+                onCheckedChanged: if (checked !== settings["backlightEnabled"]) settingsui.setSetting("backlightEnabled", checked)
                 width: parent.width - 2*Theme.paddingLarge
                 Component.onCompleted: checked = settings["backlightEnabled"]
                 enabled: !alwaysOn.checked
@@ -110,7 +111,7 @@ Page
                     if (wasChanged)
                     {
                         wasChanged = false
-                        settingsui.setSettingInt("backlightTimeout", value)
+                        settingsui.setSetting("backlightTimeout", value)
                     }
                 }
             }
@@ -136,28 +137,52 @@ Page
                     if (wasChanged)
                     {
                         wasChanged = false
-                        settingsui.setSettingInt("backlightLuxThreshold", value)
+                        settingsui.setSetting("backlightLuxThreshold", value)
                     }
                 }
             }
 
             SectionHeader
             {
-                //: Section header for orientation settings
-                //% "Orientation"
+                //: Section header for display related settings
+                //% "Display"
                 text: qsTrId("orientation-sect-header")
             }
             TextSwitch
             {
-                //: Force landsacep switch text
+                //: Force landscape switch text
                 //% "Force Landscape"
                 text: qsTrId("orientation-force-landscape-sw")
-                //: Force landsacep switch description
+                //: Force landscape switch description
                 //% "Force landscape orientation when keyboard attached"
                 description: qsTrId("orientation-force-landscape-desc")
-                onCheckedChanged: settingsui.setSettingInt("forceLandscapeOrientation", checked ? 1 : 0)
+                onCheckedChanged: settingsui.setSetting("forceLandscapeOrientation", checked)
                 width: parent.width - 2*Theme.paddingLarge
                 Component.onCompleted: checked = settings["forceLandscapeOrientation"]
+            }
+            TextSwitch
+            {
+                //: Keep display on when connected switch text
+                //% "Display on when connected"
+                text: qsTrId("keep-display-on-when-connected-sw")
+                //: Keep display on when connected switch description
+                //% "Keep display on when keyboard is connected"
+                description: qsTrId("keep-display-on-when-connected-desc")
+                onCheckedChanged: settingsui.setSetting("keepDisplayOnWhenConnected", checked)
+                width: parent.width - 2*Theme.paddingLarge
+                Component.onCompleted: checked = settings["keepDisplayOnWhenConnected"]
+            }
+            TextSwitch
+            {
+                //: Display off when removed switch text
+                //% "Display off when removed"
+                text: qsTrId("turn-display-off-when-removed-sw")
+                //: Display off when removed switch description
+                //% "Turn display off when keyboard is removed"
+                description: qsTrId("turn-display-off-when-removed-desc")
+                onCheckedChanged: settingsui.setSetting("turnDisplayOffWhenRemoved", checked)
+                width: parent.width - 2*Theme.paddingLarge
+                Component.onCompleted: checked = settings["turnDisplayOffWhenRemoved"]
             }
 
             SectionHeader
@@ -186,7 +211,7 @@ Page
                     if (wasChanged)
                     {
                         wasChanged = false
-                        settingsui.setSettingInt("keyRepeatDelay", value)
+                        settingsui.setSetting("keyRepeatDelay", value)
                     }
                 }
             }
@@ -210,7 +235,7 @@ Page
                     if (wasChanged)
                     {
                         wasChanged = false
-                        settingsui.setSettingInt("keyRepeatRate", value)
+                        settingsui.setSetting("keyRepeatRate", value)
                     }
                 }
             }
@@ -238,7 +263,7 @@ Page
             Label
             {
                 //: Description text for sticky and locking modifier keys
-                //% "Sticky modifiers will toggle when pressed once and released after pressing any other key. Locking modifier will lock on double-press and released on third. In both modes you can also use them as normal modifier keys."
+                //% "In Sticky mode, modifier key will stay on after pressed once and released after pressing again or any other key. In Lock mode modifier key will lock on double-press and released on third. In Cycle mode Sticky and Lock modes are both active, after first press is Sticky and second press is Lock. In all modes you can also use them as normal modifier keys."
                 text: qsTrId("sticky-desc")
                 wrapMode: Text.Wrap
                 font.pixelSize: Theme.fontSizeExtraSmall
@@ -247,135 +272,89 @@ Page
                 anchors.horizontalCenter: parent.horizontalCenter
             }
 
-            Row
+            Repeater
             {
-                width: parent.width - 2*Theme.paddingLarge
-                TextSwitch
+                model: modifiers
+
+                ComboBox
                 {
-                    id: stickyShift
-                    //% "Sticky Shift"
-                    text: qsTrId("sticky-shift")
-                    onCheckedChanged:
+                    width: parent.width
+                    label: "   " + combolabel + " "
+                    menu: ContextMenu
                     {
-                        if (checked)
-                            lockingShift.checked = false
-                        settingsui.setSettingInt("stickyShiftEnabled", checked ? 1 : 0)
+                        id: modifierCBmenu
+                        Repeater
+                        {
+                            model: modifierModes
+                            MenuItem { text: name; onClicked: settingsui.setSetting(key, code); }
+                        }
                     }
-                    width: parent.width/2
-                    Component.onCompleted: checked = settings["stickyShiftEnabled"]
-                }
-                TextSwitch
-                {
-                    id: lockingShift
-                    //% "Locking Shift"
-                    text: qsTrId("locking-shift")
-                    onCheckedChanged:
+                    Component.onCompleted:
                     {
-                        if (checked)
-                            stickyShift.checked = false
-                        settingsui.setSettingInt("lockingShiftEnabled", checked ? 1 : 0)
+                        var i
+                        for (i=0 ; i < modifierModes.count ; i++)
+                        {
+                            var item = modifierModes.get(i)
+                            if (settings[key] === item["code"])
+                            {
+                                currentIndex = i
+                                return
+                            }
+                        }
                     }
-                    width: parent.width/2
-                    Component.onCompleted: checked = settings["lockingShiftEnabled"]
                 }
             }
-            Row
+
+            SectionHeader
             {
-                width: parent.width - 2*Theme.paddingLarge
-                TextSwitch
-                {
-                    id: stickyCtrl
-                    //% "Sticky Ctrl"
-                    text: qsTrId("sticky-ctrl")
-                    onCheckedChanged:
-                    {
-                        if (checked)
-                            lockingCtrl.checked = false
-                        settingsui.setSettingInt("stickyCtrlEnabled", checked ? 1 : 0)
-                    }
-                    width: parent.width/2
-                    Component.onCompleted: checked = settings["stickyCtrlEnabled"]
-                }
-                TextSwitch
-                {
-                    id: lockingCtrl
-                    //% "Locking Ctrl"
-                    text: qsTrId("locking-ctrl")
-                    onCheckedChanged:
-                    {
-                        if (checked)
-                            stickyCtrl.checked = false
-                        settingsui.setSettingInt("lockingCtrlEnabled", checked ? 1 : 0)
-                    }
-                    width: parent.width/2
-                    Component.onCompleted: checked = settings["lockingCtrlEnabled"]
-                }
+                //: Section header for Debug settings
+                //% "Debug"
+                text: qsTrId("debug-sect-header")
             }
-            Row
+            TextSwitch
             {
+                //: Enable verbose mode to print more stuff on journal
+                //% "Verbose mode"
+                text: qsTrId("verbose-mode-sw")
+                //: Verbose mode switch description
+                //% "Print more information in Journal logs. Use 'devel-su journalctl -fa | grep toh' to see output."
+                description: qsTrId("verbose-mode-desc")
+                onCheckedChanged: if (checked !== settings["verboseMode"]) settingsui.setSetting("verboseMode", checked)
                 width: parent.width - 2*Theme.paddingLarge
-                TextSwitch
-                {
-                    id: stickyAlt
-                    //% "Sticky Alt"
-                    text: qsTrId("sticky-alt")
-                    onCheckedChanged:
-                    {
-                        if (checked)
-                            lockingAlt.checked = false
-                        settingsui.setSettingInt("stickyAltEnabled", checked ? 1 : 0)
-                    }
-                    width: parent.width/2
-                    Component.onCompleted: checked = settings["stickyAltEnabled"]
-                }
-                TextSwitch
-                {
-                    id: lockingAlt
-                    //% "Locking Alt"
-                    text: qsTrId("locking-alt")
-                    onCheckedChanged:
-                    {
-                        if (checked)
-                            stickyAlt.checked = false;
-                        settingsui.setSettingInt("lockingAltEnabled", checked ? 1 : 0)
-                    }
-                    width: parent.width/2
-                    Component.onCompleted: checked = settings["lockingAltEnabled"]
-                }
+                Component.onCompleted: checked = settings["verboseMode"]
             }
-            Row
+
+            TextSwitch
             {
+                id: nodeadkeysSwitch
+                //: Switch to set 'nodeadkeys' in keymap variant
+                //% "No deadkeys"
+                text: qsTrId("nodeadkeys-sw")
+                //: No deadkeys switch description
+                //% "Set 'nodeadkeys' to keymap variant. Required for some keyboard layouts, e.g. fi, de."
+                description: qsTrId("nodeadkeys-desc")
                 width: parent.width - 2*Theme.paddingLarge
-                TextSwitch
+                automaticCheck: false
+                onClicked:
                 {
-                    id: stickySym
-                    //% "Sticky Sym"
-                    text: qsTrId("sticky-sym")
-                    onCheckedChanged:
-                    {
-                        if (checked)
-                            lockingSym.checked = false
-                        settingsui.setSettingInt("stickySymEnabled", checked ? 1 : 0)
-                    }
-                    width: parent.width/2
-                    Component.onCompleted: checked = settings["stickySymEnabled"]
+                    if (keymapVariant.value !== "nodeadkeys")
+                        keymapVariant.value = "nodeadkeys"
+                    else
+                        keymapVariant.value = ""
                 }
-                TextSwitch
-                {
-                    id: lockingSym
-                    //% "Locking Sym"
-                    text: qsTrId("locking-sym")
-                    onCheckedChanged:
-                    {
-                        if (checked)
-                            stickySym.checked = false
-                        settingsui.setSettingInt("lockingSymEnabled", checked ? 1 : 0)
-                    }
-                    width: parent.width/2
-                    Component.onCompleted: checked = settings["lockingSymEnabled"]
-                }
+                Component.onCompleted: checked = (keymapVariant.value === "nodeadkeys")
             }
         }
+    }
+
+    ConfigurationValue
+    {
+        id: keymapVariant
+        key: "/desktop/lipstick-jolla-home/variant"
+        defaultValue: ""
+
+        onValueChanged:
+            nodeadkeysSwitch.checked = (value === "nodeadkeys")
     }
 }
 

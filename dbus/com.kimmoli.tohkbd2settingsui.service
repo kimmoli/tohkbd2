@@ -1,0 +1,3 @@
+[D-BUS Service]
+Name=com.kimmoli.tohkbd2settingsui
+Exec=/usr/bin/invoker --type=silica-qt5 -s -n -d 5 /usr/bin/harbour-tohkbd2-settingsui --showhelp

@@ -1,29 +1,22 @@
 TARGET = harbour-tohkbd2
 
-QT += dbus
+QT += dbus network
 QT -= gui
 
-# D-bus adaptor and interface
-system(qdbusxml2cpp config/com.kimmoli.tohkbd2.xml -i src/tohkeyboard.h -a src/daemonAdaptor)
-system(qdbusxml2cpp config/com.kimmoli.tohkbd2.xml -p ../daemon/src/daemonInterface)
+CONFIG += link_pkgconfig
+PKGCONFIG += Qt5SystemInfo
 
 DEFINES += "APPVERSION=\\\"$${SPECVERSION}\\\""
 
 target.path = /usr/bin/
 
-systemd.path = /etc/systemd/system/
-systemd.files = config/$${TARGET}.service
-
 udevrule.path = /etc/udev/rules.d/
 udevrule.files = config/95-$${TARGET}.rules
-
-dbusconf.path = /etc/dbus-1/system.d/
-dbusconf.files = config/$${TARGET}.conf
 
 vkblayout.path = /usr/share/maliit/plugins/com/jolla/layouts/
 vkblayout.files = config/layouts/$${TARGET}.conf config/layouts/$${TARGET}.qml
 
-INSTALLS += target systemd udevrule dbusconf vkblayout
+INSTALLS += target udevrule vkblayout
 
 message($${DEFINES})
 
@@ -36,11 +29,12 @@ SOURCES += \
     src/driverBase.cpp \
     src/tca8424driver.cpp \
     src/keymapping.cpp \
-    src/daemonAdaptor.cpp \
     src/eepromdriver.cpp \
     src/modifierhandler.cpp \
-    ../user-daemon/src/userInterface.cpp \
-    src/uinputevpoll.cpp
+    src/uinputevpoll.cpp \
+    ../dbus/src/daemonAdaptor.cpp \
+    ../dbus/src/userdaemonInterface.cpp \
+    ../dbus/src/settingsuiInterface.cpp
 
 HEADERS += \
     src/toh.h \
@@ -50,19 +44,16 @@ HEADERS += \
     src/driverBase.h \
     src/tca8424driver.h \
     src/keymapping.h \
-    src/daemonAdaptor.h \
     src/defaultSettings.h \
     src/eepromdriver.h \
-    src/keymapping_lut.h \
     src/modifierhandler.h \
-    ../user-daemon/src/userInterface.h \
-    src/uinputevpoll.h
+    src/uinputevpoll.h \
+    ../dbus/src/daemonAdaptor.h \
+    ../dbus/src/userdaemonInterface.h \
+    ../dbus/src/settingsuiInterface.h
 
 OTHER_FILES += \
-    config/$${TARGET}.service \
-    config/$${TARGET}.conf \
     config/layouts/$${TARGET}.conf \
     config/layouts/$${TARGET}.qml \
-    config/com.kimmoli.tohkbd2.xml \
     config/icon-system-keyboard.png
 

@@ -2,11 +2,6 @@
     tohkbd2-settings-u, The Otherhalf Keyboard 2 settings UI
 */
 
-
-#ifdef QT_QML_DEBUG
-#include <QtQuick>
-#endif
-
 #include <sailfishapp.h>
 #include <QtQml>
 #include <QScopedPointer>
@@ -17,11 +12,13 @@
 #include <QCoreApplication>
 #include "settingsui.h"
 #include "IconProvider.h"
+#include "consolemodel.h"
 
 
 int main(int argc, char *argv[])
 {
     qmlRegisterType<SettingsUi>("harbour.tohkbd2.settingsui", 1, 0, "SettingsUi");
+    qmlRegisterType<ConsoleModel>("harbour.tohkbd2.ConsoleModel", 1, 0, "ConsoleModel");
 
     QScopedPointer<QGuiApplication> app(SailfishApp::application(argc, argv));
 
@@ -38,8 +35,20 @@ int main(int argc, char *argv[])
     QQmlEngine *engine = view->engine();
     engine->addImageProvider(QLatin1String("tohkbd2"), new IconProvider);
 
+    QString viewMode;
+
+    if (argc > 1)
+        viewMode = QString(argv[1]);
+
+    if (!viewMode.startsWith("--"))
+        viewMode = QString();
+
+    view->rootContext()->setContextProperty("viewMode", viewMode);
+
     view->setSource(SailfishApp::pathTo("qml/tohkbd2-settingsui.qml"));
     view->show();
+
+    QObject::connect(engine, SIGNAL(quit()), app.data(), SLOT(quit()));
 
     return app->exec();
 }

@@ -8,11 +8,11 @@ QT += dbus
 
 CONFIG += sailfishapp
 CONFIG += link_pkgconfig
-PKGCONFIG += mlite5 sailfishapp
+PKGCONFIG += mlite5 Qt5SystemInfo sailfishapp
 
 DEFINES += "APPVERSION=\\\"$${SPECVERSION}\\\""
 
-#system(lupdate src qml -no-obsolete -ts $$PWD/i18n/engineering_en.ts)
+system(lupdate src qml -no-obsolete -ts $$PWD/i18n/engineering_en.ts)
 system(lrelease -idbased $$PWD/i18n/*.ts)
 
 translations.path = /usr/share/$${TARGET}/i18n
@@ -24,13 +24,17 @@ message($${DEFINES})
 
 SOURCES += src/tohkbd2-settingsui.cpp \
         src/settingsui.cpp \
-        ../daemon/src/daemonInterface.cpp \
-        ../user-daemon/src/userInterface.cpp
+        src/consolemodel.cpp \
+        ../dbus/src/settingsuiAdaptor.cpp \
+        ../dbus/src/daemonInterface.cpp \
+        ../dbus/src/userdaemonInterface.cpp
 	
 HEADERS += src/settingsui.h \
         src/IconProvider.h \
-        ../daemon/src/daemonInterface.h \
-        ../user-daemon/src/userInterface.h
+        src/consolemodel.h \
+        ../dbus/src/settingsuiAdaptor.h \
+        ../dbus/src/daemonInterface.h \
+        ../dbus/src/userdaemonInterface.h
 
 OTHER_FILES += qml/tohkbd2-settingsui.qml \
     qml/cover/CoverPage.qml \
@@ -38,7 +42,6 @@ OTHER_FILES += qml/tohkbd2-settingsui.qml \
     qml/pages/AboutPage.qml \
     qml/pages/ApplicationSelectionPage.qml \
     qml/pages/Shortcuts.qml \
-    qml/pages/KeyboardLayout.qml \
     qml/pages/BugReporter.qml \
     qml/pages/GeneralSettings.qml \
     qml/icons/icon-m-test.png \
@@ -49,13 +52,7 @@ OTHER_FILES += qml/tohkbd2-settingsui.qml \
     qml/icons/kimmoli.png \
     qml/icons/wazd.png \
     qml/icons/dirkvl.png \
-    qml/components/Key.qml \
-    qml/pages/CustomizeKey.qml \
-    qml/images/image-keyboard-azerty.png \
-    qml/images/image-keyboard-cyrillic.png \
-    qml/images/image-keyboard-qwerty.png \
-    qml/images/image-keyboard-qwertz.png \
-    qml/images/image-keyboard-scandic.png \
-    qml/images/image-keyboard-stealth.png \
-    qml/components/KeyboardHandler.qml
-
+    qml/components/KeyboardHandler.qml \
+    qml/pages/Help.qml \
+    qml/cover/HelpCoverPage.qml \
+    qml/pages/LayoutSwitcher.qml

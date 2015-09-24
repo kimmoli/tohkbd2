@@ -1,12 +1,39 @@
+#include <QStringList>
+#include <QFile>
+#include <QTextStream>
+#include <QDir>
+
 #include "keymapping.h"
 #include <linux/input.h>
 #include <stdio.h>
-#include "keymapping_lut.h"
+
+QStringList keymapping::keyNames = QStringList()
+    << "KEY_RESERVED" << "KEY_ESC" << "KEY_1" << "KEY_2" << "KEY_3" << "KEY_4" << "KEY_5" << "KEY_6" << "KEY_7" << "KEY_8" << "KEY_9"
+    << "KEY_0" << "KEY_MINUS" << "KEY_EQUAL" << "KEY_BACKSPACE" << "KEY_TAB" << "KEY_Q" << "KEY_W" << "KEY_E" << "KEY_R" << "KEY_T"
+    << "KEY_Y" << "KEY_U" << "KEY_I" << "KEY_O" << "KEY_P" << "KEY_LEFTBRACE" << "KEY_RIGHTBRACE" << "KEY_ENTER" << "KEY_LEFTCTRL"
+    << "KEY_A" << "KEY_S" << "KEY_D" << "KEY_F" << "KEY_G" << "KEY_H" << "KEY_J" << "KEY_K" << "KEY_L" << "KEY_SEMICOLON" << "KEY_APOSTROPHE"
+    << "KEY_GRAVE" << "KEY_LEFTSHIFT" << "KEY_BACKSLASH" << "KEY_Z" << "KEY_X" << "KEY_C" << "KEY_V" << "KEY_B" << "KEY_N" << "KEY_M"
+    << "KEY_COMMA" << "KEY_DOT" << "KEY_SLASH" << "KEY_RIGHTSHIFT" << "KEY_KPASTERISK" << "KEY_LEFTALT" << "KEY_SPACE" << "KEY_CAPSLOCK"
+    << "KEY_F1" << "KEY_F2" << "KEY_F3" << "KEY_F4" << "KEY_F5" << "KEY_F6" << "KEY_F7" << "KEY_F8" << "KEY_F9" << "KEY_F10" << "KEY_NUMLOCK"
+    << "KEY_SCROLLLOCK" << "KEY_KP7" << "KEY_KP8" << "KEY_KP9" << "KEY_KPMINUS" << "KEY_KP4" << "KEY_KP5" << "KEY_KP6" << "KEY_KPPLUS"
+    << "KEY_KP1" << "KEY_KP2" << "KEY_KP3" << "KEY_KP0" << "KEY_KPDOT" << "KEY_RESERVED" << "KEY_ZENKAKUHANKAKU" << "KEY_102ND" << "KEY_F11"
+    << "KEY_F12" << "KEY_RO" << "KEY_KATAKANA" << "KEY_HIRAGANA" << "KEY_HENKAN" << "KEY_KATAKANAHIRAGANA" << "KEY_MUHENKAN" << "KEY_KPJPCOMMA"
+    << "KEY_KPENTER" << "KEY_RIGHTCTRL" << "KEY_KPSLASH" << "KEY_SYSRQ" << "KEY_RIGHTALT" << "KEY_LINEFEED" << "KEY_HOME" << "KEY_UP"
+    << "KEY_PAGEUP" << "KEY_LEFT" << "KEY_RIGHT" << "KEY_END" << "KEY_DOWN" << "KEY_PAGEDOWN" << "KEY_INSERT" << "KEY_DELETE" << "KEY_MACRO"
+    << "KEY_MUTE" << "KEY_VOLUMEDOWN" << "KEY_VOLUMEUP" << "KEY_POWER" << "KEY_KPEQUAL" << "KEY_KPPLUSMINUS" << "KEY_PAUSE" << "KEY_SCALE"
+    << "KEY_KPCOMMA" << "KEY_HANGEUL" << "KEY_HANJA" << "KEY_YEN" << "KEY_LEFTMETA" << "KEY_RIGHTMETA" << "KEY_COMPOSE"
+    << "KEY_TOH_TABLE_DELIMITER" /* Keys after this are custom keys */
+    << "KEY_TOH_SCREENSHOT" << "KEY_TOH_SELFIE" << "KEY_TOH_NEWEMAIL" << "KEY_TOH_BACKLIGHT" << "KEY_TOH_NONE";
 
 keymapping::keymapping(QObject *parent) :
     QObject(parent)
 {
+    layoutPath = QString();
+    alternativeLayout = QString();
+    originalLayout = QString();
+
     pressedCode = 0;
+    verboseMode = false;
 
     shift = new modifierHandler("shift");
     ctrl = new modifierHandler("ctrl");
@@ -34,7 +61,6 @@ keymapping::keymapping(QObject *parent) :
 
 void keymapping::process(QByteArray inputReport)
 {
-    int n;
     QList< QPair<int,int> > retKey;
     char irCode = 0;
 
@@ -44,10 +70,14 @@ void keymapping::process(QByteArray inputReport)
     bool altDown = false;
     bool symDown = false;
 
-    printf("Processing report: ");
-    for (n=0 ; n<inputReport.count() ; n++)
-        printf("%02x ", inputReport.at(n));
-    printf("\n");
+    if (verboseMode)
+    {
+        int n;
+        printf("Processing report: ");
+        for (n=0 ; n<inputReport.count() ; n++)
+            printf("%02x ", inputReport.at(n));
+        printf("\n");
+    }
 
     QByteArray ir = inputReport.mid(5, 6);
 
@@ -88,6 +118,13 @@ void keymapping::process(QByteArray inputReport)
         return;
     }
 
+    if (altDown && sym->pressed)
+    {
+        releaseStickyModifiers();
+        toggleAlternativeLayout();
+        return;
+    }
+
     shift->set(leftShiftDown || shiftDown, ir.isEmpty());
     ctrl->set(ctrlDown, ir.isEmpty());
     alt->set(altDown, ir.isEmpty());
@@ -117,31 +154,12 @@ void keymapping::process(QByteArray inputReport)
 
     if (sym->pressed && irCode) /* With SYM modifier */
     {
-        int i = 0;
-        while (lut_sym[i])
-        {
-            if (irCode == lut_sym[i])
-            {
-                retKey.append(qMakePair(lut_sym[i+1], lut_sym[i+2]));
-                break;
-            }
-            i += 3;
-        }
+        retKey.append(lut_sym.value(irCode));
     }
-    else if (irCode) /* Without SYM modifier */
+    else if (irCode) /* Plain key */
     {
-        int i = 0;
-        while (lut_plain[i])
-        {
-            if (irCode == lut_plain[i])
-            {
-                retKey.append(qMakePair(lut_plain[i+1], lut_plain[i+2]));
-                break;
-            }
-            i += 3;
-        }
+        retKey.append(lut_plain.value(irCode));
     }
-
 
     /* If key is changed on the fly without break... emit released */
     if (pressedCode)
@@ -172,54 +190,195 @@ void keymapping::releaseStickyModifiers(bool force)
     sym->clear(force);
 }
 
-void keymapping::setLayout(QString toLayout)
+bool keymapping::setLayout(QString toLayout, bool forceReload)
 {
-    if (toLayout == layout)
-        return;
+    bool ret = true;
+    bool alternativeLayoutSet = false;
+
+    if ((toLayout == layout) && !forceReload)
+        return true;
+
+    if (forceReload && toLayout.isEmpty())
+        toLayout = layout;
 
     int i = 0;
 
-    if (toLayout == "Scandic")
+    QString filename = layoutPath + "/" + toLayout + ".tohkbdmap";
+
+    printf("keymap: reading file %s\n", qPrintable(filename));
+
+    QFile inputFile( filename );
+
+    if ( inputFile.open( QIODevice::ReadOnly | QIODevice::Text ) )
     {
-        while (lut_plain_scandic[i])
+        lut_plain.clear();
+        lut_sym.clear();
+
+        QTextStream in( &inputFile );
+        while (!in.atEnd())
         {
-            lut_plain[i] = lut_plain_scandic[i];
+            QStringList line = in.readLine().split(QRegExp("\\s+"));
+
+            // Comment starts with #
+            if (line.at(0).startsWith("#"))
+               continue;
+
+            if (line.count() == 2)
+            {
+                if (QString::compare(line.at(0), "variant", Qt::CaseInsensitive) == 0)
+                {
+                    if (QString::compare(line.at(1), "none", Qt::CaseInsensitive) == 0)
+                    {
+                        emit setKeymapVariant("");
+                    }
+                    else
+                    {
+                        emit setKeymapVariant(line.at(1));
+                    }
+                }
+                else if (QString::compare(line.at(0), "alternative", Qt::CaseInsensitive) == 0)
+                {
+                    alternativeLayout = line.at(1);
+                    alternativeLayoutSet = true;
+                    printf("keymap: alternative layout is %s\n", qPrintable(alternativeLayout));
+                }
+            }
+
+            if (line.count() != 5)
+               continue;
+
+            /*
+             * CODE PlainKey PlainModifier SymKey SymModifier
+             */
+
+            bool ok;
+            int code = line.at(0).toInt(&ok, 16);
+            int plainKeyIndex = keyNames.indexOf(line.at(1));
+            int symKeyIndex = keyNames.indexOf(line.at(3));
+            int plainModifier = 0;
+            int symModifier = 0;
+
+            if (!ok)
+            {
+               printf("keymap: error parsing %s\n", qPrintable(line.at(0)));
+               ret = false;
+               break;
+            }
+
+            if (plainKeyIndex < 0)
+            {
+               printf("keymap: error parsing %s\n", qPrintable(line.at(1)));
+               ret = false;
+               break;
+            }
+
+            /* Custom keys */
+            if (line.at(1).startsWith("KEY_TOH_"))
+                plainKeyIndex = plainKeyIndex - keyNames.indexOf("KEY_TOH_TABLE_DELIMITER") + KEY_MAX;
+
+            if (symKeyIndex < 0)
+            {
+               printf("keymap: error parsing %s\n", qPrintable(line.at(3)));
+               ret = false;
+               break;
+            }
+
+            if (line.at(3).startsWith("KEY_TOH_"))
+                symKeyIndex = symKeyIndex - keyNames.indexOf("KEY_TOH_TABLE_DELIMITER") + KEY_MAX;
+
+            if (line.at(2).contains("SHIFT"))
+                plainModifier |= FORCE_SHIFT;
+            if (line.at(2).contains("RALT"))
+                plainModifier |= FORCE_RIGHTALT;
+            if (line.at(2).contains("LALT"))
+                plainModifier |= FORCE_ALT;
+            if (line.at(2).contains("CTRL"))
+                plainModifier |= FORCE_CTRL;
+            if (line.at(2).contains("COMP"))
+                plainModifier |= FORCE_COMPOSE;
+
+            if (line.at(4).contains("SHIFT"))
+                symModifier |= FORCE_SHIFT;
+            if (line.at(4).contains("RALT"))
+                symModifier |= FORCE_RIGHTALT;
+            if (line.at(4).contains("LALT"))
+                symModifier |= FORCE_ALT;
+            if (line.at(4).contains("CTRL"))
+                symModifier |= FORCE_CTRL;
+            if (line.at(4).contains("COMP"))
+                symModifier |= FORCE_COMPOSE;
+
+            lut_plain.insert(code, qMakePair(plainKeyIndex, plainModifier));
+            lut_sym.insert(code, qMakePair(symKeyIndex, symModifier));
+
             i++;
-            lut_plain[i] = lut_plain_scandic[i];
-            i++;
-            lut_plain[i] = lut_plain_scandic[i];
-            i++;
-        }
+       }
     }
-    else if (toLayout == "QWERTZ")
+    else
     {
-        while (lut_plain_qwertz[i])
-        {
-            lut_plain[i] = lut_plain_qwertz[i];
-            i++;
-            lut_plain[i] = lut_plain_qwertz[i];
-            i++;
-            lut_plain[i] = lut_plain_qwertz[i];
-            i++;
-        }
-    }
-    else if (toLayout == "AZERTY")
-    {
-        while (lut_plain_azerty[i])
-        {
-            lut_plain[i] = lut_plain_azerty[i];
-            i++;
-            lut_plain[i] = lut_plain_azerty[i];
-            i++;
-            lut_plain[i] = lut_plain_azerty[i];
-            i++;
-        }
+        printf("keymap: failed to open file\n");
+        ret = false;
     }
 
-    for ( ; i<256 ; i++)
-        lut_plain[i] = 0;
+    /* Fail if not a single key was defined */
+    if (i == 0)
+    {
+        ret = false;
+    }
 
-    layout = toLayout;
+    inputFile.close();
 
-    printf("keymap: layout set to %s\n", qPrintable(layout));
+    if (ret)
+    {
+        layout = toLayout;
+
+        /* If we did toggle to something that was not alternative, and does not have alternative, clear alternative */
+        if (!alternativeLayoutSet && layout != alternativeLayout)
+            alternativeLayout = QString();
+
+        /* Set original if we changed to something else, or this is first time it is set */
+        if ((layout != originalLayout && layout != alternativeLayout) || originalLayout.isEmpty())
+        {
+            originalLayout = layout;
+        }
+
+        printf("keymap: processed %d keys. layout set to %s\n", i, qPrintable(layout));
+    }
+    else
+    {
+        printf("keymap: failed to set layout to %s\n", qPrintable(toLayout));
+    }
+
+    return ret;
+}
+
+void keymapping::toggleAlternativeLayout()
+{
+    if (alternativeLayout.isEmpty() || originalLayout.isEmpty() || layout.isEmpty())
+        return;
+
+    printf("keymap: toggling layout from %s to %s\n", qPrintable(layout), qPrintable(alternativeLayout));
+
+    if (layout == alternativeLayout)
+    {
+        emit setKeymapLayout(originalLayout);
+    }
+    else if (layout == originalLayout)
+    {
+        emit setKeymapLayout(alternativeLayout);
+    }
+}
+
+bool keymapping::setPathToLayouts(QString pathToLayouts)
+{
+    if (QDir(pathToLayouts).exists())
+    {
+        layoutPath = pathToLayouts;
+        return true;
+    }
+    else
+    {
+        printf("keymap: path provided is invalid: %s\n", qPrintable(pathToLayouts));
+        return false;
+    }
 }
