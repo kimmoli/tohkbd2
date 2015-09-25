@@ -25,16 +25,20 @@ message($${DEFINES})
 SOURCES += src/tohkbd2-settingsui.cpp \
         src/settingsui.cpp \
         src/consolemodel.cpp \
+        src/systemsettings.cpp \
         ../dbus/src/settingsuiAdaptor.cpp \
         ../dbus/src/daemonInterface.cpp \
-        ../dbus/src/userdaemonInterface.cpp
+        ../dbus/src/userdaemonInterface.cpp \
+        ../dbus/src/mceInterface.cpp
 	
 HEADERS += src/settingsui.h \
         src/IconProvider.h \
         src/consolemodel.h \
+        src/systemsettings.h \
         ../dbus/src/settingsuiAdaptor.h \
         ../dbus/src/daemonInterface.h \
-        ../dbus/src/userdaemonInterface.h
+        ../dbus/src/userdaemonInterface.h \
+        ../dbus/src/mceInterface.h
 
 OTHER_FILES += qml/tohkbd2-settingsui.qml \
     qml/cover/CoverPage.qml \

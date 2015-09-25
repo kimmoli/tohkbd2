@@ -8,7 +8,6 @@
 #include <QVariantList>
 #include <QTimer>
 #include <QMap>
-
 #include "../dbus/src/daemonInterface.h"
 #include "../dbus/src/userdaemonInterface.h"
 

@@ -1,0 +1,20 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node>
+    <interface name="com.nokia.mce.request">
+        <method name="get_config">
+            <arg name="path" direction="in" type="o"/>
+            <arg direction="out" type="v"/>
+        </method>
+        <method name="set_config">
+            <arg name="path" direction="in" type="o"/>
+            <arg name="value" direction="in" type="v"/>
+            <arg direction="out" type="b"/>
+        </method>
+    </interface>
+    <interface name="com.nokia.mce.signal">
+        <signal name="config_change_ind">
+            <arg name="key" direction="out" type="s"/>
+            <arg name="value" direction="out" type="v"/>
+        </signal>
+    </interface>
+</node>

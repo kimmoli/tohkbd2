@@ -28,9 +28,6 @@
 #define FORCE_LANDSCAPE_ORIENTATION true
 #define FORCE_BACKLIGHT_ON false
 
-#define TURN_DISPLAY_OFF_WHEN_REMOVED false
-#define KEEP_DISPLAY_ON_WHEN_CONNECTED false
-
 #define MASTER_LAYOUT "Scandic"
 
 #define ACTION_REBOOT_REMORSE "reboot-remorse"

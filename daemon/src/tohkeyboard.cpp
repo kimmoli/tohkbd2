@@ -55,7 +55,6 @@ Tohkbd::Tohkbd(QObject *parent) :
     selfieLedOn = false;
     gpioInterruptCounter = 0;
     verboseMode = true;
-    displayBlankPreventRequested = false;
 
     fix_CapsLock = !checkSailfishVersion("1.1.7.0");
     capsLock = false;
@@ -74,7 +73,6 @@ Tohkbd::Tohkbd(QObject *parent) :
     backlightTimer = new QTimer(this);
     presenceTimer = new QTimer(this);
     repeatTimer = new QTimer(this);
-    displayBlankPreventTimer = new QTimer(this);
     uinputif = new UinputIf();
     uinputevpoll = new UinputEvPoll();
     evpollThread = new QThread();
@@ -121,9 +119,6 @@ bool Tohkbd::init()
 
     repeatTimer->setSingleShot(true);
     connect(repeatTimer, SIGNAL(timeout()), this, SLOT(repeatTimerTimeout()));
-
-    displayBlankPreventTimer->setSingleShot(true);
-    connect(displayBlankPreventTimer, SIGNAL(timeout()), this, SLOT(displayBlankPreventTimerTimeout()));
 
     /* do this automatically at startup */
     setVddState(true);
@@ -334,7 +329,6 @@ bool Tohkbd::setInterruptEnable(bool state)
  */
 void Tohkbd::handleDisplayStatus(const QDBusMessage& msg)
 {
-    bool __previousDisplayStatus = displayIsOn;
     QString turn = msg.arguments().at(0).toString();
 
     if (verboseMode)
@@ -353,12 +347,6 @@ void Tohkbd::handleDisplayStatus(const QDBusMessage& msg)
 
         backlightTimer->stop();
         controlLeds(false);
-    }
-
-    if (displayIsOn != __previousDisplayStatus)
-    {
-        /* blank preventing or cancelling */
-        displayBlankPreventTimerTimeout();
     }
 }
 
@@ -431,28 +419,6 @@ bool Tohkbd::checkKeypadPresence()
         if (settingsMap.value("forceLandscapeOrientation").toBool())
         {
             changeOrientationLock();
-        }
-
-        if (keypadIsPresent)
-        {
-            /* If display is off, this does nothing. It is called again when display turns on */
-            displayBlankPreventTimerTimeout();
-        }
-        else // not present
-        {
-            if (settingsMap.value("keepDisplayOnWhenConnected").toBool())
-            {
-                displayBlankPreventTimerTimeout(true);
-            }
-            if (settingsMap.value("turnDisplayOffWhenRemoved").toBool() && displayIsOn)
-            {
-                /* if enabled and display is on, turn display off when keyboard is removed */
-                if (verboseMode)
-                    printf("request mce to turn display off\n");
-
-                QDBusMessage m = QDBusMessage::createMethodCall(MCE_SERVICE, MCE_REQUEST_PATH, MCE_REQUEST_IF, MCE_DISPLAY_OFF_REQ);
-                QDBusConnection::systemBus().send(m);
-            }
         }
     }
 
@@ -942,39 +908,6 @@ void Tohkbd::backlightTimerTimeout()
         tca8424->setLeds(LED_BACKLIGHT_OFF);
 }
 
-/*
- * Display blank prevention.
- * If enabled, keyboard attached and display is on, request blank prevent from mce and restart timer,
- * otherwise, cancel request
- */
-void Tohkbd::displayBlankPreventTimerTimeout(bool forceCancel)
-{
-    if (settingsMap.value("keepDisplayOnWhenConnected").toBool() && displayIsOn && keypadIsPresent && !forceCancel)
-    {
-        if (verboseMode)
-            printf("requesting mce to prevent blanking\n");
-
-        QDBusMessage m = QDBusMessage::createMethodCall(MCE_SERVICE, MCE_REQUEST_PATH, MCE_REQUEST_IF, MCE_PREVENT_BLANK_REQ);
-        QDBusConnection::systemBus().send(m);
-        displayBlankPreventTimer->start(30000);
-        displayBlankPreventRequested = true;
-    }
-    else if (displayBlankPreventRequested || forceCancel)
-    {
-        if (verboseMode)
-            printf("cancelling blanking prevent request %s\n", forceCancel ? "(forced)" : "");
-
-        if (forceCancel)
-        {
-            displayBlankPreventTimer->stop();
-        }
-
-        QDBusMessage m = QDBusMessage::createMethodCall(MCE_SERVICE, MCE_REQUEST_PATH, MCE_REQUEST_IF, MCE_CANCEL_PREVENT_BLANK_REQ);
-        QDBusConnection::systemBus().send(m);
-        displayBlankPreventRequested = false;
-    }
-}
-
 /* Change virtual keyboard active layout,
  * uses private: vkbLayoutIsTohkbd
  * true = change to harbour-tohkbd2.qml
@@ -1148,8 +1081,6 @@ void Tohkbd::reloadSettings()
 
     settingsMap.insert("forceLandscapeOrientation", settings.value("forceLandscapeOrientation", FORCE_LANDSCAPE_ORIENTATION).toBool());
     settingsMap.insert("forceBacklightOn", settings.value("forceBacklightOn", FORCE_BACKLIGHT_ON).toBool());
-    settingsMap.insert("turnDisplayOffWhenRemoved", settings.value("turnDisplayOffWhenRemoved", TURN_DISPLAY_OFF_WHEN_REMOVED).toBool());
-    settingsMap.insert("keepDisplayOnWhenConnected", settings.value("keepDisplayOnWhenConnected", KEEP_DISPLAY_ON_WHEN_CONNECTED).toBool());
     settings.endGroup();
 }
 
@@ -1261,10 +1192,6 @@ void Tohkbd::setSetting(const QString &key, const QDBusVariant &value)
         {
             tohkbd2user->setOrientationLock("landscape");
         }
-    }
-    else if (key == "keepDisplayOnWhenConnected")
-    {
-        displayBlankPreventTimerTimeout();
     }
     else if (key == "modifierShiftMode")
     {

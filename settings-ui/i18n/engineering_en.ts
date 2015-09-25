@@ -386,31 +386,41 @@
         <extracomment>Description text for sticky and locking modifier keys</extracomment>
         <translation type="unfinished"></translation>
     </message>
-    <message id="turn-display-off-when-removed-sw">
-        <source>Display off when removed</source>
-        <oldsource>Display Off when removed</oldsource>
-        <extracomment>Display off when removed switch text</extracomment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message id="turn-display-off-when-removed-desc">
-        <source>Turn display off when keyboard is removed</source>
-        <oldsource>Turn display off when keyboard removed</oldsource>
-        <extracomment>Display off when removed switch description</extracomment>
-        <translation type="unfinished"></translation>
-    </message>
     <message id="keep-display-on-when-connected-sw">
-        <source>Display on when connected</source>
+        <source>Display mode</source>
+        <oldsource>Display on when connected</oldsource>
         <extracomment>Keep display on when connected switch text</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message id="keep-display-on-when-connected-desc">
-        <source>Keep display on when keyboard is connected</source>
+        <source>Display mode when keyboard is connected. Normally display will blank when phone is not used for a specified time, but you can force it to stay on or allow just to dim when keyboard is connected.</source>
+        <oldsource>Keep display on when keyboard is connected</oldsource>
         <extracomment>Keep display on when connected switch description</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message id="about-changes">
         <source>Changes</source>
         <extracomment>section header for changelog</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message id="action-when-connected-cb">
+        <source>Action when connected</source>
+        <extracomment>blaa</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message id="action-when-connected-desc">
+        <source>Select action when keyboard is attached.</source>
+        <extracomment>blaa</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message id="action-when-removed-cb">
+        <source>Action when removed</source>
+        <extracomment>blaa</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message id="action-when-removed-desc">
+        <source>Select action when keyboard is removed.</source>
+        <extracomment>blaa</extracomment>
         <translation type="unfinished"></translation>
     </message>
 </context>

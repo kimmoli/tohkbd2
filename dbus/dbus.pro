@@ -18,6 +18,9 @@ system(qdbusxml2cpp com.kimmoli.tohkbd2.xml -p ../dbus/src/daemonInterface)
 system(qdbusxml2cpp com.kimmoli.tohkbd2settingsui.xml -i ../settings-ui/src/settingsui.h -a ../dbus/src/settingsuiAdaptor)
 system(qdbusxml2cpp com.kimmoli.tohkbd2settingsui.xml -p ../dbus/src/settingsuiInterface)
 
+# mce
+system(qdbusxml2cpp mce.xml -p ../dbus/src/mceInterface)
+
 # Install dbus related files
 
 dbus_services.path = /usr/share/dbus-1/services/
@@ -46,4 +49,5 @@ OTHER_FILES += \
     com.kimmoli.tohkbd2settingsui.service \
     com.kimmoli.tohkbd2user.service \
     harbour-tohkbd2.conf \
-    harbour-tohkbd2.service
+    harbour-tohkbd2.service \
+    mce.xml

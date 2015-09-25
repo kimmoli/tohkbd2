@@ -5,11 +5,32 @@
 import QtQuick 2.0
 import Sailfish.Silica 1.0
 import org.nemomobile.configuration 1.0
+import harbour.tohkbd2.systemsettings 1.0
 import "../components"
 
 Page
 {
     id: page
+
+    SystemSettings
+    {
+        id: systemsettings
+
+        Component.onCompleted:
+        {
+            /* if the keyboard open event is not triggering actions
+               set them to trigger when no proximity. Always is also ok, do not change that */
+            if (value("/system/osso/dsm/locks/keyboard_open_trigger") == 0)
+                setValue("/system/osso/dsm/locks/keyboard_open_trigger", 2)
+
+            /* Set the keyboard close event to trigger always
+             * This is needed for proper operation */
+            if (value("/system/osso/dsm/locks/keyboard_close_trigger") != 1)
+                setValue("/system/osso/dsm/locks/keyboard_close_trigger", 1)
+        }
+
+        /* Todo: change comboBox index if a setting is changed, onSettingChanged(path) */
+    }
 
     KeyboardHandler
     {
@@ -34,6 +55,9 @@ Page
                 onClicked:
                 {
                     settingsui.setSettingsToDefault()
+                    systemsettings.setValue(blankInhibitCB.path, 0)
+                    systemsettings.setValue(openActionCB.path, 1)
+                    systemsettings.setValue(closeActionCB.path, 2)
                     pageStack.pop()
                 }
             }
@@ -160,31 +184,87 @@ Page
                 width: parent.width - 2*Theme.paddingLarge
                 Component.onCompleted: checked = settings["forceLandscapeOrientation"]
             }
-            TextSwitch
+            ComboBox
             {
+                id: blankInhibitCB
+                property string path: "/system/osso/dsm/display/kbd_slide_inhibit_blank_mode"
+                width: parent.width
                 //: Keep display on when connected switch text
-                //% "Display on when connected"
-                text: qsTrId("keep-display-on-when-connected-sw")
-                //: Keep display on when connected switch description
-                //% "Keep display on when keyboard is connected"
-                description: qsTrId("keep-display-on-when-connected-desc")
-                onCheckedChanged: settingsui.setSetting("keepDisplayOnWhenConnected", checked)
-                width: parent.width - 2*Theme.paddingLarge
-                Component.onCompleted: checked = settings["keepDisplayOnWhenConnected"]
+                //% "Display mode"
+                label: qsTrId("keep-display-on-when-connected-sw") + " "
+                menu: ContextMenu
+                {
+                    MenuItem { text: "Normal";   onClicked: systemsettings.setValue(blankInhibitCB.path, 0); }
+                    MenuItem { text: "Stay on";  onClicked: systemsettings.setValue(blankInhibitCB.path, 1); }
+                    MenuItem { text: "Stay dim"; onClicked: systemsettings.setValue(blankInhibitCB.path, 2); }
+                }
+                Component.onCompleted: currentIndex = systemsettings.value(blankInhibitCB.path)
             }
-            TextSwitch
+            Label
             {
-                //: Display off when removed switch text
-                //% "Display off when removed"
-                text: qsTrId("turn-display-off-when-removed-sw")
-                //: Display off when removed switch description
-                //% "Turn display off when keyboard is removed"
-                description: qsTrId("turn-display-off-when-removed-desc")
-                onCheckedChanged: settingsui.setSetting("turnDisplayOffWhenRemoved", checked)
-                width: parent.width - 2*Theme.paddingLarge
-                Component.onCompleted: checked = settings["turnDisplayOffWhenRemoved"]
+                //: Keep display on when connected switch description
+                //% "Display mode when keyboard is connected. Normally display will blank when phone is not used for a specified time, but you can force it to stay on or allow just to dim when keyboard is connected."
+                text: qsTrId("keep-display-on-when-connected-desc")
+                wrapMode: Text.Wrap
+                font.pixelSize: Theme.fontSizeExtraSmall
+                color: Theme.secondaryColor
+                width: parent.width - 4*Theme.paddingLarge
+                anchors.horizontalCenter: parent.horizontalCenter
             }
-
+            ComboBox
+            {
+                id: openActionCB
+                property string path: "/system/osso/dsm/locks/keyboard_open_actions"
+                width: parent.width
+                //: blaa
+                //% "Action when connected"
+                label: qsTrId("action-when-connected-cb") + " "
+                menu: ContextMenu
+                {
+                    MenuItem { text: "No action"; onClicked: systemsettings.setValue(openActionCB.path, 0); }
+                    MenuItem { text: "Unblank";   onClicked: systemsettings.setValue(openActionCB.path, 1); }
+                    MenuItem { text: "Unlock";    onClicked: systemsettings.setValue(openActionCB.path, 2); }
+                }
+                Component.onCompleted: currentIndex = systemsettings.value(blankInhibitCB.path)
+            }
+            Label
+            {
+                //: blaa
+                //% "Select action when keyboard is attached."
+                text: qsTrId("action-when-connected-desc")
+                wrapMode: Text.Wrap
+                font.pixelSize: Theme.fontSizeExtraSmall
+                color: Theme.secondaryColor
+                width: parent.width - 4*Theme.paddingLarge
+                anchors.horizontalCenter: parent.horizontalCenter
+            }
+            ComboBox
+            {
+                id: closeActionCB
+                property string path: "/system/osso/dsm/locks/keyboard_close_actions"
+                width: parent.width
+                //: blaa
+                //% "Action when removed"
+                label: qsTrId("action-when-removed-cb") + " "
+                menu: ContextMenu
+                {
+                    MenuItem { text: "No action"; onClicked: systemsettings.setValue(closeActionCB.path, 0); }
+                    MenuItem { text: "Blank";     onClicked: systemsettings.setValue(closeActionCB.path, 1); }
+                    MenuItem { text: "Lock";      onClicked: systemsettings.setValue(closeActionCB.path, 2); }
+                }
+                Component.onCompleted: currentIndex = systemsettings.value(closeActionCB.path)
+            }
+            Label
+            {
+                //: blaa
+                //% "Select action when keyboard is removed."
+                text: qsTrId("action-when-removed-desc")
+                wrapMode: Text.Wrap
+                font.pixelSize: Theme.fontSizeExtraSmall
+                color: Theme.secondaryColor
+                width: parent.width - 4*Theme.paddingLarge
+                anchors.horizontalCenter: parent.horizontalCenter
+            }
             SectionHeader
             {
                 //: Section header for repeat settings

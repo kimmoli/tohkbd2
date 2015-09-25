@@ -17,6 +17,7 @@
 #include "../../daemon/src/defaultSettings.h"
 #include "../dbus/src/settingsuiAdaptor.h"
 
+
 static const char *SERVICE = SERVICE_NAME;
 static const char *PATH = "/";
 
@@ -164,8 +165,6 @@ QVariantMap SettingsUi::getCurrentSettings()
     map.insert("modifierCtrlMode", settings.value("modifierCtrlMode", MODIFIER_CTRL_MODE).toString());
     map.insert("modifierAltMode", settings.value("modifierAltMode", MODIFIER_ALT_MODE).toString());
     map.insert("modifierSymMode", settings.value("modifierSymMode", MODIFIER_SYM_MODE).toString());
-    map.insert("turnDisplayOffWhenRemoved", settings.value("turnDisplayOffWhenRemoved", TURN_DISPLAY_OFF_WHEN_REMOVED).toBool());
-    map.insert("keepDisplayOnWhenConnected", settings.value("keepDisplayOnWhenConnected", KEEP_DISPLAY_ON_WHEN_CONNECTED).toBool());
     map.insert("verboseMode", settings.value("verboseMode", VERBOSE_MODE_ENABLED).toBool());
     settings.endGroup();
 
@@ -270,8 +269,6 @@ void SettingsUi::setSettingsToDefault()
     setSetting("modifierAltMode", MODIFIER_ALT_MODE);
     setSetting("modifierSymMode", MODIFIER_SYM_MODE);
     setSetting("verboseMode", VERBOSE_MODE_ENABLED);
-    setSetting("turnDisplayOffWhenRemoved", TURN_DISPLAY_OFF_WHEN_REMOVED);
-    setSetting("keepDisplayOnWhenConnected", KEEP_DISPLAY_ON_WHEN_CONNECTED);
 
     QThread::msleep(200);
 

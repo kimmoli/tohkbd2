@@ -62,7 +62,6 @@ public slots:
     void backlightTimerTimeout();
     void presenceTimerTimeout();
     void repeatTimerTimeout();
-    void displayBlankPreventTimerTimeout(bool forceCancel = false);
 
     /* Interrupt */
     void handleGpioInterrupt();
@@ -116,7 +115,6 @@ private:
     QTimer *backlightTimer;
     QTimer *presenceTimer;
     QTimer *repeatTimer;
-    QTimer *displayBlankPreventTimer;
 
     QString currentActiveLayout;
     QString currentOrientationLock;
@@ -137,7 +135,6 @@ private:
     bool selfieLedOn;
     bool capsLock;
     bool verboseMode;
-    bool displayBlankPreventRequested;
     bool doNotChangeVkbLayout;
 
     ComKimmoliTohkbd2userInterface *tohkbd2user;
