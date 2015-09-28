@@ -2,8 +2,9 @@ TARGET = harbour-tohkbd2-user
 
 CONFIG += sailfishapp link_pkgconfig
 PKGCONFIG += sailfishapp mlite5 nemonotifications-qt5
+PKGCONFIG += Qt5SystemInfo
 
-QT += dbus gui-private
+QT += dbus network gui-private
 
 system(lupdate src qml -no-obsolete -ts $$PWD/i18n/engineering_en.ts)
 system(lrelease -idbased $$PWD/i18n/*.ts)

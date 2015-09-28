@@ -57,6 +57,7 @@ public slots:
 
 private:
     void showNotification(const QString &text);
+    bool checkSailfishVersion(QString versionToCompare);
     bool m_dbusRegistered;
     bool m_launchPending;
     MGConfItem *physicalLayout;
