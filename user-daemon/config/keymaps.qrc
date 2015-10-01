@@ -8,5 +8,6 @@
         <file>layouts/no.tohkbdmap</file>
         <file>layouts/pl.tohkbdmap</file>
         <file>layouts/fr.tohkbdmap</file>
+        <file>layouts/se.tohkbdmap</file>
     </qresource>
 </RCC>
