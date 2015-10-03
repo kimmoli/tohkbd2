@@ -40,6 +40,7 @@ public:
     Q_INVOKABLE void setSetting(QString key, QVariant value);
     Q_INVOKABLE void forceKeymapReload();
     Q_INVOKABLE void restoreOriginalKeymaps();
+    Q_INVOKABLE void quitDaemon();
 
 public slots:
     void showHelp() { emit showHelpPage(); }

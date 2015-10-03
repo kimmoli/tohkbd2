@@ -373,3 +373,8 @@ QVariantList SettingsUi::getCurrentLayouts()
 
     return tmp;
 }
+
+void SettingsUi::quitDaemon()
+{
+    tohkbd2daemon->quit();
+}

@@ -428,5 +428,10 @@
         <extracomment>Section header for notifications settings</extracomment>
         <translation type="unfinished"></translation>
     </message>
+    <message id="restart-daemon">
+        <source>Restart daemon</source>
+        <extracomment>Menu option to restart daemon</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 </TS>

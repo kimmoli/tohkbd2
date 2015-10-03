@@ -76,6 +76,13 @@ Page
         {
             MenuItem
             {
+                //: Menu option to restart daemon
+                //% "Restart daemon"
+                text: qsTrId("restart-daemon")
+                onClicked: settingsui.quitDaemon()
+            }
+            MenuItem
+            {
                 //: Menu option and header for about page
                 //% "About..."
                 text: qsTrId("about")
