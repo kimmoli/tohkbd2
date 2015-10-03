@@ -307,6 +307,24 @@ Page
 
             SectionHeader
             {
+                //: Section header for notifications settings
+                //% "Notifications"
+                text: qsTrId("notifications-sect-header")
+            }
+            TextSwitch
+            {
+                //: Show notifications of keyboard attachment/removal
+                //% "Show notifications"
+                text: qsTrId("showNotifications-sw")
+                //: showNotifications switch description
+                //% "Show notifications when keyboard is attached or removed. If disabled, other notifications for errors and screenshot are still shown."
+                description: qsTrId("showNotifications-desc")
+                onCheckedChanged: if (checked !== settings["showNotifications"]) settingsui.setSetting("showNotifications", checked)
+                width: parent.width - 2*Theme.paddingLarge
+                Component.onCompleted: checked = settings["showNotifications"]
+            }
+            SectionHeader
+            {
                 //: Section header for Debug settings
                 //% "Debug"
                 text: qsTrId("debug-sect-header")

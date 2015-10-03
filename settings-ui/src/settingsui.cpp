@@ -167,6 +167,7 @@ QVariantMap SettingsUi::getCurrentSettings()
     map.insert("turnDisplayOffWhenRemoved", settings.value("turnDisplayOffWhenRemoved", TURN_DISPLAY_OFF_WHEN_REMOVED).toBool());
     map.insert("keepDisplayOnWhenConnected", settings.value("keepDisplayOnWhenConnected", KEEP_DISPLAY_ON_WHEN_CONNECTED).toBool());
     map.insert("verboseMode", settings.value("verboseMode", VERBOSE_MODE_ENABLED).toBool());
+    map.insert("showNotifications", settings.value("showNotifications", SHOW_NOTIFICATIONS).toBool());
     settings.endGroup();
 
     QString layout = QString(tohkbd2user->getActivePhysicalLayout());
@@ -272,6 +273,7 @@ void SettingsUi::setSettingsToDefault()
     setSetting("verboseMode", VERBOSE_MODE_ENABLED);
     setSetting("turnDisplayOffWhenRemoved", TURN_DISPLAY_OFF_WHEN_REMOVED);
     setSetting("keepDisplayOnWhenConnected", KEEP_DISPLAY_ON_WHEN_CONNECTED);
+    setSetting("showNotifications", SHOW_NOTIFICATIONS);
 
     QThread::msleep(200);
 

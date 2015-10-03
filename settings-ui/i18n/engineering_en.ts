@@ -413,5 +413,20 @@
         <extracomment>section header for changelog</extracomment>
         <translation type="unfinished"></translation>
     </message>
+    <message id="showNotifications-sw">
+        <source>Show notifications</source>
+        <extracomment>Show notifications of keyboard attachment/removal</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message id="showNotifications-desc">
+        <source>Show notifications when keyboard is attached or removed. If disabled, other notifications for errors and screenshot are still shown.</source>
+        <extracomment>showNotifications switch description</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message id="notifications-sect-header">
+        <source>Notifications</source>
+        <extracomment>Section header for notifications settings</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 </TS>

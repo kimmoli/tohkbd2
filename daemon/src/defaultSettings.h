@@ -37,5 +37,6 @@
 #define ACTION_RESTART_LIPSTICK_REMORSE "restart-lipstick-remorse"
 
 #define VERBOSE_MODE_ENABLED false
+#define SHOW_NOTIFICATIONS true
 
 #endif // DEFAULTSSETTINGS_H

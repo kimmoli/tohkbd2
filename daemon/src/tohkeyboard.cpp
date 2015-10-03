@@ -420,7 +420,8 @@ bool Tohkbd::checkKeypadPresence()
 
     if (__prev_keypadPresence != keypadIsPresent)
     {
-        tohkbd2user->showKeyboardConnectionNotification(keypadIsPresent);
+        if (settingsMap.value("showNotifications").toBool())
+            tohkbd2user->showKeyboardConnectionNotification(keypadIsPresent);
 
         emit keyboardConnectedChanged(keypadIsPresent);
         emitKeypadSlideEvent(keypadIsPresent);
@@ -1150,6 +1151,7 @@ void Tohkbd::reloadSettings()
     settingsMap.insert("forceBacklightOn", settings.value("forceBacklightOn", FORCE_BACKLIGHT_ON).toBool());
     settingsMap.insert("turnDisplayOffWhenRemoved", settings.value("turnDisplayOffWhenRemoved", TURN_DISPLAY_OFF_WHEN_REMOVED).toBool());
     settingsMap.insert("keepDisplayOnWhenConnected", settings.value("keepDisplayOnWhenConnected", KEEP_DISPLAY_ON_WHEN_CONNECTED).toBool());
+    settingsMap.insert("showNotifications", settings.value("showNotifications", SHOW_NOTIFICATIONS).toBool());
     settings.endGroup();
 }
 
