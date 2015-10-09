@@ -61,6 +61,7 @@ private:
     bool m_dbusRegistered;
     bool m_launchPending;
     MGConfItem *physicalLayout;
+    QTimer *unsupportedLayoutNotificationBlocker;
 };
 
 #endif // UserDaemon_H
