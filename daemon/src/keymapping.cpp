@@ -31,6 +31,7 @@ keymapping::keymapping(QObject *parent) :
     layoutPath = QString();
     alternativeLayout = QString();
     originalLayout = QString();
+    keymapIsValid = false;
 
     pressedCode = 0;
     verboseMode = false;
@@ -61,6 +62,13 @@ keymapping::keymapping(QObject *parent) :
 
 void keymapping::process(QByteArray inputReport)
 {
+    if (!keymapIsValid)
+    {
+        printf("Keymap is invalid, processing aborted.\n");
+        emit keymapInvalid();
+        return;
+    }
+
     QList< QPair<int,int> > retKey;
     char irCode = 0;
 
@@ -94,15 +102,19 @@ void keymapping::process(QByteArray inputReport)
             return;
         }
 
-    /* First check modifiers from modifier byte */
-    if (inputReport.at(3) & 0x02) symDown = true;
-    if (inputReport.at(3) & 0x08) ctrlDown = true;
-    if (inputReport.at(3) & 0x10) leftShiftDown = true;
+    /* Translate modifier bytes to ir */
+    if (inputReport.at(3) & 0x02) ir.append(0xE0);
+    if (inputReport.at(3) & 0x08) ir.append(0xE2);
+    if (inputReport.at(3) & 0x10) ir.append(0xE3);
+
     /* And other modifiers from the usage codes */
-    if (ir.contains(0xEA)) { shiftDown = true; ir.remove(ir.indexOf(0xEA), 1); }
-    if (ir.contains(0xCF)) { altDown = true; ir.remove(ir.indexOf(0xCF), 1); }
-    if (ir.contains(0xBF)) { ctrlDown = true; ir.remove(ir.indexOf(0xBF), 1); }
-    if (ir.contains(0xED)) { symDown = true; ir.remove(ir.indexOf(0xED), 1); }
+    if (ir.contains(0xE0)) { symDown = true; ir.remove(ir.indexOf(0xE0), 1); }       /* Left Sym    */
+    if (ir.contains(0xED)) { symDown = true; ir.remove(ir.indexOf(0xED), 1); }       /* Right Sym   */
+    if (ir.contains(0xE2)) { ctrlDown = true; ir.remove(ir.indexOf(0xE2), 1); }      /* left Ctrl   */
+    if (ir.contains(0xBF)) { ctrlDown = true; ir.remove(ir.indexOf(0xBF), 1); }      /* Right Ctrl  */
+    if (ir.contains(0xE3)) { leftShiftDown = true; ir.remove(ir.indexOf(0xE3), 1); } /* Left Shift  */
+    if (ir.contains(0xEA)) { shiftDown = true; ir.remove(ir.indexOf(0xEA), 1); }     /* Right Shift */
+    if (ir.contains(0xCF)) { altDown = true; ir.remove(ir.indexOf(0xCF), 1); }       /* Right Alt   */
 
     /* Check space key here, it is a special case */
     if ((inputReport.at(3) & 0x40) || (inputReport.at(3) & 0x80) || ir.contains(0xE9))
@@ -195,7 +207,7 @@ bool keymapping::setLayout(QString toLayout, bool forceReload)
     bool ret = true;
     bool alternativeLayoutSet = false;
 
-    if ((toLayout == layout) && !forceReload)
+    if ((toLayout == layout) && !forceReload && keymapIsValid)
         return true;
 
     if (forceReload && toLayout.isEmpty())
@@ -348,6 +360,8 @@ bool keymapping::setLayout(QString toLayout, bool forceReload)
     {
         printf("keymap: failed to set layout to %s\n", qPrintable(toLayout));
     }
+
+    keymapIsValid = ret;
 
     return ret;
 }

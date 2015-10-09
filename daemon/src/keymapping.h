@@ -42,6 +42,7 @@ public:
     bool setLayout(QString toLayout, bool forceReload = false);
 
     bool verboseMode;
+    bool keymapIsValid;
 
 signals:
     void shiftChanged();
@@ -54,6 +55,7 @@ signals:
     void bogusDetected();
     void setKeymapVariant(QString keymapVariant);
     void setKeymapLayout(QString keymapLayout);
+    void keymapInvalid();
 
 public slots:
 

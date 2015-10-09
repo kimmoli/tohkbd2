@@ -177,6 +177,7 @@ bool Tohkbd::init()
     connect(keymap, SIGNAL(bogusDetected()), tca8424, SLOT(reset()));
     connect(keymap, SIGNAL(setKeymapLayout(QString)), tohkbd2user, SLOT(setKeymapLayout(QString)));
     connect(keymap, SIGNAL(setKeymapVariant(QString)), tohkbd2user, SLOT(setKeymapVariant(QString)));
+    connect(keymap, SIGNAL(keymapInvalid()), tohkbd2user, SLOT(showUnsupportedLayoutNotification()));
 
     QString currentPhysicalLayout = tohkbd2user->getActivePhysicalLayout();
 
