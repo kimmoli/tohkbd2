@@ -5,7 +5,7 @@ harbour-ambience-tohkbd2
 * When TOHKBD base is attached to the phone for very first time
   * NFC ID is read by ```tohd``` and subbmitted to Jolla Store
   * Store install required packages automatically
-  * During installation, EEPROM contents of TOHKBD are compared to certain vid/pid, and if they match, daemon is started
+  * During installation, EEPROM contents of TOHKBD are compared to certain vid/pid, and if they match, daemon is started aka `systemctl start harbour-tohkbd2`
 * After this, everytime TOHKBD base is attached to the phone, EEPROM contents are checked by udev rule, which starts daemon
 * When daemon is started it creates a uinput device which is used to send key-events to system
 * When the keyboard part is connected to the base, interrupt is generated which triggers followig sequence:
@@ -43,3 +43,6 @@ mer-obs https://build.merproject.org/project/show/home:kimmoli:tohs
 * TCA8424 datasheet: http://www.ti.com/lit/ds/symlink/tca8424.pdf
 * TCA8424 evaluation module user's guide: www.ti.com/lit/ug/scdu004/scdu004.pdf
 
+### Troubleshooting
+
+* If your tohkbd does not work anymore (it doesn't say Keyboard connected anymore) and you notice that in fact the little pin of the back cover has broken off, one way to work around the problem (assuming you always have the tohkbd toh part attached) is to do `systemctl start harbour-tohkbd2 ; systemctl enable harbour-tohkbd2`. This has the same effect as if the pin was always present.
